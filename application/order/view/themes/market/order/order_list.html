@@ -1,0 +1,14 @@
+<table class="table table-bordered table-striped">
+    <tr>
+        <td>编号</td>
+        <td>金额</td>
+        <td>时间</td>
+    </tr>
+    {foreach $list as $val}
+    <tr>
+        <td>{$val.order_id}</td>
+        <td>{$val.amount}</td>
+        <td>{$val.create_time}</td>
+    </tr>
+    {/foreach}
+</table>

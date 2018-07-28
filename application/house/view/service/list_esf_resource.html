@@ -1,0 +1,32 @@
+{foreach $data.data as $item}
+<a  href="/house/esf/detail?id={$item.id}" class="weui-media-box weui-media-box_appmsg">
+    <div class="weui-media-box__hd is-clipped" style="width: 120px;height: 90px;">
+        <img src="{$item.thumb.0.url|default=$_W['module_config']['default_thumb']}" alt="" class="weui-media-box__thumb">
+    </div>
+    <div class="weui-media-box__bd" style="    align-self: flex-start;"><h4 class="weui-media-box__title"><!----> {$item.title}
+
+
+        </h4>
+        <p class="weui-media-box__desc" style="  font-size: 12px">{$item.address} </p>
+        <p class="weui-media-box__desc" style="padding-top: 5px">
+        <div>
+            <?php
+            $tags = explode(',' , $item['tags']);
+            ?>
+            {foreach $tags as $tag}
+            {if $tag}
+            <span class="tag">{$tag}</span>
+            {/if}
+            {/foreach}
+
+        </div>
+        </p>
+
+        <p class="weui-media-box__desc has-text-right">
+            <span class="price has-text-danger">{$item.price} 元/平方</span>
+        </p>
+
+    </div>
+</a>
+
+{/foreach}

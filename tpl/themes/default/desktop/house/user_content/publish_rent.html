@@ -1,0 +1,105 @@
+{extend name="$front_base_layout" /}
+
+{block name="content_header"}
+{include file="public/top_nav" /}{/block}
+
+{block name="semantic_css"}{/block}
+
+{block name="main"}
+<div class="weui-cells__title">发布出租信息</div>
+
+<div class="ui top attached mhcms-panel">
+    <form class="layui-form form-inline" target="mhcms" method="post"
+          action="{:\think\\Request::instance()->url()}" style="padding-right: 10px">
+        {foreach $field_list as $k=>$field}
+        <div class="layui-form-item" id="row_{$k}">
+            <label class="layui-form-label">{$field['slug']}</label>
+            <div class="layui-input-block">
+                {$field['form_str']}
+            </div>
+        </div>
+        {/foreach}
+
+
+        {if $_W['module_config']['top_set']}
+        <div  class="is_top" id="is_top_app">
+            <div class="weui-cells weui-cells_form">
+                <div class="weui-cell weui-cell_switch">
+                    <div class="weui-cell__bd">您是否置顶信息？</div>
+                    <div class="weui-cell__ft">
+                        <input class="weui-switch" v-model="is_top" value="1" name="is_top" lay-ignore type="checkbox">
+                    </div>
+                </div>
+
+            </div>
+            <div class="weui-cells__title has-text-danger" v-if="is_top">请选择您要置顶的套餐</div>
+            <div class="weui-cells weui-cells_checkbox" v-if="is_top">
+                <label class="weui-cell weui-check__label" v-for="(set,index) in top_set" :for="set.unit_type + '_' + set.days">
+                    <div class="weui-cell__hd">
+                        <input type="radio" class="weui-check" required name="set_index" :value="index" :id="set.unit_type + '_' + set.days" lay-ignore >
+                        <i class="weui-icon-checked"></i>
+                    </div>
+                    <div class="weui-cell__bd">
+                        <p> {{set.days}}天 {{set.money}} <span :class="set.unit_type"> {{units_text[set.unit_type]}}</span></p>
+                    </div>
+                </label>
+            </div>
+
+
+        </div>
+
+        <script>
+            new Vue({
+                el : "#is_top_app" ,
+                data : {
+                    units_text : {
+                        balance : "{$_W['site']['config']['trade']['balance_text']}" ,
+                        point : "{$_W['site']['config']['trade']['point_text']}" ,
+                    },
+                    is_top : false ,
+                    top_set : {:json_encode($_W['module_config']['top_set'])}
+            }
+            });
+            layui.use(['layer', 'form'], function () {
+                var form = layui.form;
+                var $ = layui.$;
+                form.render();
+            });
+        </script>
+        {/if}
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                {:token()}
+                <button class="layui-btn" lay-submit lay-filter="*">立即发布</button>
+            </div>
+        </div>
+
+    </form>
+    <div class="bk10"></div>
+    <div class="bk10"></div>
+
+</div>
+
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form;
+        var $ = layui.$;
+        form.render();
+    });
+</script>
+{/block}
+
+
+{block name="footer"}
+<style>
+    .layui-form-item {
+        margin-bottom: 0;
+        padding: 9px 0;
+        clear: both;
+        border-bottom: solid 1px #f1f1f1;
+    }
+</style>
+{include file="public/footer" /}
+{/block}

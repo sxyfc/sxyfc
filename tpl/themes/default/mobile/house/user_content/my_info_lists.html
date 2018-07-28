@@ -1,0 +1,242 @@
+{extend name="$front_base_layout" /}
+
+{block name="jquery"}{/block}
+{block name="semantic_css"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="baidu_map"}{/block}
+{block name="mhcms_module_js"}{/block}
+{block name="content_header"}{/block}
+{block name="vue_js"}{/block}
+{block name="main"}
+<link rel="stylesheet" href="/statics/components/semantic/components/icon.min.css">
+<div id="main_mhcms_app" v-cloak>
+    <div class="ui top attached mhcms-panel" >
+        <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+            <ul class="ui mhcms-list unstackable items">
+
+
+                <div v-for="item in items" class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <p>
+                                <a  >
+                                    <strong >{{item.title}}</strong>
+
+                                </a>
+                            </p>
+                        </div>
+                        <nav class="level is-mobile">
+                            <div class="level-left">
+                                <div class="level-item" @click="refresh_item(item.id)">刷新</div>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="media-right">
+                        <div class="delete" @click="delete_item(item.id)"></div>
+                    </div>
+                </div>
+            </ul>
+        </div>
+    </div>
+
+
+
+    <div class="js_dialog" id="iosDialog1" :style="{display : show_top_dialog?'block' : 'none'}" >
+        <div class="weui-mask" @click="close_mask()"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__hd"><strong class="weui-dialog__title">请选择置顶信息天数</strong></div>
+            <div class="weui-dialog__bd">
+
+                <div class="weui-cells weui-cells_checkbox" style="margin-top: 0">
+                    <label v-for="(set , index ) in top_set" class="weui-cell weui-check__label" :for="set.unit_type + '_' + set.days">
+                        <div class="weui-cell__hd">
+                            <input type="radio" class="weui-check" name="checkbox1" v-model="selected_top_set" :value="index" :id="set.unit_type + '_' + set.days" >
+                            <i class="weui-icon-checked"></i>
+                        </div>
+                        <div class="weui-cell__bd">
+                            <p>{{set.days}}天 {{set.money}} {{units_text[set.unit_type]}}</p>
+                        </div>
+                    </label>
+                </div>
+
+            </div>
+            <div class="weui-dialog__ft">
+                <a href="javascript:;" @click="close_mask()" class="weui-dialog__btn weui-dialog__btn_default">关闭</a>
+                <a href="javascript:;" @click="do_top_item()" class="weui-dialog__btn weui-dialog__btn_primary">立刻置顶</a>
+            </div>
+        </div>
+    </div>
+
+    <?php
+
+    if(!$_W['module_config']['top_set']){
+        $_W['module_config']['top_set'] = "{}";
+    }else{
+        $_W['module_config']['top_set'] = json_encode( $_W['module_config']['top_set']);
+    }
+    ?>
+</div>
+{/block}
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}
+{block name="vue_mine_js"}
+
+<script>
+    require([ 'Vue' , 'axios' ,'vue!mhcms_ui' ,  'vue!mhcms_filters', 'vue!house' ] , function (Vue , axios) {
+        Vue.prototype.$http = axios;
+
+        var service_url = "{:url('house/api/my_info_list')}";
+        new Vue({
+            el: "#mhcms-app",
+            data: {
+                is_loading: false,
+                has_more: true,
+                items: [],
+                top_item_id: 0,
+                show_top_dialog: false,
+                top_set: {$_W['module_config']['top_set']},
+
+                units_text: {
+                    balance: "{$_W['site']['config']['trade']['balance_text']}",
+                    point: "{$_W['site']['config']['trade']['point_text']}",
+                },
+                selected_top_set: ''
+            },
+            methods: {
+                refresh_item($id) {
+                    var that = this;
+                    layui.use(['layer'], function () {
+                        var layer = layui.layer;
+                        layer.confirm("您确定刷新该信息嘛？", function () {
+
+                            var api_url = api_host + 'house/api/refresh_item';
+                            that.$http.get(api_url, {
+                                params: {
+                                    site_id: 1,
+                                    query: {
+                                        model_id: 'info',
+                                        id: $id
+
+                                    }
+                                }
+                            }).then(function (response) {
+                                var data = response.data;
+                                console.log(response);
+                                if(data.code==1){
+                                    layer.msg(data.msg);
+                                }
+                                //layer.closeAll();
+                            });
+                        }, function () {
+
+
+                        });
+                    });
+                },
+                close_mask: function () {
+                    this.show_top_dialog = false;
+                    this.top_item_id = 0;
+                },
+                do_top_item: function () {
+                    console.log(this.top_item_id, this.selected_top_set);
+                    var that = this;
+                    var service_url = "{:url('house/api/do_top_item')}";
+                    that.$http.get(service_url, {
+                        params: {
+                            site_id: 1,
+                            query: {
+                                top_item_id: this.top_item_id,
+                                top_set_index: this.selected_top_set,
+                                model_id: 'info'
+                            }
+                        }
+                    }).then(function (response) {
+                        var data = response.data;
+                        if (data.code === 1) {
+                            that.top_item_id = 0;
+                            that.show_top_dialog = false;
+                            layui.use(['layer'], function () {
+                                layui.layer.msg(data.msg);
+                            });
+                        } else {
+                            console.log(data);
+                            layui.use(['layer'], function () {
+                                layui.layer.msg(data.msg);
+                            });
+                        }
+
+                    });
+
+
+                },
+                top_item: function ($id) {
+                    this.show_top_dialog = true;
+
+                    this.top_item_id = $id;
+                },
+                load_list: function () {
+
+                    var that = this;
+                    if (!this.is_loading && this.has_more) {
+                        that.$http.get(service_url, {
+                            params: {
+                                site_id: 1
+                            }
+                        }).then(function (response) {
+                            var data = response.data;
+                            if (data.code === 1) {
+                                that.items = data.data.data;
+                            } else {
+                                console.log(data);
+                            }
+                        });
+                    }
+                },
+                delete_item($id) {
+                    console.log($id);
+                    var that = this;
+                    for (var key in this.items) {
+                        if ($id == this.items[key].id) {
+                            console.log(this.items[key]);
+                            layui.use(['layer'], function () {
+                                var layer = layui.layer;
+                                layer.confirm("您确定删除该信息嘛？", function () {
+
+                                    var api_url = api_host + 'house/api/delete_item';
+                                    that.$http.get(api_url, {
+                                        params: {
+                                            site_id: 1,
+                                            query: {
+                                                model_id: 'info',
+                                                id: $id
+
+                                            }
+                                        }
+                                    }).then(function (response) {
+                                        var data = response.data;
+                                        //todo delete the
+                                        that.items.splice(key, 1);
+                                        console.log(response);
+                                        layer.closeAll();
+                                    });
+                                }, function () {
+
+
+                                });
+                            });
+                        }
+                    }
+
+                }
+            },
+            created() {
+                this.load_list();
+            }
+
+        });
+    });
+
+</script>
+{/block}

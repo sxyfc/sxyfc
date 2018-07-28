@@ -1,0 +1,157 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+{block name="content_header"}
+{/block}
+{block name="main"}
+
+<div class="weui-panel" >
+    <div class="weui-panel__hd">我的推广链接</div>
+    <div class="weui-panel__bd">
+        <div class="weui-media-box weui-media-box_small-appmsg">
+            <div class="weui-cells">
+
+
+                {if module_exist('sites')}
+                <a class="weui-cell weui-cell_access" >
+                    1. 方法一 ，经纪人或者合伙人查看产品详情点击生成海报 分享图片到朋友圈即可进行分销操作
+                </a>
+
+                <a class="weui-cell weui-cell_access" >
+                    2. 方法二 ，直接复制海报下方链接即可
+                </a>
+
+                <a class="weui-cell weui-cell_access" >
+                    3. 方法三 ，直接复制该链接即可
+                </a>
+
+
+                {else}
+                <a class="weui-cell weui-cell_access" >
+                    <div class="weui-cell__hd"><i class="iconfont icon-mianshi"   style="width:20px;margin-right:5px;display:block"></i></div>
+                    <div class="weui-cell__bd weui-cell_primary">
+                        <p>微信环境请分享首页或者产品页面到朋友圈或者发送给好友即可</p>
+                    </div>
+                    <span class="weui-cell__ft"></span>
+                </a>
+                <a class="weui-cell weui-cell_access" >
+                    <div class="weui-cell__hd"><i class="iconfont icon-mianshi"   style="width:20px;margin-right:5px;display:block"></i></div>
+                    <div class="weui-cell__bd weui-cell_primary">
+                        <p>经纪人或者合伙人查看产品详情点击生成海报 分享图片到朋友圈即可进行分销操作</p>
+                    </div>
+                    <span class="weui-cell__ft"></span>
+                </a>
+                {/if}
+
+                <div class="message is-info" style="-webkit-user-select: text;user-select: text;margin: 20px" onclick="selectText('link')">
+
+                    <div class="message-header">您的推广链接</div>
+                    <div class="message-body">
+                        <div class="layui-textarea" >
+
+                            <div id="data" style="font-size: 14px;line-height: 35px">
+                                http://{$_W['global_config']['sso_domain']}/home/share/s?id={$share.id}
+                            </div>
+                            <button id="button" class="button needsclick">点击复制</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container ">
+
+<nav class="panel">
+
+</nav>
+</div>
+
+    <script type="text/javascript">
+
+        function selectText(element) {
+            var text = document.getElementById(element);
+            if (document.body.createTextRange) {
+                var range = document.body.createTextRange();
+                range.moveToElementText(text);
+                range.select();
+            } else if (window.getSelection) {
+                var selection = window.getSelection();
+                var range = document.createRange();
+                range.selectNodeContents(text);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                /*if(selection.setBaseAndExtent){
+                    selection.setBaseAndExtent(text, 0, text, 1);
+                }*/
+            } else {
+                alert("none");
+            }
+        }
+
+        function selectText2(containerid) {
+            if (document.selection) { // IE
+                var range = document.body.createTextRange();
+                range.moveToElementText(document.getElementById(containerid));
+                range.select();
+            } else if (window.getSelection) {
+                var range = document.createRange();
+                range.selectNode(document.getElementById(containerid));
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+            }
+        }
+
+        require(['jquery'] , function ($) {
+            $("#button").click(function(){
+                if (navigator.userAgent.match(/(iPhone|iPod|iPad);?/i)) { //ios
+                    var copyDOM = document.querySelector('#data');  //要复制文字的节点
+                    var range = document.createRange();
+                    // 选中需要复制的节点
+                    range.selectNode(copyDOM);
+                    // 执行选中元素
+                    window.getSelection().addRange(range);
+                    // 执行 copy 操作
+                    var successful = document.execCommand('copy');
+                    try {
+                        var msg = successful ? 'successful' : 'unsuccessful';
+                        alert("您已经成功复制网址!")
+                    } catch(err) {
+                        console.log('Oops, unable to copy');
+                    }
+                    // 移除选中的元素
+                    window.getSelection().removeAllRanges();
+                }else{
+                    selectText2("data");
+                    document.execCommand("Copy"); // 执行浏览器复制命令
+                    console.log("android不支持此方式复制,请长按文字复制!")
+                }
+            });
+
+
+
+        });
+    </script>
+
+{/block}
+
+
+    {block name="footer"}
+    <div class="weui-tabbar" style="    z-index: 99999;position: fixed;box-shadow: 0px 7px 14px 5px #c0bfc4;">
+        <a href="/" class="weui-tabbar__item " >
+        <span style="display: inline-block;position: relative;">
+            <i class="weui-tabbar__icon"><i class="iconfont icon-shouye"></i></i>
+        </span>
+            <div class="weui-tabbar__label">返回首页</div>
+        </a>
+    </div>
+    {/block}
+
+{block name="copyright"}
+
+{/block}

@@ -1,0 +1,77 @@
+{extend name="admin@public/content_frame" /}
+{block name="table_form"}
+<?php
+if(!isset($keyword)){
+    $keyword = "";
+}
+?>
+<form class="form-inline" method="get" action="{:\think\\Request::instance()->url()}">
+    <table class="form-group">
+        <td class="input-group">
+            <select name="catid" class="form-control layui-input">
+                <option value="0">栏目选择</option>
+                {foreach $categorys as  $cat}
+                <option value="{$cat.node_id}">{$cat.title}</option>
+                {/foreach}
+            </select>
+        </td>
+        <td class="input-group">
+            <input type="text" name="keyword" value="{$keyword}" class="layui-input" /></td><td><input type="submit" value="搜索"  class="layui-btn layui-btn-small" /></td>
+        </td></table>
+</form>
+{/block}
+
+{block name="main"}
+<form class="form-inline" id="cate_action" action="{:\think\\Url::build('menu/update')}" target="zbn_cms" method="post">
+    <div class="tableBox">
+        <table class="layui-table" style="">
+            <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+                <td>{:zlang('listorder')}</td>
+                <td>{:zlang('id')}</td>
+                <td>{:zlang('地区')}</td>
+                <td>{:zlang('title')}</td>
+                <td>{:zlang('operation')}</td>
+            </tr>
+            {foreach $list as $var}
+            <?php
+
+            $var =array_merge($var->toArray() ,  $node_model->get_node($var['node_id']));
+            ?>
+            <tr class="menu_level1" >
+                <td >
+                    <input type="text" pk="node_id" pk_value="{$var.node_id}" class="layui-input" field="listorder" model="node_index" mini='blur' id="{$var.node_id}" value="{$var.listorder}" />
+                </td>
+                <td style="">{$var.node_id}</td>
+                <td>{:show_linkage($var['select1'])}</td>
+                <td style="">{$var.title}</td>
+                <td style="text-align:center;">
+                    <?php
+                    $params = array("id"=>$var['node_id']);
+
+                    // if(!$var->is_core){
+                    ?>
+                    {volist name="sub_menu" id="menu"}
+                    {eq name="menu.user_menu_display" value="0"}
+                    <?php
+                    if($menu['id'] == 148){
+                        if($var['node_status']){
+                            continue;
+                        }
+                        $menu['user_menu_name'] = "审核";
+                    }
+                    $mini = $menu['user_menu_mini'];
+                    $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
+                    ?>
+                    {:build_back_a($menu['id'],$params,zlang($menu['user_menu_name']),$mini,$menu['class'],'90%','80%')}
+                    {/eq}
+                    {/volist}
+                    <?php
+                    // }
+                    ?>
+                </td>
+            </tr>
+            {/foreach}
+        </table>
+    </div>
+</form>
+{/block}

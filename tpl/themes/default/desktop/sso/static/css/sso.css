@@ -1,0 +1,74 @@
+
+.text h1 {
+    height: 60px;
+    line-height: 60px;
+    max-width: 600px;
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 34px;
+    letter-spacing: 2px;
+    padding: 0 50px;
+    text-shadow: 0 1px 1px #333;
+}
+.text {
+    color: #fff;
+}
+.text p {
+    font-size: 16px;
+    letter-spacing: 2px;
+    padding-top: 20px;
+}
+.light {
+    height: 0;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.5);
+    margin: 30px 0;
+    border-color: rgba(255,255,255,.5);
+}
+.logo {
+    display: inline-block;
+    width: 180px;
+    margin-bottom: 30px;
+    padding: 10px;
+    background: #fff;
+    line-height: 0;
+    border-radius: 5px;
+    box-shadow: 0 1px 1px #333;
+}
+.mhcms-container {
+    width: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate3d(-50%,-50%,0);
+    transform: translate3d(-50%,-50%,0);
+    z-index: 99;
+    text-align: center;
+}
+
+.vegas-overlay{transition: all 1000ms;
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    background: url(/statics/images/sso_bg.jpg) no-repeat;
+    top: 0;
+    background-size: cover;
+    animation-duration: 4000ms;
+    -webkit-animation-name: fadeIn; /*动画名称*/
+    -webkit-animation-duration: 3s; /*动画持续时间*/
+    -webkit-animation-iteration-count: 1; /*动画次数*/
+    -webkit-animation-delay: 0s; /*延迟时间*/
+}
+
+@-webkit-keyframes fadeIn {
+    0% {
+        opacity: 0; /*初始状态 透明度为0*/
+    }
+    50% {
+        opacity: 0; /*中间状态 透明度为0*/
+    }
+    100% {
+        opacity: 1; /*结尾状态 透明度为1*/
+    }
+}

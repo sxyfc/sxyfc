@@ -1,0 +1,14 @@
+
+{include file="index/head" /}
+<div class="install-box">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>恭喜您更新成功</legend>
+    </fieldset>
+</div>
+<script>
+    function goToUrl($url) {
+        window.location.href = $url;
+    }
+    goToUrl("{:url('admin/index/main')}");
+</script>
+{include file="index/foot" /}

@@ -1,0 +1,82 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+{/block}
+
+
+{block name="main"}
+
+<div>
+    {foreach $filter_info.fields as $k=>$field}
+    <a style="background-color: {$option.bgcolor|default=""};width: 120px;margin: 10px"  class="layui-btn layui-btn-primary ">{$field.slug}</a>
+
+    <a style="background-color: {$option.bgcolor|default=""};width: 120px;margin:10px "  class="layui-btn layui-btn-primary    {$field.class|default=""}" href="{$field.href}">全部</a>
+
+    {foreach $field.options as $option}
+    <a style="background-color: {$option.bgcolor};color: {$option.color} ;width: 120px;margin:10px " class="layui-btn layui-btn-primary  {$option.class|default=""}" href="{$option.href}">
+    <i class="{$option.icon}"></i> {$option.module_name}</a>
+    {/foreach}
+    {/foreach}
+</div>
+
+<script>
+    $('a.selected')
+        .transition({
+            animation  : 'pulse',
+
+            duration   : '2s',
+            onComplete : function() {
+                //    alert('done');
+            }
+        }).transition('set looping')
+    ;
+
+</script>
+<div class="tableBox">
+    <table lay-filter="demo" class="layui-table table-bordered" style="">
+        <thead>
+        <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+            <td lay-data="{ field:'id',width:100}">ID</td>
+            {foreach $field_list as $field}
+            <td lay-data="{ field:'{$field['field_name']}' ,width:100}">{$field['slug']}</td>
+            {/foreach}
+            <td lay-data="{ field:'operation'}">{:zlang('操作')}</td>
+        </tr>
+        </thead>
+        {foreach $lists as $item}
+        <?php
+        $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
+        ?>
+        <tr>
+            <td>{$item.id}</td>
+            {foreach $field_list as $field}
+            <td><pre>{$item[$field['field_name']]}</pre></td>
+            {/foreach}
+            <td>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                <?php
+                $mapping = $item;
+                ?>
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
+                {/eq}
+                {/volist}
+            </td>
+        </tr>
+
+        {/foreach}
+
+    </table>
+
+</div>
+
+<script>
+    layui.use(['table'] ,function () {
+        var table = layui.table;
+
+
+//转换静态表格
+
+    });
+</script>
+{/block}

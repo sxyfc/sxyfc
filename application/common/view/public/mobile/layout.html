@@ -1,0 +1,251 @@
+{block name="header_base"}<!DOCTYPE html><?php
+global $_W,$_GPC;
+?>
+<html><!--鸣鹤CMS 头部开始-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>{$seo.seo_title|default=""}</title>
+<meta content="mobile" name="device">
+<meta content="{$seo.seo_desc|default=""}" name="description">
+<meta name="keywords" content="{$seo.seo_keywords|default=""}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+<link type="favicon" rel="shortcut icon" href="/favicon.ico" />
+<meta name="Generator" content="mhcms" />
+{/block}
+
+<script type="text/javascript">
+    {if isset($user) && $user}
+    var  is_login= 1;
+    {else}
+    var  is_login= 0;
+    {/if}
+    var  hide_tools= 0;
+    {if isset($hide_tools) && $hide_tools==1}
+    var  hide_tools= 1;
+    {/if}
+    {if ($_W['global_config']['sites']['auto_create_site'])}
+    //todo cookie setting
+    <?php
+    $baidu_map = 1;
+    ?>
+    var check_area = 1;
+    {else}
+    var check_area = 0;
+    {/if}
+    var reload_menu = "<?php echo (int) input('param.reload_menu'); ?>";
+    var m_c_d = "{$_W.global_config.sso_domain}" , site_id = '{$_W.site.id}'  , api_host = "{$_W['siteroot']}";
+    var upload_url = "{:nb_url(['r'=>'attachment/index/upload'])}";
+    var check_md5 = "{:nb_url(['r'=>'attachment/attach/check_md5'])}";
+    var save_attach = "{:nb_url(['r'=>'attachment/attach/save'])}";
+    var check_chunk = "{:nb_url(['r'=>'attachment/index/chunkCheck'])}";
+    var current_district = "{$linkage.name|default=""}";
+    var wechat_download_url = "{:nb_url(['r'=>'attachment/WechatRes/download'])}";
+
+</script>
+
+{if $baidu_map}
+<script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak={$_W['site']['config']['map']['bd_key']|default='	MKqiLv4hVg6G9gU6tIzbR9OBASGBt4zW'}"></script>
+{/if}
+
+    {block name="jquery"}
+<script type="text/javascript" src="/statics/js/jquery.min.js"></script>
+{/block}
+
+{block name="layui_js"}
+<script type="text/javascript" src="/statics/components/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/statics/components/layui/libs/'
+    });
+</script>
+{/block}
+{block name="layui_css"}
+    <link rel="stylesheet" href="/statics/components/layui/css/layui.css">
+{/block}
+
+{block name="bulma_css"}
+<link rel="stylesheet" href="/statics/components/bulma/bulma.min.css">
+{/block}
+
+{block name="semantic_css"}
+    <link rel="stylesheet" href="/statics/components/semantic/semantic.min.css">
+{/block}
+{block name="weui_css"}
+<link rel="stylesheet" href="/statics/components/weui/weui.min.css">
+{/block}
+{block name="header_css"}
+<link rel="stylesheet" href="/statics/css/{$_W.DEVICE_TYPE_TPL}/front_base.css?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}" />
+{/block}
+
+{block name="vue_js"}
+    {if $_W['debug']}
+    <script type="text/javascript" src="/statics/components/vue/vue.js"></script>
+    {else}
+    <script type="text/javascript" src="/statics/components/vue/vue.min.js"></script>
+    {/if}
+{/block}
+{block name="require_js"}
+<script type="text/javascript" src="/statics/js/require.js"></script>
+<script type="text/javascript" src="/statics/js/config.js?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}"></script>
+
+<script>
+
+    var vue_global = {};
+    require([ 'jquery' ,'pjax' , 'fastclick' ,  'mhcms' , 'layui' , 'weui'] , function ($,pjax , FastClick ,mhcms , layui , weui) {
+        $(document).ready(function () {
+            $('#mha_loadingToast').hide();
+            $(document).pjax('a[data-mha]', '.app_container')
+            $(document).on('pjax:send', function(event) {
+                event.preventDefault()
+                $('#mha_loadingToast').show();
+
+                $(document.body).destroyInfinite();
+            })
+            $(document).on('pjax:complete', function() {
+                if(event.currentTarget.status > 0 && event.currentTarget.status !== 200){
+                    event.preventDefault()
+                    history.back();
+                }
+                console.log(event);
+                $('#mha_loadingToast').hide();
+            });
+            $(document).on('pjax:timeout', function(event) {
+                event.preventDefault()
+            })
+            $(document).on('pjax:error', function(event) {
+            });
+            FastClick.attach(document.body);
+        });
+
+        setTimeout(function () {
+            $('#mha_loadingToast').hide();
+        } , 3000)
+
+    });
+</script>
+{/block}
+{block name="mhcms_base_js"}
+<script src="/statics/js/{$_W.DEVICE_TYPE_TPL}/front_base.js?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}"></script>
+{/block}
+{if is_weixin()}
+
+<?php
+$logo = $_W['share_img']= $_W['global_config']['data']['logo'] ? render_file_id($_W['global_config']['data']['logo']) : "/statics/images/logo.png" ;
+if(!isset($share_img) || empty($share_img)){
+    $share_img =  $logo;
+}
+?>
+<script>
+    var global_wx = {};
+    var js_api_list = [
+        // 所有要调用的 API 都要加到这个列表中
+        'checkJsApi',
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage',
+        'onMenuShareQQ',
+        'onMenuShareWeibo',
+        'hideMenuItems',
+        'showMenuItems',
+        'hideAllNonBaseMenuItem',
+        'showAllNonBaseMenuItem',
+        'translateVoice',
+        'startRecord',
+        'stopRecord',
+        'onRecordEnd',
+        'playVoice',
+        'pauseVoice',
+        'stopVoice',
+        'uploadVoice',
+        'downloadVoice',
+        'chooseImage',
+        'previewImage',
+        'uploadImage',
+        'downloadImage',
+        'getNetworkType',
+        'openLocation',
+        'getLocation',
+        'hideOptionMenu',
+        'showOptionMenu',
+        'closeWindow',
+        'scanQRCode',
+        'chooseWXPay',
+        'openProductSpecificView',
+        'addCard',
+        'chooseCard',
+        'openCard',
+        'openAddress'
+    ];
+    var share_icon = "{$share_img}";
+</script>
+{/if}
+
+{block name="header_extra"}{/block}
+{block name="mhcms_module_css"}
+<link href="/tpl/themes/{$_W['theme']}/mobile/{:ROUTE_M}/static/css/{:ROUTE_M}.css?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}" rel="stylesheet" />
+{/block}
+{block name="vue_component_js"}
+{/block}
+{block name="mhcms_module_js"}
+<script src="/tpl/themes/{$_W['theme']}/mobile/{:ROUTE_M}/static/js/{:ROUTE_M}.js?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}" type="text/javascript"></script>
+{/block}
+</head>
+<body {$body_prop|default=""} {if $_W['site']['config']['gray_site']}  style="    -webkit-filter: grayscale(1);"{/if}>
+<div id="nav_tools">
+
+    <span id="go_back" onclick="history.back()"><i class="iconfont icon-back"></i></span>
+    <span id="do_refresh" onclick="window.location.reload()"><i class="iconfont icon-shuaxin"></i></span>
+</div>
+
+{block name="after_body"}
+<div class="weui-pull-to-refresh__layer" style="margin-top: -50px;    height: 50px;">
+    <div class="status">释放刷新</div>
+</div>
+{/block}
+<div id="mha_loadingToast" >
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-loading weui-icon_toast"></i>
+        <p class="weui-toast__content" style="padding:  0 0 10px">数据加载中</p>
+    </div>
+</div>
+
+<iframe name="mhcms" id="鸣鹤CMS" class="hidden" style="display: none"></iframe>
+<iframe name="zbn_cms" id="鸣鹤CMS"  style="display: none"></iframe>
+<!-- Page Contents -->
+<div class="pusher" id="mhcms-app" >
+
+<div class="app_container" >
+{block name="content_header"}
+{include file="$header_tpl" /}
+{/block}
+
+{block name="body_extra"}{/block}
+
+{block name="main"}{/block}
+
+{block name="scripts"}{/block}
+
+
+{block name="tab_bar"}{/block}
+</div>
+</div>
+
+
+
+{block name="footer"}
+{include file="$footer_tpl" /}
+{/block}
+
+{block name="vue_mine_js"}
+
+{/block}
+
+{block name="copyright"}
+{if $_W.site.config.tongji}
+<p style="display: none">{$_W.site.config.tongji}</p>
+{/if}
+{/block}<!--鸣鹤CMS 内容结束-->
+<!--根统计-->
+<p style="display: none">{$_W.global_config.tongji}</p>
+</body>
+</html>

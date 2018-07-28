@@ -1,0 +1,29 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+{/block}
+{block name="main"}
+<!--加载O2O模块列表-->
+<div class="ui one column grid  padded index_cate">
+
+    <div class="row">
+    <div class="page__bd page__bd_spacing column">
+        <h3 class="has-text-centered">我的余额</h3>
+        <h3 class="has-text-centered">￥{$user.balance}</h3>
+        <a href="{:url('pay/deposit/do_deposit')}" class="weui-btn weui-btn_primary">在线充值</a>
+        <a href="{:url('pay/fund/draw')}" class="weui-btn weui-btn_default">申请提现</a>
+        <a href="{:url('pay/fund/bill_list')}" class="weui-btn weui-btn_default">资金明细</a>
+    </div>
+    </div>
+</div>
+{/block}
+{block name="copyright"}{/block}
+{block name="footer"}
+<div class="weui-tabbar" style="    z-index: 99999;position: fixed;box-shadow: 0px 7px 14px 5px #c0bfc4;">
+    <a href="/" class="weui-tabbar__item " >
+        <span style="display: inline-block;position: relative;">
+            <i class="weui-tabbar__icon"><i class="iconfont icon-shouye"></i></i>
+        </span>
+        <div class="weui-tabbar__label">返回首页</div>
+    </a>
+</div>
+{/block}

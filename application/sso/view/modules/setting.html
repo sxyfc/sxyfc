@@ -1,0 +1,99 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form class="layui-form" action="" target="zbn_cms" method="post">
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">模块站群模式</label>
+        <div class="layui-input-block">
+            <input type="radio" name="groups_mode" value="0" title="关闭" {if $config.groups_mode==0} checked {/if}>
+            <input type="radio" name="groups_mode" value="1" title="二级域名" {if $config.groups_mode=="1"} checked {/if}>
+            <input type="radio" name="groups_mode" value="2" title="单域名" {if $config.groups_mode=="2"} checked {/if}>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否自动增加区县站点</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="auto_create_site" value="1" {if $config.auto_create_site==1} checked {/if} lay-skin="switch">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否关闭模块</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="close_site" value="1"  {if $config.close_site==1} checked {/if} lay-skin="switch">
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">关闭原因</label>
+        <div class="layui-input-block">
+            <textarea name="close_site_tips" placeholder="关闭网站用户提示语" class="layui-textarea">{$config.close_site_tips}</textarea>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否开启模板自配</label>
+        <div class="layui-input-block">
+            <input type="radio" name="auto_fit_tpl" value="1" title="开启" {if $config.auto_fit_tpl=="1"} checked {/if}>
+            <input type="radio" name="auto_fit_tpl" value="2" title="关闭" {if $config.auto_fit_tpl=="2"} checked {/if}>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">强制模板</label>
+        <div class="layui-input-block">
+            <input type="radio" name="fixed_device" value="mobile" title="手机模板" {if $config.fixed_device=="mobile"} checked {/if}>
+            <input type="radio" name="fixed_device" value="desktop" title="桌面模板" {if $config.fixed_device=="desktop"} checked {/if}>
+        </div>
+        <div class="layui-form-mid layui-word-aux">关闭模板自配此项才会生效 ， 另外模块配置会覆盖掉此配置</div>
+    </div>
+
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">统计代码</label>
+        <div class="layui-input-block">
+            <textarea name="tongji" placeholder="统计代码" class="layui-textarea">{$config.tongji}</textarea>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">底部版权信息</label>
+        <div class="layui-input-block">
+            <input type="text" name="copyright"   value="{$config.copyright}"  placeholder="版权设置" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">系统名字</label>
+        <div class="layui-input-block">
+            <input type="text" name="system_name"   value="{$config.system_name}"  placeholder="系统名字" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+        });
+    });
+</script>
+
+{/block}

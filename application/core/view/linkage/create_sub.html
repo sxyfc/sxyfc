@@ -1,0 +1,44 @@
+<form name="myform" class="form-horizontal" target="zbn_cms" action="{:\think\\Request::instance()->url()}" method="post" id="myform">
+<div class="container-fluid"><div class="row"><div class="col-xs-12"><table class="layui-table">
+    <tr>
+        <td><?php echo zlang('parent,menu')?></td>
+        <td>
+            <?php
+            $config = [
+				'field_type_name' => "select" ,                 //对应了\app\common\forms\的类名称
+	            'node_field_data_source_type' => 'linkage',     //
+				'node_field_data_source_config' => $keyid ,     //联动菜单列表查看到的id
+	            'node_field_parentid_key' => 'parentid' ,
+	            'node_field_mode' => 'single_select' ,          //小白说明：就是外观  专家说明：对应了field_type_name类里面的处理方法
+	            'node_field_primary_option' => '作为一级菜单' ,
+	            'node_field_form_class_name' => '',
+                'node_field_name' => 'parentid' ,
+                'node_field_pk_key' => 'linkageid' ,
+                'node_field_name_key' => 'name' ,
+	            'node_field_default_value' => $parentid,
+	            'node_field_class_name' => 'form-control'
+            ];
+            echo $form_factory->config_form($config);
+            ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td><?php echo zlang('linkage,name')?></td>
+        <td>
+            <textarea name="data[name]" rows="10" cols="20" id="name" class="inputtext" style="width:300px;"></textarea>
+        </td>
+    </tr>
+
+    <tr>
+        <td><?php echo zlang('menu,description')?></td>
+        <td>
+            <textarea name="data[description]" rows="5" cols="20" id="description" class="inputtext" style="width:300px;"></textarea>
+        </td>
+    </tr>
+</table>
+
+<div class="bk15"></div>
+<input type="hidden" name="keyid" value="<?php echo $keyid?>">
+<input name="dosubmit" type="submit" value="<?php echo zlang('submit')?>" class="layui-btn layui-btn-small " id="dosubmit">
+</div></div></div></form>

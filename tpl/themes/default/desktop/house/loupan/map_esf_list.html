@@ -1,0 +1,140 @@
+
+<!--mhcms.net  content start {php} global $_W; {/php}-->
+<div id="app_mhcms">
+
+    <div class="infinite weui-panel"  >
+
+        <div class="weui-panel__hd">共为您找到二手房源信息 {$esf_count} 条</div>
+
+        <div class="mhcms-lists weui-panel__bd"  id="index_content">
+
+        </div>
+
+    </div>
+
+    <div class="weui-panel__ft has-text-centered" style="display: none">
+        <a class=" button is-light is-mobile-loading is-loading">
+            <img src="/statics/images/logo.png" class="loading_icon">
+        </a>
+    </div>
+
+    <div class="weui-loadmore weui-loadmore_line" id="no_data" style="display: none">
+        <span class="weui-loadmore__tips">暂无数据</span>
+    </div>
+
+    <input type="hidden" id="page" value="1" >
+
+    <div style="height: 45px"></div>
+</div>
+
+<script>
+    function toggle_filter(filter_name){
+        require(['jquery' , 'mhcms' , 'weui'  ] , function ($ , mhcms , weui ) {
+            if($("#filter_" + filter_name).is(":visible")){
+                var $show = false;
+            }else{
+                var $show = true;
+            }
+
+            $(".filter_panel").hide();
+
+
+
+            if($show){
+                $("#filter_" + filter_name).show();
+            }else{
+                $("#filter_" + filter_name).hide();
+            }
+
+
+        });
+    }
+
+    require(['jquery' , 'mhcms' , 'weui'] , function ($ , mhcms , weui ) {
+
+
+
+        mhcms.mhcms_simple_tab('.mhcms_simple_tab')
+
+
+        var pager = $("#page");
+
+
+        var action = "{:url('house/service/list_esf_resource')}";
+        var $options = {
+            has_more : true,
+            site_id : "{$_W.site.id}" ,
+            page : parseInt( pager.val()) ,
+            mha : 0,
+            query : {
+            },
+            _f : 'html'
+        };
+
+
+
+        var loader =new mhcms.list_loader($options, action);
+        loader.options.query['loupan_id'] = {$detail.id}
+
+        function change_options(field_name , value) {
+            pager.val(1)
+            loader.options.query[field_name] = value
+            loader.options.page = 1;
+            loader.options.has_more = true;
+            loader.load_item_list(1 , function (data) {
+                $("#index_content").html('');
+                console.log(data);
+                if(data.html!==""){
+                    pager.val(parseInt( pager.val()) + 1);
+                    $("#index_content").append(data.html);
+
+                }else{
+                    loader.options.has_more = false;
+                    $("#no_data").show();
+                }
+                $("#load_more").hide();
+                loading = false;
+            });
+        }
+
+        $(".change_options").each(function () {
+            $(this).click(function () {
+                var field_name = $(this).data('field_name');
+                var value = $(this).data('value');
+
+                change_options(field_name , value);
+                $('.filter_panel').hide();
+            });
+        })
+
+        loader.load_item_list(0 , function (data) {
+
+            if(data.html!==""){
+
+                pager.val(parseInt( pager.val()) + 1);
+                $("#index_content").append(data.html);
+            }else{
+
+                loader.options.has_more = false;
+                $("#no_data").show();
+            }
+            loading = false;
+            $("#load_more").hide();
+        });
+
+
+        var loading = false;  //状态标记
+
+    });
+
+    require([ 'mhcms'], function (mhcms) {
+        //todo set title bar
+        // {if is_weixin()}
+
+
+        mhcms.init_wechat_share( {:json_encode($seo)}  , '{$_W.current_url}');
+        // {/if}
+
+        mhcms.init_seo("{$seo.seo_key}" , {:json_encode($seo)});
+    });
+</script>

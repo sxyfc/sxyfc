@@ -1,0 +1,20 @@
+{extend name="$front_base_layout" /}
+{block name="jquery"}{/block}
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="baidu_map"}{/block}
+{block name="mhcms_module_js"}{/block}
+{block name="semantic_css"}{/block}
+{block name="element_ui"}{/block}
+{block name="vue_js"}{/block}
+
+{block name="main"}
+
+<?php
+$template = $template ? $template : ROUTE_A;
+echo $view->fetch( $view_path . ROUTE_C . "/" .  $template . ".php");
+?>
+
+{/block}
+

@@ -1,0 +1,133 @@
+{extend name="$front_base_layout" /}
+
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+
+<style>
+    .layui_mutil_upload, .layui_single_upload_thumb {
+        padding: 0;
+        height: 90px;
+        width: 90px;
+        float: left;
+    }
+
+    .layui-upload-list {
+        margin-left: 100px;
+    }
+
+    .layui-form-label {
+        width: 110px;
+        text-align: left;
+        padding: 10px 0;
+    }
+
+    .node_field_tips {
+        padding: 10px 0;
+    }
+    .hidden_tr{
+        display: none;
+    }
+</style>
+<div class="" style="padding:0 20px;background: #fff">
+    <div>
+        <div class="layui-row">
+            <form class="layui-form form-inline" target="mhcms" method="post" action="{:\think\\Request::instance()->url()}">
+                <br>
+                {volist name="field_list" id="item"}
+                <div class="{$item.field_name}_div"><div class="layui-form-item {$item.node_field_mode}_tr" style="border-top: dotted 1px #ccc">
+
+                        <label class="layui-form-label"><strong style="font-size: 16px">{if $item.node_field_must_fill} <span class="ui red">*</span> {/if} {$item['slug']} :</strong></label>
+                        <div class="layui-input-block node_field_tips">
+                            {$item['node_field_tips']}
+                        </div>
+                    </div>
+                    <div class="layui-form-item {$item.node_field_mode}_tr">
+                        {$item['form_str']}
+                    </div>
+                </div>
+                {/volist}
+
+                {if is_weixin()}
+                <div class="layui-form-item " style="border-top: dotted 1px #ccc">
+                    <label class="layui-form-label"><strong style="font-size: 16px">
+                            <span class="ui red">*</span> 联系方式</strong></label>
+                    <div class="layui-input-block node_field_tips" onclick="get_address()">
+                        点此选择您的微信地址信息
+                    </div>
+                </div>
+                <div id="wechat_address"  class="layui-form-item ">
+
+                </div>
+                {/if}
+                <div class="layui-form-item" style="border-top: dotted 1px #ccc">
+                </div>
+                <div class="layui-form-item " style="display: none">
+                    <label class="layui-form-label">安全码</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input pull-left" id="code_input" name="code" placeholder="验证码">
+                    </div>
+                    <div class="layui-input-inline" style="width: auto">
+                        <img id="code" src="{:captcha_src()}" onclick="this.src = this.src +'?i=' + Math.random()"
+                             alt="captcha"/>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" style="padding-bottom: 15px">
+                    {:token()}
+                    <input class="fluid ui button layui-btn positive" type="submit" lay-submit lay-filter="*" value="立即提交">
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <script>
+        layui.use(['form'], function () {
+            var form = layui.form;
+        });
+
+        function get_address() {
+            require(['jquery', 'wx'], function ($, wx) {
+                wx.openAddress({
+                    success: function (res) {
+                        var $address = {};
+                        $address.userName = res.userName; // 收货人姓名
+                        $address.postalCode = res.postalCode; // 邮编
+                        $address.provinceName = res.provinceName; // 国标收货地址第一级地址（省）
+                        $address.cityName = res.cityName; // 国标收货地址第二级地址（市）
+                        $address.countryName = res.countryName; // 国标收货地址第三级地址（国家）
+                        $address.detailInfo = res.detailInfo; // 详细收货地址信息
+                        $address.nationalCode = res.nationalCode; // 收货地址国家码
+                        $address.telNumber = res.telNumber; // 收货人手机号码
+
+                        $("#city").val(res.cityName);
+                        $("#mobile").val(res.telNumber);
+                        var $str = res.provinceName + "," + res.cityName + "," + res.telNumber;
+                        $("#wechat_address").html($str);
+                    }
+                });
+            });
+        }
+    </script>
+</div>
+
+<style>
+    {foreach $hide_fields as $hide_field}
+    .{$hide_field}_div ,
+                  {/foreach}
+    .sasasas{
+        display: none;
+    }
+    .red{
+        color: red;
+    }
+</style>
+{/block}
+
+{block name="copyright"}
+<div style="height: 35px"></div>
+{/block}

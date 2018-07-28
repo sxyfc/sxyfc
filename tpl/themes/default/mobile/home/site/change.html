@@ -1,0 +1,167 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+{block name="main"}
+
+<style>
+    select{
+        margin-top: 10px;
+    }
+    .mh_header, .nav_bottom , #switch {
+         background: #cc0000;
+        position: static;
+         /* z-index: 9; */
+     }
+    .app_container {
+        padding-top: 0px;
+        position: relative;
+        background: #eee;
+    }
+</style>
+<div class="layui- mt10" style="padding: 30px 15px">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="layui-item form-group" id="area">
+                <select class="layui-select form-control" style="width: 100%" name="" level="1" onchange="render(this)">
+                    <option value="0">选择区域</option>
+                    {foreach $top_sites as $site}
+                    <option value="{$site.id}">{$site.site_name}</option>
+                    {/foreach}
+                </select>
+
+                <input type="hidden" value="0" id="aid">
+            </div>
+
+        </div>
+
+        <div class="col-xs-12 form-group" style="margin-top: 10px" >
+            <p>
+
+                <a mini="load"  id="switch" href="/home/site/change?aid=all" prefix="/home/site/change?aid=" class=" layui-btn btn-lg btn-block bg-maroon btn-flat margin padding" style="width: 100%"> 进入 </a>
+            </p></div>
+
+    </div>
+</div>
+<script>
+    function render(obj) {
+        layui.use(['layer'], function () {
+                var $ = layui.$;
+                //load next
+                console.log($(obj).val());
+                var parentid = $(obj).val();
+
+                if(parentid==0){
+                    return;
+                }
+                var prefix = $("#switch").attr('prefix');
+                $("#switch").attr("href", prefix + parentid);
+
+                var level = parseInt($(obj).attr("level"));
+
+                $("#aid").val(parentid);
+                var $url = "/home/site/get_child?parent_id=" + parentid;
+                if (level == 1) {
+                    $(".subs").remove();
+                }
+                $.get($url, {}, function ($data) {
+                    //TODO remove level ++
+                    if ($data.length >= 1) {
+
+                        var next_level = level + 1;
+                        $("#level_" + next_level).remove();
+                        console.log($data);
+                        var $str = '<select level="' + next_level + '" id="level_' + next_level + '" class="layui-select form-control" style="width: 100%" name="" onchange="render(this)">';
+                        $str += "<option value='" + 0 + "'>" + "进入下级" + "</option>";
+                        for (var i = 0; i < $data.length; i++) {
+                            $str += "<option value='" + $data[i].id + "'>" + $data[i].site_name + "</option>";
+                        }
+                        $str += "</select>";
+                        $($str).appendTo("#area");
+                    } else {
+                        //layer.msg("没有更多了");
+                    }
+                }, 'json');
+            }
+        );
+    }
+</script>
+
+
+<style>
+    html,body,ul,ol,img,p,input,button,h1,h2,h3,h4,h5,h6{margin:0;padding:0}body{font-family:'寰蒋闆呴粦'锛�"Helvetica Neue",Helvetica,STHeiTi,Arial,sans-serif;font-size:14px;color:#000;background-color:#f4f4f4;-webkit-user-select:none;-webkit-tap-highlight-color:rgba(255,255,255,0);outline:0}ol,ul,li{list-style:none}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:400}img{border:0}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}button,input{border:0;background:0 0;-webkit-appearance:none;outline:0}button:focus,input:focus{outline:0;-webkit-tap-highlight-color:transparent}a{-webkit-touch-callout:none;text-decoration:none;color:#000;outline:0}i{font-style:normal}html{-webkit-text-size-adjust:none}.body_div{width:100%;height:auto;margin:0 auto;overflow:hidden;-webkit-box-sizing:border-box;-moz-box-sizing:border-box}.index_div{width:320px;position:relative}.body_bg{background:url(http://pic2.58.com/m58/m3/img/bg.png?v=3.1.5);background-size:94px auto}.locationtips{position:fixed;left:50%;top:50%;z-index:2000;width:190px;line-height:24px;color:#888;margin-left:-100px;margin-top:-50px;padding:5px;padding-top:80px;text-align:center;background:url(http://pic2.58.com/m58/m3/img/mi_loading.gif?2) no-repeat 60px 0;background-size:80px auto}img.googleanalyze{display:none}body{background:#f4f4f4}.search{margin-top:10px}.arrow{border-top:2px solid #a4adbc;border-right:2px solid #a4adbc;position:absolute;top:0;left:12px;margin-top:14px;border-color:#fff;width:10px;height:10px;-webkit-transform:rotate(-135deg)}.hot-job{background:#f4f4f4;box-shadow:0 10px 10px -10px rgba(0,0,0,.1) inset;padding:10px 5px;width:100%;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;overflow:hidden;min-height:100%;top:0}.hot-job h2{margin:0 5px;font-size:14px;font-weight:400;color:#ff550a;overflow:hidden;position:relative}.hot-job h2 .arrow{left:inherit;right:10px;border-color:#9298a2;width:7px;height:7px;border-width:1px;margin-top:15px;-webkit-transform:rotate(45deg)}.hot-job h2 a,.hot-job h2 span,.hot-job .cateul span{background:#fff;height:38px;line-height:38px;width:100%;padding:0 10px;display:inline-block;border:1px solid #e7e6e6;-webkit-border-radius:0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box}.hot-job h2 span{background:0 0;border:none;text-indent:5px;height:28px;line-height:28px}.hot-job h2 span .arrow{right:inherit;left:0;background:#fb5b0b;border:none;-webkit-transform:rotate(0deg);margin-top:11px}.hot-job h2.mt10{margin-bottom:10px;margin-top:10px}.hot-job h2 a{color:#ff550a}.hot-job h2 a.hover1{background:rgba(0,0,0,.3);background-color:rgba(0,0,0,.3);color:inherit}.hot-job .dl_local{width:100%;margin-top:10px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;font-size:0;overflow:hidden}.hot-job .dl_local li{width:25%;line-height:34px;margin-bottom:10px;text-align:center;display:block;float:left;font-size:14px;white-space:nowrap;overflow:hidden}.hot-job .dl_local li a,.hot-job .dl_local li span{margin:0 5px;height:36px;display:block;-webkit-border-radius:0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box}.hot-job .dl_local li .hover1{background:#6f747a;color:#fff}.hot-job ul.wli3 li{width:33.33333333%}.hot-job .dl_local li.bg-c1 a{background:#ffe9e5;border-bottom:1px solid #f3d9d5}.hot-job .dl_local li.bg-c2 a{background:#fff0db;border-bottom:1px solid #eadac3}.hot-job .dl_local li.bg-c3 a{background:#dcf5dc;border-bottom:1px solid #d0e6cf}.hot-job h4{margin:0 5px;font-size:14px;font-weight:400;overflow:hidden;position:relative}.hot-job h4 p{background:#fff;height:38px;line-height:38px;width:100%;color:#333;padding:0 10px;display:inline-block;border:1px solid #e7e6e6;-webkit-border-radius:0;-webkit-box-sizing:border-box;-moz-box-sizing:border-box}.hot-job h4 p a{color:#ff550a;margin-right:10px;display:inline-block}.hot-job .dl_local li.morelist{display:none}.hot-job .dl_local li.list-more{cursor:pointer}.hot-job .com-service{width:100%;overflow:hidden;margin-top:-1px}.hot-job .wli4{padding:0 5px;margin:0}.hot-job .wli4 li{margin-bottom:0;margin-top:0}.hot-job .wli4 li a{margin:0;border-left:none;width:100%}.hot-job .wli4 li:nth-child(1) a,.hot-job .wli4 li:nth-child(5) a,.hot-job .wli4 li:nth-child(9) a,.hot-job .wli4 li:nth-child(13) a,.hot-job .wli4 li:nth-child(17) a{border-left:1px solid #e7e6e6}
+    .weui-footer{
+        display: none;
+    }
+    .city_box h3 {
+        border-top: 1px solid #E3E3E3;
+        border-bottom: 1px solid #E3E3E3;
+        height: 38px;
+        font-size: 16px;
+        padding-left: 10px;
+        line-height: 38px;
+        background: #F8F8F8;
+        color: #3F4358;margin: 15px 0;
+    }
+</style>
+
+<div class="body_div">
+
+    <div class="hot-job city_box" id="job_dl" style="margin-top: 45px">
+        <div class="bs-example" data-example-id="form-inline-with-input-group">
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="ui action input" style="width: 100%;">
+                            <input type="text" name="keyword"  placeholder="搜索分站...">
+                            <button class="ui button">搜索</button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <h3>
+            <span>热门城市</span>
+        </h3>
+
+        <div class="city_list">
+            <ul class="dl_local wli3">
+                {foreach name="citylists" item="item"}
+                <li style="width: 16%"><a href="#li_{$key}">{$key}</a></li>
+                {/foreach}
+            </ul>
+        </div>
+        <div class="cities_list ">
+            <h3>
+                按拼音首字母选择
+            </h3>
+            <ul>
+                {foreach $citylists as $k=>$item}
+
+                {if $k}
+
+                <h4 style="    clear: both;
+    height: 40px;
+    border-bottom: 1px solid #FF6C00;
+    border-top: 1px solid #c8c9ca;
+    font-weight: 400;" id="li_{$k}">
+                    <p>
+                        <span><a name="{$k}">{$k}</a></span>(以{$k}为开头分站名)
+                    </p>
+                </h4>
+
+
+                <ul class="dl_local wli3" >
+                    {volist name="item" id="var" key="i"}
+                    <li> <a target="_top" class="nobor2 bor_r" href="http://{$var.site_domain}.{$_W.root.root_domain}" >{$var.site_name}</a></li>
+                    {/volist}
+                </ul>
+                {/if}
+                {/foreach}
+            </ul>
+        </div>
+    </div>
+</div>
+{/block}

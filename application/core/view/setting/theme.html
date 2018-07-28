@@ -1,0 +1,63 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}<form id="cate_action" class="form-inline"  target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="tableBox">
+        <table class="layui-table" style="">
+            <tr>
+                <td class="left-td">{:lang('顶部标题')}</td>
+                <td>
+                    <label><input type="text" class="layui-input" name="data[top_title]" value="{$detail.top_title}" /></label>
+                </td>
+            </tr>
+
+            <tr class="">
+                <td class="left-td">{:lang('字体大小')}</td>
+                <td>
+                    <label><input type="text" class="layui-input" name="data[font_size]" value="{$detail.font_size}" /> px(像素)</label>
+
+                    <label>字体颜色：<input type="color"   name="data[font_color]" value="{$detail.font_color}" /></label>
+
+                </td>
+            </tr>
+
+
+            <tr>
+                <td class="left-td">{:lang('网页背景颜色')}</td>
+                <td>
+                    <label><input type="color"   name="data[background]" value="{$detail.background}" /></label>
+
+                </td>
+            </tr>
+            <tr>
+                <td class="left-td">{:lang('头部背景图片')}
+                <p>1200*125</p>
+                </td>
+                <td>
+                        <?php
+                        $config = [
+                        'node_field_data_source_type' => "",
+                        'node_field_data_source_config' => "jpg,gif,png,jpeg",
+                        'node_field_form_name' => 'image',
+                        'node_field_name'=> 'image',
+                        'node_field_mode' => 'upload',
+                        'field_type_name' => 'upload',
+                        'node_field_default_value'=> ['file_id'=>$detail['image']],
+                        'node_field_form_id' => 'upload',
+                        'node_field_form_classname' => 'form-control',
+                        'node_field_pk_key' => 'field_type_name',
+                        'node_field_name_key' => 'field_type_name',
+                        'node_field_parentid_key' => '',
+                        'node_field_form_property' => ' readonly disabled required onchange="load_edit_form(this)"',
+                        'node_field_primary_option' => 'Please,Select'
+                        ];
+                        echo $form_factory->config_form($config);
+                        ?>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" class="layui-btn layui-btn-small " />
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>{/block}

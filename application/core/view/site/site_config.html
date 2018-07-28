@@ -1,0 +1,331 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form class="layui-form" action="" target="zbn_cms" method="post">
+
+    <div class="layui-tab layui-tab-card">
+        <ul class="layui-tab-title">
+            <li class="layui-this" data-tab="网站设置">网站设置</li>
+            <li class="item " data-tab="yuntongxin">云通信</li>
+            <li class="item " data-tab="security">安全设置</li>
+            <li class="item " data-tab="map">地图配置</li>
+            <li class="item " data-tab="redbao">红包配置</li>
+            <li class="item " data-tab="robot">机器人配置</li>
+
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show" id="网站设置">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">是否关闭网站</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="close_site" value="1"  {if isset($config.close_site) && $config.close_site==1} checked {/if} lay-skin="switch">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">是否把网站变成灰色</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="gray_site" value="1"  {if isset($config.gray_site) && $config.gray_site==1} checked {/if} lay-skin="switch">
+                    </div>
+                    <p>提醒人们历史上的今天</p>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">是否强制微信登录</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="member[force_wechat]" value="1"  {if isset($config.member.force_wechat) && $config.member.force_wechat==1} checked {/if} lay-skin="switch">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">关闭原因</label>
+                    <div class="layui-input-block">
+                        <textarea name="close_site_tips" placeholder="关闭网站用户提示语" class="layui-textarea">{$config.close_site_tips|default="网站维护中"}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">统计代码</label>
+                    <div class="layui-input-block">
+                        <textarea name="tongji" placeholder="统计代码" class="layui-textarea">{$config.tongji|default=""}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">底部版权信息</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="copyright"   value="{$config.copyright|default=""}" placeholder="版权设置" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">系统名字</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="system_name" required value="{$config.system_name|default=""}"  placeholder="系统名字" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">SEO地名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="site_name" required value="{$config.site_name|default=$site.site_name}"  placeholder="SEO地名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">积分别称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="trade[point_text]" required value="{$config.trade.point_text|default="积分"}"  placeholder="积分别称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">余额别称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="trade[balance_text]" required value="{$config.trade.balance_text|default="余额"}"  placeholder="余额别称" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">最低充值金额</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="trade[minimum_charge]"  value="{$config.trade.minimum_charge|default=""}"  placeholder="最低充值金额" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">点击系统基数</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="hit[hit_base]"  value="{$config.hit.hit_base|default="50"}"  placeholder="点击系统基数" autocomplete="off" class="layui-input">
+                        系统在信息发布时候 会增加一个随之点击量 数据最大范围为此数值
+                    </div>
+                </div>
+
+
+
+                <div>
+                    <label class="layui-form-label">{:zlang('Logo上传')}</label>
+                    <div class="layui-input-block">
+                        <?php
+                        $field_config = [
+                            'node_field_data_source_type' => '',
+                            'node_field_data_source_config' => "jpg,gif,png,jpeg",
+                            'node_field_form_name' => 'logo',
+                            'slug'=> 'Logo上传',
+                            'node_field_name'=> 'logo',
+                            'node_field_length' => 1 ,
+                            'node_field_mode' => 'layui_single_upload',
+                            'field_type_name' => 'upload',
+                            'node_field_default_value'=> isset($config['data']['logo']) ? $config['data']['logo'] : "",
+                            'node_field_form_id' => 'logo',
+                            'node_field_class_name' => 'layui-select form-control',
+                            'node_field_pk_key' => 'field_type_name',
+                            'node_field_name_key' => 'field_type_name_desc',
+                            'node_field_parentid_key' => '',
+                            'node_field_form_property' => ' "',
+                            'node_field_primary_option' => ''
+                        ];
+                        $base  =[];
+                        echo $form_factory->config_model_form($field_config  , $base);
+                        ?>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">默认模板主题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="theme"  value="{$config.theme|default="default"}" placeholder="不写默认模板主题为default" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">网站默认应用</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="default_app"  value="{$config.default_app|default=""}" placeholder="" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-tab-item " data-tab="yuntongxin">
+
+                <div class="flayui-form-item">
+                    <label class="layui-form-label">管理员账号</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{$config.webim.manager_name|default=""}" class="layui-input" name="webim[manager_name]">
+                        <span class="help-block">管理员账号</span>
+                    </div>
+                </div>
+                <div class="flayui-form-item">
+                    <label class="layui-form-label">SKDAPPID</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{$config.webim.sdkappid|default=""}" class="layui-input" name="webim[sdkappid]">
+                        <span class="help-block">SKDAPPID</span>
+                    </div>
+                </div>
+                <div class="flayui-form-item">
+                    <label class="layui-form-label">accountType</label>
+                    <div class="layui-input-block">
+                        <input type="text" value="{$config.webim.accountType|default=""}" class="layui-input" name="webim[accountType]">
+                        <span class="help-block">accountType</span>
+                    </div>
+                </div>
+                <div class="flayui-form-item">
+                    <label class="layui-form-label">云通讯私钥证书<font color="red"></font></label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea" name="webim[private_key]" rows="8" placeholder="为保证安全性, 不显示内容">{$config.webim.private_key|default=""}</textarea>
+                        <span class="help-block">从商户平台上下载支付证书, 解压并取得其中的 <mark>private_key</mark> 用记事本打开并复制全部文件内容, 填至此处</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-tab-item" data-tab="security">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">登录加密密钥</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="auth_key"  value="{$config.auth_key|default=random(32)}" placeholder="密钥可随便填写" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">隐藏的菜单</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="hide_menus"  value="{$config.hide_menus|default=''}" placeholder="隐藏的菜单逗号隔开" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">敏感词过滤 逗号（,）隔开</label>
+                    <div class="layui-input-block">
+                        <textarea name="bad_words" placeholder="敏感词过滤" class="layui-textarea">{$config.bad_words|default=""}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">敏感词过滤替代字符</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="bad_word_replace"  value="{$config.hide_menus|default='*'}" placeholder="敏感词过滤替代字符" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">管理员openid</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="admin_openid"  value="{$config.admin_openid|default=''}" placeholder="管理员openid" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+            </div>
+<!--Map Config-->
+
+            <div class="layui-tab-item" data-tab="map">
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">腾讯地图密钥</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="map[tx_key]"  value="{$config.map.tx_key}" placeholder="腾讯地图密钥" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">百度地图密钥</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="map[bd_key]"  value="{$config.map.bd_key}" placeholder="度地图密钥" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">地区中心设置</label>
+                    <div class="layui-input-block">
+                    <?php
+                        echo \app\common\util\map\BaiduMap::render('site_coordinate' , $config['map']['site_coordinate'] , 'map');
+                    ?>
+
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div class="layui-tab-item" data-tab="redbao">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">每一份红包最低金额</label>
+
+                    <div class="layui-input-block">
+                        <input  name="redbao[min]" type="number" step="0.01"  value="{$config.redbao.min}" placeholder="每一份红包最低金额" autocomplete="off" class="layui-input">
+                        <p>例1：用户如果发布了1元的推广红包分成100份的话，每一份红包金额是0.01元，这样子感觉影响用户使用平台体验满意度了</p>
+                    </div>
+
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">余额提现最低金额</label>
+
+                    <div class="layui-input-block">
+                        <input  name="redbao[min_withdraw]" type="number" step="0.01"  value="{$config.redbao.min_withdraw}" placeholder="余额提现最低金额" autocomplete="off" class="layui-input">
+                        <p> 余额提现最低金额</p>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <div class="layui-tab-item" data-tab="robot">
+            <div class="layui-form-item">
+                <label class="layui-form-label">机器人用户组ID</label>
+                <div class="layui-input-block">
+                    <input type="text" name="robot[role_id]"  value="{$config.robot.role_id}" placeholder="机器人用户组ID" autocomplete="off" class="layui-input">
+                    <p>机器人用户组ID ， 您可以在后台新增一个分组然后把分组ID填写到这里</p>
+                </div>
+            </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">机器人抢红包的最大金额</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="robot[max_redbao]"  value="{$config.robot.max_redbao}" placeholder="每个机器人 每个红包能抢的最大金额" autocomplete="off" class="layui-input">
+                        <p>每个机器人 每个红包能抢的最大金额</p>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">每个红包机器人占比数量</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="robot[max_robot_percent]"  value="{$config.robot.max_robot_percent}" placeholder="每个红包机器人占比数量  " autocomplete="off" class="layui-input">
+                        <p>每个红包机器人占比数量 百分比 请填写数字  如果是20% 请填写20即可</p>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    layui.use(['form' ,'element'], function(){
+        var form = layui.form;
+        var element = layui.element;
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+
+        });
+    });
+</script>
+
+{/block}

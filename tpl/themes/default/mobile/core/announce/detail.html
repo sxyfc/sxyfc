@@ -1,0 +1,29 @@
+{extend name="$front_base_layout" /}
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="jquery"}{/block}
+{block name="baidu_map"}{/block}
+{block name="content_header"}{/block}
+{block name="semantic_css"}{/block}
+{block name="vue_js"}{/block}
+{block name="mhcms_module_js"}{/block}
+{block name="main"}
+
+<article class="weui-article mhcms-panel">
+    <h1>{$detail.title}</h1>
+    <section class="mhcms-panel-body">
+        <section>
+
+            {$detail.old_data.content}
+        </section>
+    </section>
+
+
+    <div class="weui-footer">
+        <p class="weui-footer__text">Copyright © 2008-2016
+            {$detail.old_data.create_at}</p>
+    </div>
+</article>
+
+{/block}

@@ -1,0 +1,72 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form id="cate_action" class="form-inline"  target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="tableBox">
+        <table class="layui-table" style="">
+
+
+            <tr>
+                <td class="left-td" style="width: 150px">{:lang('充值类型')}</td>
+                <td>
+                    <label>
+                        <input name="data[unit_type]" value="1" type="radio" id="pay_unit" checked=""> 金钱
+                    </label>
+                    <label>
+                    <input name="data[unit_type]" value="2" type="radio" id="pay_type"> 积分
+                    </label>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="left-td">{:lang('交易类型')}</td>
+                <td>
+
+                    <select class="form-control" name="data[pay_type]">
+                        <option value="0">请选择</option>
+                        <option value="1">取款</option>
+                        <option value="2">存款</option>
+                        <option value="3">佣金</option>
+                    </select>
+                    <span>
+                        该操作选项只针对金币有效
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="left-td">{:lang('用户名')}</td>
+                <td>
+                    <label><input type="text" class="layui-input" name="data[user_name]" value="{$target['user_name']}" /></label>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="left-td">{:lang('充值额度')}</td>
+                <td>
+                    <label><input name="data[operate]" value="2" type="radio" checked=""> 增加</label>
+                    <label><input name="data[operate]" value="1" type="radio"> 减少</label>
+
+                    <input type="text" name="data[amount]" size="10" value="" id="amount" class="layui-input">
+                    <div id="unitTip" class="onShow">输入修改数量（资金或者点数）</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="left-td">{:lang('交易备注')}</td>
+                <td>
+                    <textarea class="form-control" name="data[note]" style="width: 80%" rows="5"></textarea>
+                </td>
+            </tr>
+
+
+
+            <tr>
+                <td colspan="2">
+                    <input type="submit" class="layui-btn layui-btn-small " />
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>
+
+{/block}

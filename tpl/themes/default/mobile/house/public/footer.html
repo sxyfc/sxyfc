@@ -1,0 +1,100 @@
+<div class="weui-tabbar"  id="house_footer" style="    z-index: 99999;position: fixed;box-shadow: 0px 7px 14px 5px #c0bfc4;">
+    {foreach $cate_tree as $nav}
+    <?php
+
+    $class_on = "";
+    if(strpos($nav['position'] , ',4,')===false  ||  $nav['show_menu'] !=1){
+        continue ;
+    }
+
+    if(ROUTE_A == "entry_publish" && strpos($nav['url'] , 'entry_publish') !==false){
+        $class_on = "weui-bar__item_on";
+    }
+
+
+    if(ROUTE_C == "user" && strpos($nav['url'] , 'user') !==false){
+        $class_on = "weui-bar__item_on";
+    }
+    if(ROUTE_C == "kft" && strpos($nav['url'] , 'kft') !==false){
+        $class_on = "weui-bar__item_on";
+    }
+
+    if(ROUTE_C == "loupan" && strpos($nav['url'] , 'loupan') !==false){
+        $class_on = "weui-bar__item_on";
+    }
+
+    ?>
+    <a  {$nav.property} href="{$nav.url}" class="weui-tabbar__item {$class_on}" >
+        <span style="display: inline-block;position: relative;">
+            <i class="weui-tabbar__icon"><i class="{$nav.icon}"></i></i>
+        </span>
+        <div class="weui-tabbar__label">{$nav.cate_name}</div>
+    </a>
+    {/foreach}
+</div>
+
+
+<div id="corner_bar" v-cloak>
+    <a class="qrcode" @click="show_footer_qr">
+        <i class="icon-qrcode iconfont"></i>
+        <em>关注</em>
+    </a>
+
+
+    <a class="qrcode" data-mha href="/house/index/entry_publish">
+        <i class="iconfont icon-fabu1"></i>
+        <em>发布</em>
+    </a>
+
+    <a class="qrcode"  data-mha href="/house">
+        <i class="iconfont icon-shouye"></i>
+        <em>首页</em>
+    </a>
+
+
+    <div class="js_dialog" id="iosDialog2"  v-if="show_dialog_footer" >
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__hd"><strong class="weui-dialog__title" v-text="dialog_content.title"></strong></div>
+            <div class="weui-dialog__bd corner_bar_content" v-html="dialog_content.content"></div>
+            <div class="weui-dialog__ft">
+                <div href="javascript:;" @click="show_dialog_footer=false" class="weui-dialog__btn weui-dialog__btn_primary">{{dialog_content.btn_text}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    require(['Vue'], function (Vue) {
+        new Vue({
+            el: "#corner_bar",
+            data: {
+                show_dialog_footer : false ,
+                dialog_content : {
+                    content : '' ,
+                    btn_text : '关闭'
+                }
+            }
+            ,
+            methods: {
+                show_footer_qr : function () {
+                    this.dialog_content.content = "<img  src='{:render_file_id($_W['site_wechat']['qrcode'])}' />";
+                    this.dialog_content.title = "关注公众号 获取更多服务！"
+                    this.show_dialog_footer = true;
+                }
+                ,
+                show_footer_kefu: function () {
+                    this.dialog_content.content = "{$_W['module_config']['kefu']}";
+                    this.dialog_content.title = "联系客服"
+                    this.show_dialog_footer = true;
+                }
+
+            }
+        });
+
+
+    });
+</script>

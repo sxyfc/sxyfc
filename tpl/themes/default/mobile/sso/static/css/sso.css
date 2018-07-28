@@ -1,0 +1,63 @@
+.ui.secondary.pointing.menu .item {
+    line-height: 45px;
+    font-size: 20px;
+}
+.app_container{
+    height: 100vh;
+}
+.text h1 {
+    height: 60px;
+    line-height: 60px;
+    max-width: 595px;
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 0 19px;
+    text-shadow: 0 1px 1px #333;
+}
+.text {
+    color: #fff;
+}
+.text p {
+    font-size: 16px;
+    letter-spacing: 2px;
+    padding-top: 20px;
+}
+.light {
+    height: 0;
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,.5);
+    margin: 30px 0;
+    border-color: rgba(255,255,255,.5);
+}
+.logo {
+    display: inline-block;
+    width: 180px;
+    margin-bottom: 30px;
+    padding: 10px;
+    background: #fff;
+    line-height: 0;
+    border-radius: 5px;
+    box-shadow: 0 1px 1px #333;
+}
+.mhcms-container {
+    width: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate3d(-50%,-50%,0);
+    transform: translate3d(-50%,-50%,0);
+    z-index: 99;
+    text-align: center;
+}
+
+.vegas-overlay{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    background: url(/statics/images/sso_bg.jpg) no-repeat;
+    top: 0;
+    background-size: cover;
+}

@@ -1,0 +1,38 @@
+{extend name="$front_base_layout" /}
+{block name="main"}
+{foreach $addresses as $address}
+<li>
+    <h4>{$address.userName}</h4>
+    <p class="extra">
+        {$address.provinceName} {$address.cityName} {$address.countryName} {$address.detailInfo}
+    </p>
+</li>
+
+{/foreach}
+<a onclick="get_address()" class="layui-btn">新增收货地址</a>
+
+<script>
+    function get_address() {
+        require(['jquery', 'wx'], function ($, wx) {
+            wx.openAddress({
+                success: function (res) {
+                    var $address = {};
+                    $address.userName = res.userName; // 收货人姓名
+                    $address.postalCode = res.postalCode; // 邮编
+                    $address.provinceName = res.provinceName; // 国标收货地址第一级地址（省）
+                    $address.cityName = res.cityName; // 国标收货地址第二级地址（市）
+                    $address.countryName = res.countryName; // 国标收货地址第三级地址（国家）
+                    $address.detailInfo = res.detailInfo; // 详细收货地址信息
+                    $address.nationalCode = res.nationalCode; // 收货地址国家码
+                    $address.telNumber = res.telNumber; // 收货人手机号码
+                    $.post("{:url('member/api/add_address')}", {address : $address}, function (data) {
+
+                    })
+                }
+            });
+        });
+
+    }
+
+</script>
+{/block}

@@ -1,0 +1,20 @@
+{extend name="admin@public/content_frame" /}
+{block name="mhcms-header"}
+自定义字段选项
+{/block}
+{block name="main"}
+{foreach $models as $model}
+{foreach $model.setting.fields as $field}
+{if $field.node_field_data_source_type =='mhcms_options'}
+<?php
+$map = [];
+$map['field_name'] = $field['field_name'];
+$map['table_name'] = $model['table_name'];
+$vars = "field_name={field_name}&model_id={table_name}";
+?>
+<a class="layui-btn" mini="iframe" href="{:build_back_link(729 , $vars , $map )}" >{$model.model_name} / {$field.slug}</a>
+{/if}
+{/foreach}
+{/foreach}
+
+{/block}

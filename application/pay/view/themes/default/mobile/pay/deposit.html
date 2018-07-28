@@ -1,0 +1,117 @@
+{extend name="$front_mobile_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+
+<div class=" weui-cells_form">
+    <form class="layui-form" action="" method="post">
+        <div class="weui-cells__title">选择支付方式</div>
+        <div class="weui-cells weui-cells_radio">
+            <label class="weui-cell weui-check__label" for="x11">
+                <div class="weui-cell__bd">
+                    <p>微信支付</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" value="micropay" title="微信支付" class="weui-check" checked name="gateway" id="micropay">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+
+
+
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">充值金额</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="text" id="amount" name="amount" value="0.01"   placeholder="充值金额">
+                </div>
+            </div>
+        </div>
+        <div class="weui-btn-area">
+            <button type="submit" class="weui-btn weui-btn_primary"   href="javascript:" id="showTooltips">立刻充值</button>
+        </div>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+    layui.use('form', function(){
+        var form = layui.form();
+
+        //各种基于事件的操作，下面会有进一步介绍
+    });
+
+    function do_deposit() {
+        var amount = parseFloat( $("#amount").val());
+        {if !$user}
+        return layer.msg('清登录在进行操作！');
+        {else}
+        var user_balance = {$user['balance']};
+        if(user_balance >= amount){
+            console.log("do upgrade!");
+            do_upgrade();
+        }else{
+            check_balance(amount);
+            do_depo();
+        }
+        {/if}
+
+
+
+    }
+
+    //deposit
+    function do_depo() {
+        //$("#depo").submit();
+        var amount = parseFloat($("#amount").html());
+        var user_balance = {$user['balance']};
+
+        var need_depo_amount = (amount*100 -user_balance*100) / 100;
+
+        var url = "{:nb_url(['r'=>'pay.deposit.do_deposit'])}";
+        $.getJSON(url , {
+            gateway : "micropay" , amount : need_depo_amount , api : 1
+        } ,function (data) {
+            var index = layer.load(2, {time: 10*1000});
+            jsApiCall(data);
+        });
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    //调用微信JS api 支付
+    function jsApiCall($jsApiParameters)
+    {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            $jsApiParameters,
+            function(res){
+                WeixinJSBridge.log(res.err_msg);
+                if(res.err_msg == "get_brand_wcpay_request:ok"){
+                    layer.msg("支付成功！");
+
+                }else{
+                    alert("您取消了支付！");
+                }
+            }
+        );
+    }
+
+    function callpay()
+    {
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        }else{
+            jsApiCall();
+        }
+    }
+</script>
+{/block}

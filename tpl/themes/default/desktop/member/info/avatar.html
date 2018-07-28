@@ -1,0 +1,43 @@
+{extend name="$front_base_layout" /}
+
+{block name="main"}
+{/block}{extend name="$front_member_layout" /}
+
+{block name="main"}
+<div class="larry-fluid larry-wrapper">
+    <div class="layui-row lay-col-space20">
+        <div class="layui-cos-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
+            <section class="larry-body animated fadeInRightBig">
+                <div class="larry-body-header">
+                    <span class="tit">设置头像</span>
+                </div>
+                <div class="larry-body-content clearfix">
+                            <form class="layui-form" action="" method="post" target="mhcms">
+                                <div class="site-demo-upload">
+                                    <img id="avatar_img" src="{$user.avatar}" style="max-width: 50%">
+                                    <div class="site-demo-upbar">
+                                        <span class="layui-btn test"  >上传图片</span>
+                                    </div>
+                                </div>
+                            </form>
+                    <script>
+                        layui.use('upload', function(){
+                            var upload = layui.upload;
+                            upload.render({
+                                url: '/attachment/ueditor/index?action=upload_avatar', //上传接口
+                                elem: '.test' ,
+                                field : 'avatar'
+                                ,done: function(res, index, upload){
+                                    //获取当前触发上传的元素，一般用于 elem 绑定 class 的情况，注意：此乃 layui 2.1.0 新增
+                                    $("#avatar_img").attr("src",res.url + "?mt=" + Math.random());
+                                    layer.msg('上传成功');
+                                }
+                            })
+                        });
+                    </script>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{/block}

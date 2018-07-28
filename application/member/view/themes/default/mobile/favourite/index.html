@@ -1,0 +1,81 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}
+<div class="col-xs-12 hidden">发布{$node_type.node_type_name}信息</div>
+{/block}
+
+{block name="main"}
+
+<link href="//at.alicdn.com/t/font_2yf6dr83a86ez5mi.css" rel="stylesheet"/>
+<div class="media-list">
+    {foreach $lists as $item}
+    <?php
+    $product = \app\common\model\Product::get(['node_id'=>$item['node_id']]);
+    if(!$item){
+        continue;
+    }
+    ?>
+    <div class="new_better_row row" style="padding: 10px 0;" onclick="goToUrl('{:nb_url('home/node_types/detail?node_type_id=' . $item['node_type_id'] , $item['site_id'] , ['id' =>$item['node_id']])}')">
+        <div class="col-xs-12 new-better-user-menu">
+
+            <div class="media">
+                <div class="media-left">
+                    {if is_array($item.thumb)}
+                    {foreach $item.thumb as $pic}
+                    <a href="#">
+                        <img class="media-object" style="width: 80px" src="{:nb_url(['r'=>'attachment/image/view_thumb','file_id'=>$pic['file_id']])}" alt="...">
+                    </a>
+                    <?php  break; ?>
+                    {/foreach}
+                    {/if}
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{$item.title} <span class="f12 pull-right text-muted"><?php echo $item['node_status']==1? '已上架' : '已下架'; ?></span></h4>
+                    <div class="f12 text-muted">
+                        ￥ {$product.price}
+                        <span class="f12 pull-right text-muted">
+                {:format_date($item.create_time)}
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {/foreach}
+</div>
+{/block}
+{block name="footer"}
+<nav class="new-better-footer">
+
+    <div   class="col-xs-3 menu-item">
+        <a href="{:nb_url(['r'=>'market/index/index'])}" >
+            <span class="glyphicon iconfont icon-shouyeshouye" aria-hidden="true"></span>
+            首页
+        </a>
+    </div>
+
+
+    <div   class="col-xs-3 menu-item">
+        <a href="{:nb_url(['r'=>'search/index/index' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon iconfont icon-search" aria-hidden="true"></span>
+            搜索
+        </a>
+    </div>
+
+
+    <div   class="col-xs-3 menu-item">
+        <a href="{:nb_url(['r'=>'market/user_content/publish' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+
+            发布
+        </a>
+    </div>
+    <div   class="col-xs-3 menu-item">
+
+        <a href="{:nb_url(['r'=>'member/index/index' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 会员
+        </a>
+    </div>
+</nav>
+{/block}

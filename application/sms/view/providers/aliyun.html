@@ -1,0 +1,53 @@
+
+<form class="layui-form" method="post" action="{:\think\\Request::instance()->url()}" target="zbn_cms">
+    <div class="layui-form-item">
+        <label class="layui-form-label">app_key</label>
+        <div class="layui-input-block">
+            <input type="text" name="data[config][app_key]" value="{$detail.config.app_key}" required  lay-verify="required" placeholder="请输入app_key" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">app_secret</label>
+        <div class="layui-input-block">
+            <input type="text" name="data[config][app_secret]" value="{$detail.config.app_secret}" required  lay-verify="required" placeholder="请输入app_secret" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">signature</label>
+        <div class="layui-input-block">
+            <input type="text" name="data[config][signature]" value="{$detail.config.signature}" required  lay-verify="required" placeholder="请输入短信签名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+
+    {foreach $field_list as $k=>$field}
+    <div class="layui-form-item" id="row_{$k}">
+        <label class="layui-form-label">{$field['slug']}</label>
+        <div class="layui-input-block">
+            {$field['form_str']}
+        </div>
+    </div>
+    {/foreach}
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+        });
+    });
+</script>

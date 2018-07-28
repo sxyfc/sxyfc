@@ -1,0 +1,31 @@
+.media-left {
+    float: left;
+    display: block;
+}
+.media-body, .media-left, .media-right {
+    display: table-cell;
+    vertical-align: top;
+}
+.news .media-left img {
+    max-width: 77px;
+}
+
+.news {
+    border-bottom: solid 1px #ccc;
+
+    padding: 10px;
+    margin: 0px auto 10px;
+}
+.mh_header, .nav_bottom {
+    height: 45px;
+    line-height: 45px;
+    background: #cc0000;
+    color: #ffffff;
+    font-size: 20px;
+    text-align: center;
+    z-index: 9;
+}
+body{
+    max-width: 601px;
+    margin: auto!important;
+}

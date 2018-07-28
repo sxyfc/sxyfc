@@ -1,0 +1,55 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table" >
+            <tr>
+                <td class="w50">ID</td>
+                <td>用户名</td>
+                <td>数量</td>
+                <td>申请时间</td>
+                <td>状态</td>
+                <td>汇款信息</td>
+                <td>操作</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <?php
+            $tmp_user = \app\common\model\Users::get($var['user_id']);
+            ?>
+            <tr >
+                <td>{$var.id}</td>
+                <td>{$tmp_user.user_name}</td>
+                <td>{$var.amount}</td>
+                <td>{$var.create_time}</td>
+                <td>{$var.status_text}</td>
+                <td>
+                    <p>{$var.name}</p>
+                    <p>{$var.card_number}</p>
+                    <p>{:show_linkage($var['bank_id'])}</p>
+                    <p>{$var['bank_address']}</p>
+                </td>
+                <td>
+                    {neq name="var.user_id" value="1"}
+
+                    {volist name="sub_menu" id="menu"}
+                    {eq name="menu.user_menu_display" value="0"}
+                    <?php
+                        $params = $menu['user_menu_params'];
+                        $mapping['id'] = $var['id'];
+                        $mini = $menu['user_menu_mini'];
+                        $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
+
+                    ?>
+                    {:build_back_a($menu['id'],$params,zlang($menu['user_menu_name']),$mini,$menu['class'],'90%','80%',$mapping)}
+                    {/eq}
+                    {/volist}
+                    {/neq}
+                </td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$page}
+    </div>
+</form>
+{/block}

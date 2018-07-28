@@ -1,0 +1,227 @@
+{extend name="admin@public/content_frame" /}
+{block name="table_form"}
+{/block}
+
+{block name="mhcms-header"}
+最新公告： 温馨提示，请使用谷歌浏览器获取最好的使用体验！
+{/block}
+{block name="main"}
+<div class="columns is-mobile is-multiline">
+
+    {foreach $modules as $module}
+    <?php
+
+
+
+    try{
+        $view->module = $module;
+       echo $view->fetch( $module['module'] . "@modules/main_tile");
+    }catch (\think\Exception $e){
+        continue;
+    }
+
+    ?>
+
+    {/foreach}
+
+
+    <div class="column is-6">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    网站概况
+                </p>
+                <a href="#" class="card-header-icon" aria-label="more options">
+              <span class="icon">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+              </span>
+                </a>
+            </header>
+            <div class="card-content">
+
+                <?php
+                $user_count = \app\common\model\Users::where(['site_id' => $_W['site']['id']])->count();
+
+                $where  =[];
+                $where['created'] = ['>' , date("Y-m-d 00:00:00" , SYS_TIME)];
+                $today_count = \app\common\model\Users::where($where)->count();
+
+
+                ?>
+
+                <section class="info-tiles">
+                    <div class="tile is-ancestor has-text-centered">
+                        <div class="tile is-parent">
+                            <article class="tile is-child box is-radiusless">
+                                <p class="title">{$user_count}</p>
+                                <p class="subtitle">用户数量</p>
+                            </article>
+                        </div>
+                        <div class="tile is-parent">
+                            <article class="tile is-child box  is-radiusless">
+                                <p class="title">{$today_count}</p>
+                                <p class="subtitle">今日新增</p>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="column is-6">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    公众号运营
+                </p>
+                <a href="#" class="card-header-icon" aria-label="more options">
+              <span class="icon">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+              </span>
+                </a>
+            </header>
+            <div class="card-content">
+                <?php
+
+                try{
+
+                $site_wechat =  \app\common\model\SitesWechat::get(['site_id' => $_W['site']['id']]);
+                $wechat_stat = set_model('sites_wechat_stat')->where(['date' => date("Ymd") , 'site_id'  => $_W['site']['id']])->find();
+                $_48_gap = time() - 48 * 3600;
+
+                $_48_active = set_model('sites_wechat_fans')->where(['last_active' => ['>' , $_48_gap]])->count();
+                }catch (\think\Exception $e){
+
+                }
+                ?>
+
+
+                <section class="info-tiles">
+                    <div class="tile is-ancestor has-text-centered">
+                        <div class="tile is-parent">
+                            <article class="tile is-child box is-radiusless">
+                                <p class="title">{$wechat_stat.new|default=0}</p>
+                                <p class="subtitle">今日关注</p>
+                            </article>
+                        </div>
+                        <div class="tile is-parent">
+                            <article class="tile is-child box  is-radiusless">
+                                <p class="title">{$_48_active|default=0}</p>
+                                <p class="subtitle">48小时活跃</p>
+                            </article>
+                        </div>
+                        <div class="tile is-parent">
+                            <article class="tile is-child box is-radiusless">
+                                <p class="title">{$wechat_stat.cancel|default=0}</p>
+                                <p class="subtitle">今日取关</p>
+                            </article>
+                        </div>
+                        <div class="tile is-parent">
+                            <article class="tile is-child box  is-radiusless">
+                                <p class="title">{$wechat_stat.cumulate|default=0}</p>
+                                <p class="subtitle">信息交流</p>
+                            </article>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+    <div class="columns is-mobile is-multiline">
+
+        <div  class="column is-6">
+            <table class="table is-bordered is-striped  is-hoverable is-fullwidth
+" lay-skin="line">
+                <colgroup>
+                    <col width="160">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="2">系统信息</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>核心框架版本</td>
+                    <td>
+                        {$system_info.module_version}   </td>
+                </tr>
+                <tr>
+                    <td>服务器环境</td>
+                    <td>{$Think.const.PHP_OS} / {$_SERVER["SERVER_SOFTWARE"]}</td>
+                </tr>
+                <tr>
+                    <td>PHP/MySql版本</td>
+                    <td>PHP {$Think.const.PHP_VERSION} / MySql {:db()->query('select version() as version')[0]['version']}</td>
+                </tr>
+                <tr>
+                    <td>ThinkPHP版本</td>
+                    <td>{$Think.VERSION}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div  class="column is-6" style=" {if isset($_W['global_config']['hide_mhcms_info']) && $_W['global_config']['hide_mhcms_info']}display: none{/if}; display: none">
+            <table class="table is-bordered is-striped  is-hoverable is-fullwidth
+" lay-skin="line">
+                <colgroup>
+                    <col width="160">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th colspan="2">产品信息</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>产品名称</td>
+                    <td>MHCMS PHP站群内容管理系统 </td>
+                </tr>
+                <tr>
+                    <td>官方网站</td>
+                    <td><a href="http://www.mhcms.net" target="_blank" rel="noreferrer">http://www.mhcms.net</a></td>
+                </tr>
+                <tr>
+                    <td>官方QQ群</td>
+                    <td><a  target="_blank" rel="noreferrer">群①：496729831</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>联系我们</td>
+                    <td><a href="mailto:1620298436@qq.com" target="_blank" rel="noreferrer">1620298436@qq.com</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+<script>
+
+    function check_update() {
+        layui.use(['layer'] , function () {
+            var $ = layui.$;
+            var $url = "{:url('update/index/check_update')}";
+            $.get($url , {
+
+            } , function (data) {
+                if(data.code==1){
+                    layer.msg(data.msg);
+                }else{
+                    layer.msg("您已经是最新版了！");
+                }
+            });
+        });
+    }
+
+</script>
+{/block}

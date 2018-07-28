@@ -1,0 +1,54 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
+<p class="attention text-info bg-primary" style="    padding: 15px;"><span>current role name：</span>{$detail.role_name}</p>
+<form  target="zbn_cms" action="{:\think\\Request::instance()->url()}" method="post">
+
+    {foreach name="menus" item="var"}
+    {if condition="($var.user_menu_parentid eq 0)"}
+    <table  class="layui-table" style="margin-bottom: 0">
+        <td style="text-align: left;padding-left: 10px; font-size: 14px;">
+            <input type="checkbox" class="checkAll" name="menu_id[]" rel="{$var.user_menu_id}" {in name="$var.user_menu_id" value="$menuIds"} checked {/in} value="{$var.user_menu_id}" /><b>{:zlang($var.user_menu_name)}</b> >    </td>
+    </table>
+    {foreach name="menus" item="var2"}
+    {eq name="var2.user_menu_parentid" value="$var.user_menu_id"}
+    <table  class="layui-table" style="margin-bottom: 0">
+        <td style="text-align: left;padding-left: 10px; font-size: 14px;">
+            <input type="checkbox" class="checkAll" name="menu_id[]" rel="{$var2.user_menu_id}" {in name="var2.user_menu_id" value="$menuIds"} checked {/in} value="{$var2.user_menu_id}" /><b>{:zlang($var.user_menu_name)}</b> >{:zlang($var2.user_menu_name)}   </td>
+    </table>
+    <table class="layui-table"  style="margin-top: 0">
+        <tr>{foreach name="menus" item="var3"}
+            {eq name="var3.user_menu_parentid" value="$var2.user_menu_id"}
+            <td style="text-align: left;padding-left: 10px;">
+                <label style="font-size: 14px;">
+                    <input class="child_{$var2.user_menu_id}" type="checkbox" name="menu_id[]" {in name="var3.user_menu_id" value="$menuIds"} checked {/in}  value="{$var3.user_menu_id}" />
+                    {:zlang($var3.user_menu_name)}
+                </label>
+                <div class="submenu">
+                    {foreach name="menus" item="var4"}
+                    {eq name="var4.user_menu_parentid" value="$var3.user_menu_id"}
+                    <label style="font-size: 14px;">
+                        <input class="child_{$var2.user_menu_id}" type="checkbox" name="menu_id[]" {in name="var4.user_menu_id" value="$menuIds"} checked {/in} value="{$var4.user_menu_id}" />
+                        {:zlang($var4.user_menu_name)}
+                    </label>
+                    {/eq}
+                    {/foreach}
+                </div>
+
+            </td>{/eq}
+            {/foreach}
+        </tr>
+    </table>
+    {/eq}
+    {/foreach}
+    {/if}
+
+    {/foreach}
+
+    <div class=""><input type="submit" class="layui-btn layui-btn-small " /></div>
+</form>
+{/block}
+
+
+
+

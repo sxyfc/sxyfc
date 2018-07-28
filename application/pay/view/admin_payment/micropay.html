@@ -1,0 +1,61 @@
+<form id="cate_action" class="form-inline" target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="ui one column  stackable grid container">
+
+        <div class="column">
+            <div class="layui-form-item">
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">支付商户号mchid</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="data[mchid]" value="{$detail.config.mchid}">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">支付apikey</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input"  name="data[apikey]" value="{$detail.config.apikey}">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">apiclient_cert.pem 证书</label>
+                <div class="layui-input-block">
+                    <?php
+                    echo \app\common\util\forms\Forms::single_upload($detail['config']['apiclient_cert'] , 'apiclient_cert' , 'file' , 'pem');
+                    ?>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">apiclient_key.pem 证书</label>
+                <div class="layui-input-block">
+                    <?php
+                    echo \app\common\util\forms\Forms::single_upload($detail['config']['apiclient_key'] , 'apiclient_key', 'file' , 'pem');
+                    ?>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">rootca.pem 证书</label>
+                <div class="layui-input-block">
+                    <?php
+                    echo \app\common\util\forms\Forms::single_upload($detail['config']['ca_path'] , 'ca_path', 'file' , 'pem');
+                    ?>
+                </div>
+            </div>
+
+
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</form>

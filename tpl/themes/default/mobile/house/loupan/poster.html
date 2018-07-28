@@ -1,0 +1,159 @@
+{extend name="$front_base_layout" /}
+
+{block name="content_header"}{/block}
+{block name="bulma_css"}{/block}
+{block name="header_extra"}
+<script src="/statics/components/qrcode/Qrcode.js"></script>
+<script src="/statics/js/lib/poster_designer.js"></script>
+<script src="/statics/js/lib/jquery.contextMenu.js"></script>
+{/block}
+{block name="main"}
+<?php
+$bg_url = render_file_id($poster['background']);
+$bg_url =  $detail['poster_bg'][0]['url']  ? $detail['poster_bg'][0]['url']: $bg_url;;
+$elements = mhcms_json_decode($poster['poster_data']);
+
+$mapping['nickname'] = $user['nickname'];
+$mapping['head'] = $avatar = $user['avatar'];
+if(strpos($user['avatar'] , "http")!==false){
+    $headimg = ihttp_request($user['avatar']);
+    $target = 'upload_file/'.$user['id'].'/headimg_'.$user['id'].'.jpg';
+    file_put_contents(SYS_PATH . $target , $headimg['content']);
+
+    $avatar = $_W['siteroot'] . $target;
+}
+$mapping = array_merge($mapping , $detail['old_data']);
+$qrcode_url = url('house/loupan/detail' , ['id'=> $detail['id']  , 'ref' => $user['id'] ] , false, true);
+
+?>
+<div id="mhcms-app">
+<div id="poster" style="background: #fff;width: 320px;margin:20px auto;position: relative">
+    <img src="{$bg_url}" class="bg" style="width: 320px">
+    {if !empty($elements)}
+    {foreach $elements as $key => $d}
+    <div class="drag {$d['type']}" type="{$d['type']}" index="<?php echo $key+1 ?>" style="zindex:<?php echo $key+1 ?>;left:{$d['left']};top:{$d['top']};  width:{$d['width']};height:{$d['height']}" size="{$d['size']}" color="{$d['color']}" >
+        {if  $d['type']=='img' || $d['type']=='head'}
+        <img src="{$avatar}" />
+        {elseif $d['type']=='qr'}
+        <img src="/statics/images/qrcode.jpg" />
+        {elseif $d['type']=='realname'}
+        <?php
+
+        $d['text'] = parseParam($d['text'] , $mapping);
+        ?>
+        <div class='text' style="font-size:{$d['size']};color:{$d['color']}" >{$d['text']}</div>
+        {/if}
+        <div class="rRightDown"> </div><div class="rLeftDown"> </div><div class="rRightUp"> </div><div class="rLeftUp"> </div><div class="rRight"> </div><div class="rLeft"> </div><div class="rUp"> </div><div class="rDown"></div>
+    </div>
+    {/foreach}
+    {/if}
+</div>
+
+    <div id="res" style="width: 320px;margin: auto"></div>
+
+    <div id="qrcode"></div>
+
+<div class="ui bottom fixed menu   equal width center aligned padded grid">
+    <a class="item column"  href="{:url('house/index/index')}" >返回首页</a>
+    <a class="item column" v-on:click="gen_poster" >立刻生成</a>
+</div>
+</div>
+
+{/block}
+
+{block name="vue_mine_js"}
+
+<style>
+    .drag{position: absolute}
+    .drag.qr{
+        background: #fff;
+    }
+</style>
+<style type="text/css">
+    .labeled.input{
+        margin-bottom: 10px;
+    }
+    #poster {
+        width:320px;height:504px;border:1px solid #ccc;position:relative
+    }
+    #poster .bg { position:absolute;width:100%;z-index:0}
+    #poster .drag[type=img] img,#poster .drag[type=thumb] img { width:100%;height:100%; }
+    #poster .drag { position: absolute; width:80px;height:80px;   }
+    #poster .drag[type=realname] { width:80px;height:40px; font-size:16px; font-family: 黑体;}
+    #poster .drag img {position:absolute;z-index:0;width:100%; }
+    #poster .rRightDown,.rLeftDown,.rLeftUp,.rRightUp,.rRight,.rLeft,.rUp,.rDown{
+        position:absolute;
+        background:transparent;
+        width:7px;
+        height:7px;
+        z-index:1;
+        font-size:0;
+    }
+    .rLeftDown,.rRightUp{cursor:ne-resize;}
+    .rRightDown,.rLeftUp{cursor:nw-resize;}
+    .rRight,.rLeft{cursor:e-resize;}
+    .rUp,.rDown{cursor:n-resize;}
+    .rLeftDown{left:-4px;bottom:-4px;}
+    .rRightUp{right:-4px;top:-4px;}
+    .rRightDown{right:-4px;bottom:-4px;background-color:#00F;}
+    .rLeftUp{left:-4px;top:-4px;}
+    .rRight{right:-4px;top:50%;margin-top:-4px;}
+    .rLeft{left:-4px;top:50%;margin-top:-4px;}
+    .rUp{top:-4px;left:50%;margin-left:-4px;}
+    .rDown{bottom:-4px;left:50%;margin-left:-4px;}
+    .context-menu-layer { z-index:9999;}
+    .context-menu-list { z-index:9999;}
+</style>
+<script>
+    var app = new Vue({
+        el: '#mhcms-app',
+        data: {
+            status:  0,
+            target : "poster",
+            nickname : "昵称"
+        } ,
+        methods : {
+            gen_poster : function () {
+                var that = this;
+                layer.msg('加载中', {
+                    icon: 16
+                    ,shade: 0.5
+                });
+                require(['html2canvas'] , function (html2canvas) {
+                    $("#poster").show();
+                    setTimeout(function () {
+                        html2canvas(document.getElementById(that.target)).then(function(canvas) {
+                            //document.body.appendChild(canvas);
+                            layer.closeAll();
+                            layer.msg("请长按此图片，保存并转发即可");
+                            $("#poster").hide('slow');
+                            var imgUri = canvas.toDataURL("image/jpg");
+                            $("#res").html("<img src='" +imgUri+ "' />");
+                        });
+                    } , 1000);
+
+                });
+            }
+        }
+    })
+
+    layui.use(['layer'] , function () {
+        var $ = layui.$;
+
+        $(".drag.qr").html("");
+        var qrcode = new QRCode($(".drag.qr")[0], {
+            text: '{$qrcode_url}',
+            width: $(".drag.qr").width() , //宽度
+            height:$(".drag.qr").height()  , //高度
+            colorDark: '#000000',
+            colorLight: '#ffffff'
+        });
+    });
+
+
+
+
+</script>
+
+
+{/block}

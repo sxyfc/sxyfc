@@ -1,0 +1,67 @@
+<div class="" style="margin: 45px" id="app_mhcms">
+    <div class="ui indicating teal  progress" id="sync_process">
+        <div class="bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+
+    require(['jquery' , 'Vue', 'layui' , 'semantic'] , function ($,Vue, layui, semantic) {
+
+        new Vue({
+            el : "#app_mhcms",
+            data : {
+                total_pages : {$total_pages} ,
+                api_prefix : "/core/service/re_index?model_id={$model_id}&page=",
+                current_page : 1
+
+            },
+            methods : {
+                do_index : function () {
+                    var that = this;
+                    $api_url = this.api_prefix + this.current_page;
+
+                    $.get($api_url, {
+                        limit : {$limit}
+
+                    }, function (data) {
+
+                        $('#sync_process')
+                            .progress({
+                                percent: data.percent
+                            })
+                        ;
+
+
+                        if(data.code === 1){
+                            that.current_page++;
+                        }else{
+                            alert("系统出错!");
+                        }
+                    });
+                }
+
+            },
+            created : function(){
+                this.do_index();
+            },
+            computed : {
+                left_pages : function () {
+                    return this.total_pages - this.current_page;
+                }
+            },
+            watch : {
+                left_pages : function (new_val) {
+                    if(this.left_pages > 0){
+                        this.do_index();
+                    }else{
+                        layer.closeAll();
+                        layer.msg("操作成功!");
+                    }
+                }
+            }
+        });
+    });
+</script>

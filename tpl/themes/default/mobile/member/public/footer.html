@@ -1,0 +1,29 @@
+
+<div class="ui bottom fixed menu equal width center aligned   grid mhcms_bottom_menu">
+    {foreach $menus[0]['children'] as $menu}
+
+
+    {if $menu['children']}
+    <div class="ui column dropdown labeled  icon item ">
+        <span>{$menu.user_menu_name}</span>
+        <div class="menu">
+            {foreach $menu['children'] as $sub_menu}
+            <a class="item" href="{$sub_menu.url}">{$sub_menu.user_menu_name}</a>
+
+            {/foreach}
+        </div>
+    </div>
+    {else}
+    <a class="item column" href="{$menu.url}">{$menu.user_menu_name}</a>
+    {/if}
+    {/foreach}
+</div>
+
+<script>
+
+    require(['jquery' , 'semantic'] , function ($, semantic) {
+        $('.ui.mhcms_bottom_menu .dropdown')
+            .dropdown()
+        ;
+    });
+</script>

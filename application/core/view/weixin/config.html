@@ -1,0 +1,76 @@
+
+
+<div class="container-fluid"><div class="row"><div class="col-xs-12">
+            <form name="myform"  target="zbn_cms" action="{:\think\\Request::instance()->url()}" method="post" id="myform">
+                <table width="100%" class="layui-table">
+                    <?php
+                    if(isset($parentid)) { ?>
+                        <tr>
+                            <td><?php echo zlang('parent,linkage')?></td>
+                            <td>
+                                <?php
+                                $config = [
+
+                                    'field_type_name' => "select" ,                 //对应了\app\common\forms\的类名称
+                                    'node_field_data_source_type' => 'linkage',     //
+                                    'node_field_data_source_config' => $keyid ,     //联动菜单列表查看到的id
+                                    'node_field_parentid_key' => 'parentid' ,
+                                    'node_field_mode' => 'single_select' ,          //小白说明：就是外观  专家说明：对应了field_type_name类里面的处理方法
+                                    'node_field_primary_option' => '作为一级菜单' ,
+                                    'node_field_form_class_name' => '',
+                                    'node_field_name' => 'parentid' ,
+                                    'node_field_pk_key' => 'linkageid' ,
+                                    'node_field_name_key' => 'name' ,
+                                    'node_field_default_value' => $detail['parentid'],
+                                    'node_field_class_name' => 'form-control'
+                                ];
+
+                                echo $form_factory->config_form($config);
+                                ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                    <tr>
+                        <td><?php echo zlang('app_id')?></td>
+                        <td>
+                            <input type="text" name="data[app_id]" value="{$detail.app_id}" class="layui-input" id="name" size="30">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><?php echo zlang('app_secret')?></td>
+                        <td>
+                            <input name="data[app_secret]" rows="5" cols="20" id="app_secret" class="layui-input" value="{$detail.app_secret}" style="width:300px;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><?php echo zlang('app_secret')?></td>
+                        <td>
+                            <input name="data[token]" rows="5" cols="20" id="token" class="layui-input" value="{$detail.token}" style="width:300px;">
+                        </td>
+                    </tr>
+
+                </table>
+
+                <table width="100%" class="layui-table">
+
+                    <tr>
+                        <td><?php echo zlang('小程序app_id')?></td>
+                        <td>
+                            <input type="text" name="data[xcx_config][app_id]" value="{$detail.xcx_config.app_id}" class="layui-input" id="name" size="30">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><?php echo zlang('小程序密钥')?></td>
+                        <td>
+                            <input name="data[xcx_config][app_secret]" rows="5" cols="20" id="app_secret" class="layui-input" value="{$detail.xcx_config.app_secret}" style="width:300px;">
+                        </td>
+                    </tr>
+
+
+                </table>
+
+                <input name="dosubmit" type="submit" value="<?php echo zlang('submit')?>" class="layui-btn layui-btn-small " id="dosubmit">
+            </form></div></div></div>

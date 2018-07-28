@@ -1,0 +1,76 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
+<link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+<form action="" method="post" target="zbn_cms" class=" layui-container">
+<div class="remote-cos">
+<div class="alert alert-info">
+    注意本系统支持多种共存，若需转移附件请等待官方附件管理功能！
+<span class="is-hidden">
+    启用腾讯云cos对象存储后，请把/upload_file目录（不包括此目录）下的子文件及子目录上传至腾讯云存储, 相关工具：<br>
+    <ul class="link-list">
+        <li><a target="_blank" href="https://console.qcloud.com/cos/bucket" class="product-grey-font" >腾讯云存储</a></li>
+    </ul></span>
+</div>
+<div class="form-group row">
+    <label class="col-sm-2 control-label">APPID</label>
+    <div class="col-sm-9">
+        <input type="text" name="{$attach_sign}[appid]" class="form-control" value="{$config['appid']}" placeholder="" />
+        <span class="help-block">APPID 是您项目的唯一ID</span>
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-sm-2 control-label">SecretID</label>
+    <div class="col-sm-9">
+        <input type="text" name="{$attach_sign}[secretid]" class="form-control" value="{$config['secretid']}" placeholder="" />
+        <span class="help-block">SecretID 是您项目的安全秘钥，具有该账户完全的权限，请妥善保管</span>
+    </div>
+</div>
+<div class="form-group row">
+    <label class="col-sm-2 control-label">SecretKEY</label>
+    <div class="col-sm-9">
+        <input type="text" name="{$attach_sign}[secretkey]" class="form-control encrypt" value="{$config['secretkey']}" placeholder="" />
+        <span class="help-block">SecretKEY 是您项目的安全秘钥，具有该账户完全的权限，请妥善保管</span>
+    </div>
+</div>
+<div class="form-group row" id="cosbucket">
+    <label class="col-sm-2 control-label">Bucket</label>
+    <div class="col-sm-9">
+        <input type="text" name="{$attach_sign}[bucket]" class="form-control" value="{$config['bucket']}" placeholder="" />
+        <span class="help-block">请保证bucket为可公共读取的</span>
+    </div>
+</div>
+<div class="form-group row" id="cos_local">
+    <label class="col-xs-12 col-sm-3 col-md-2 control-label">bucket所在区域</label>
+    <div class="col-sm-9 col-xs-12">
+        <select class="form-control" name="{$attach_sign}[local]">
+            <option value="" {if $config['local'] == ''}selected{/if}>无</option>
+            <option value="tj" {if $config['local'] == 'tj'}selected{/if}>华北</option>
+            <option value="sh" {if $config['local'] == 'sh'}selected{/if}>华东</option>
+            <option value="gz" {if $config['local'] == 'gz'}selected{/if}>华南</option>
+            <option value="cd" {if $config['local'] == 'cd'}selected{/if}>西南</option>
+            <option value="bj" {if $config['local'] == 'bj'}selected{/if}>北京</option>
+            <option value="sgp" {if $config['local'] == 'sgp'}selected{/if}>新加坡</option>
+            <option value="hk" {if $config['local'] == 'hk'}selected{/if}>香港</option>
+            <option value="ca" {if $config['local'] == 'ca'}selected{/if}>多伦多</option>
+            <option value="ger" {if $config['local'] == 'ger'}selected{/if}>法兰克福</option>
+        </select>
+        <span class="help-block">选择bucket对应的区域，如果没有选择无</span>
+    </div>
+</div>
+<div class="form-group row" >
+    <label class="col-sm-2 control-label">Url</label>
+    <div class="col-sm-9">
+        <input type="text" name="{$attach_sign}[url]" class="form-control" value="{$config['url']}" placeholder="" />
+        <span class="help-block">腾讯云支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com</span>
+    </div>
+</div>
+<div class="form-group row">
+    <div class="">
+        <button name="submit" class="btn btn-primary" value="submit">保存配置</button>
+    </div>
+</div>
+</div>
+</form>
+{/block}

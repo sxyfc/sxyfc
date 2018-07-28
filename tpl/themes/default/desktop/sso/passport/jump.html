@@ -1,0 +1,65 @@
+{extend name="$front_base_layout" /}
+{block name="jquery"}{/block}
+{block name="semantic_css"}{/block}
+{block name="baidu_map"}{/block}
+
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="mhcms_module_js"}{/block}
+{block name="content_header"}{/block}
+{block name="vue_js"}{/block}
+{block name="main"}
+<script>
+require(['jquery' , 'layui'] , function () {
+
+    function get_user_info() {
+        layui.use('layer', function () {
+            var $ = layui.$;
+
+            console.log('get user info' + m_c_d);
+            var top_menu_url = "//" + m_c_d + "/sso/passport/get_login_info";
+
+            $.get(
+                top_menu_url, {
+                    "site_id": site_id
+                }, function (data) {
+                    console.log(data);
+                    //alert(data.top_menu_url);
+                    sso_login(data);
+                }, 'jsonp'
+            );
+        });
+
+    }
+
+
+    function sso_login($data) {
+        layui.use('layer', function () {
+            var $ = layui.$;
+            console.log($data);
+            var sso_login_url = "/sso/passport/sso_login";
+            $.post(
+                sso_login_url, {
+                    "auth_str": $data.random_auth, "user_id": $data.user_id
+                }, function (data) {
+                    console.log(data);
+                    if(data.code === 1){
+                        window.location.href = "{:$forward}";
+                    }else{
+                        alert("对不起,系统错误!");
+                    }
+
+                }, 'json'
+            );
+        });
+    }
+    layui.use(['layer'], function () {
+        var $ = layui.$;
+        get_user_info();
+
+    });
+});
+
+
+</script>
+{/block}

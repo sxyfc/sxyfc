@@ -1,0 +1,63 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+    <div class="tableBox">
+        <table class="layui-table table-bordered" style="">
+            <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+                <td>ID</td><td>模块</td>
+                <td>来源</td><td>数据</td>
+                {foreach $field_list as $field}
+                <td>{$field['slug']}</td>
+                {/foreach}
+
+                <td>{:zlang('operation')}</td>
+            </tr>
+            {foreach $lists as $item}
+            <?php
+
+            try {
+                $info = \app\common\model\Models::get_item($item['item_id'] , $item['model_id']);
+
+            }
+
+            catch (Exception $e){
+
+            }
+
+
+
+            $_m = set_model($item['model_id']);
+            $_m_i = $_m->model_info;
+            ?>
+            <tr>
+                <td>{$item.id}</td>
+                <td>{$_m_i.module}</td>
+                <td>{$_m_i.model_name}</td>
+                <td>{$info[$_m_i.name_key]}</td>
+
+                {foreach $field_list as $field}
+                <td>{$item[$field['field_name']]}</td>
+                {/foreach}
+
+                <td>
+                    {volist name="sub_menu" id="menu"}
+                    {eq name="menu.user_menu_display" value="0"}
+                    <?php
+                    $mapping = $item;
+                    $mini = $menu['user_menu_mini'];
+                    $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
+                    ?>
+                    {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$mini,$menu['class'],'90%','80%' , $mapping)}
+                    {/eq}
+                    {/volist}
+                </td>
+            </tr>
+
+            {/foreach}
+
+        </table>
+
+    </div>
+
+        {:$lists->render()}
+    </div>
+        {/block}

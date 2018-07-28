@@ -1,0 +1,42 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}{/block}
+{block name="main"}
+<div class="ui four column grid  padded  mhcms_user_menu">
+    <div class="ui sixteen wide column mhcms-header-column" style="border-bottom: solid 1px #f0f0f0;text-align: left">
+         请使用<i class="wechat icon	"></i>微信扫一扫功能
+    </div>
+
+
+    <img src="{$code}" class="ui image small" style="margin: auto;">
+
+</div>
+<script>
+
+    var mhcms_wx_login = "{$mhcms_wx_login_api}";
+    var uuid = "{$uuid}";
+
+    check_login();
+
+
+    function check_login() {
+        $.post(mhcms_wx_login, {}, function (data) {
+
+            if (data.status == 'wait') {
+                setTimeout(function () {
+                    check_login();
+                }, 2000)
+            }
+
+            if (data.status == 'expired') {
+                console.log("expired");
+            }
+
+            if (data.status == "success") {
+                console.log("登录成功");
+                window.location.href="{$forward}";
+            }
+        });
+    }
+
+</script>
+{/block}

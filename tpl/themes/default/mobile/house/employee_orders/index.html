@@ -1,0 +1,106 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+{/block}
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+<style>
+    .active{
+        background: #eee;
+    }
+</style>
+
+<div class="ui five column grid  padded  mhcms_user_menu" id="mhcms-app">
+
+
+
+
+
+
+    <div class="ui sixteen wide column mhcms-header-column" style="border-bottom: solid 1px #f0f0f0;text-align: left">
+        内部经纪人订单处理
+    </div>
+    <div class="ui column" v-bind:class={active:status==2}>
+        <a class="nav_item"  href="/house/employee_orders/index/status/2">
+            <i class="icon wait"></i>待跟进
+        </a>
+    </div>
+
+    <div class="ui column" v-bind:class={active:status==3}>
+        <a class="nav_item" href="/house/employee_orders/index/status/3"><i class="comments outline icon"></i>沟通中</a>
+    </div>
+
+    <div class="ui column" v-bind:class={active:status==5}>
+        <a class="nav_item" href="/house/employee_orders/index/status/5"><i class="legal icon"></i>已认购</a>
+    </div>
+    <div class="ui column" v-bind:class={active:status==6}>
+        <a class="nav_item" href="/house/employee_orders/index/status/6"><i class="iconfont  icon-zhaoshangjiameng"></i>已成交</a>
+    </div>
+
+    <div class="ui column" v-bind:class={active:status==4}>
+        <a class="nav_item" href="/house/employee_orders/index/status/4.html"><i class="  remove circle icon	"></i>已关闭</a>
+    </div>
+
+    <div class="ui column" v-bind:class={active:status==0}>
+        <a class="nav_item" href="/house/employee_orders/index/status/0.html"><i class="angle double down icon"></i>全部</a>
+    </div>
+
+</div>
+<script>
+    require(['vue'] , function (Vue) {
+        var app = new Vue({
+            el: '#mhcms-app',
+            data: {
+                status:  {$status} ,
+
+            } ,
+            methods : {
+
+            }
+        })
+    });
+</script>
+<div class="ui two column stackable grid container" style="margin: 10px 0 ">
+    <div class="ui twelve wide  column stackable  mhcms_mobile_column" >
+
+        <div class="ui top attached mhcms-panel">
+            <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+                <ul class="ui mhcms-list unstackable items">
+                    {foreach $appointments as $appointment}
+                    <?php
+
+                    $_item = \app\common\model\Models::get_item($appointment['id'] , "house_appointment")
+                    ?>
+                    <div class="ui item mhcms-list-item ">
+                        <div class="content">
+                            <a class="header mhcms-item-header" href="{:url('house/employee_orders/detail' , ['id'=>$appointment['id'] ])}">客户 {$appointment['id']}</a>
+                            <div class="meta">
+                                {$appointment.note}
+                                {if $appointment.kanfang_date}
+                                <p>
+                                    看房中
+                                </p>
+                                {/if}
+                            </div>
+                            <div class="extra">
+                                {$_item.status}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}
+{block name="copyright"}{/block}

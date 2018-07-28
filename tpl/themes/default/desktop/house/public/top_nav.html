@@ -1,0 +1,31 @@
+<nav id="top-nav-bg" class=" top-nav-bg" role="navigation" aria-label="main navigation">
+    <div class="mhcms-container" id="user-top">
+
+        <div class="is-pulled-left">
+            <?php
+
+
+            $logo = $_W['global_config']['data']['logo'] ? render_file_id($_W['global_config']['data']['logo']) : "/statics/images/logo.png" ;
+            ?>
+            <a>
+            <img class="is-vcentered" src="{$logo}" style="height: 25px">
+            </a>
+
+            {foreach $cate_tree as $_cate}
+            {if strpos($_cate['position'] , ',2,')!==false}
+            <a {$_cate.property} class="mhcms-login  weui-flex__item" href="{$_cate.url}" >{$_cate.cate_name}</a>
+            {/if}
+            {/foreach}
+        </div>
+        <div  class="is-pulled-right">
+            <a class="mhcms-login  weui-flex__item" href="{:url('house/user/index')}" >会员中心</a>
+            {if $user}
+            <a class="mhcms-login  weui-flex__item" >{$user.nickname}</a>
+
+            <a class="mhcms-register  weui-flex__item" href="/sso/passport/logout">注销</a>
+            {/if}
+        </div>
+        <div class="is-clearfix"></div>
+    </div>
+
+</nav>

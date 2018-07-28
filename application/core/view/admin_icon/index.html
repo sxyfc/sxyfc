@@ -1,0 +1,44 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<div>
+    {foreach $filter_info.fields as $k=>$field}
+    <a style="width: 120px;margin: 10px" class="layui-btn layui-btn-primary ">{$field.slug}</a>
+
+    <a style="width: 120px;margin:10px " class="layui-btn layui-btn-primary    {$field.class}" href="{$field.href}">全部</a>
+
+    {foreach $field.options as $option}
+    <a style="background-color: {$option.bgcolor};width: 120px;margin:10px " class="layui-btn layui-btn-primary  {$option.class}" href="{$option.href}">{$option.name}</a>
+    {/foreach}
+    {/foreach}
+</div>
+
+<script type="text/javascript">
+    $('a.selected').transition({
+        animation: 'pulse',
+        duration: '2s',
+        onComplete: function () {
+            //    alert('done');
+
+        }
+    }).transition('set looping');
+</script>
+<div class="ui equal width center aligned  grid">
+
+    <div class="row">
+        {foreach $lists as $item}
+        <div class=" four wide column">
+            <table class="layui-table table-bordered">
+                <tr>
+                    <td><i class="{$item.icon}" style="font-size: 2em;"></i></td>
+                    {foreach $field_list as $field}
+                    <td>{$item[$field['field_name']]}</td>
+                    {/foreach}
+                </tr>
+            </table>
+        </div>
+        {/foreach}
+    </div>
+
+</div>
+{/block}
+

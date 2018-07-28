@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<?php
+global $_W;
+?>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>管理后台</title>
+    <meta name="description" content="管理后台" />
+    <meta name="keywords" content="管理后台" />
+    <link rel="stylesheet" href="/statics/css/font-awesome.min.css">
+    <script type="text/javascript">
+        var single_url = "{:nb_url(['r'=>'/admin/index/update_field'])}";
+    </script>
+    <script type="text/javascript" src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    {block name="header_js"}
+    <script src="/statics/components/layui/layui.js"></script>
+    <script type="text/javascript" src="/statics/js/admin/gobal.js"></script>
+    {/block}
+    <link rel="stylesheet" type="text/css" href="/statics/components/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="/statics/css/reset.css" media="all">
+
+
+    {block name="header_css"}
+    <link rel="stylesheet" href="/statics/components/semantic/semantic.min.css">
+    <link rel="stylesheet" href="/statics/components/layui/css/layui.css">
+    <link rel="stylesheet" href="/statics/css/{$_W.DEVICE_TYPE_TPL}/front_base.css" />
+    {/block}
+
+    {block name="require_js"}
+    <script type="text/javascript" src="/statics/js/require.js"></script>
+    <script type="text/javascript" src="/statics/js/config.js"></script>
+    {/block}
+
+    <script src="/statics/js/{$_W.DEVICE_TYPE_TPL}/front_base.js" ></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        var reload_menu = "<?php echo (int) input('param.reload_menu'); ?>";
+        var m_c_d = "{$m_c_d}" , site_id = '{$site.id}';
+        var upload_url = "{:nb_url(['r'=>'attachment/index/upload'])}";
+        var check_md5 = "{:nb_url(['r'=>'attachment/attach/check_md5'])}";
+        var save_attach = "{:nb_url(['r'=>'attachment/attach/save'])}";
+        var check_chunk = "{:nb_url(['r'=>'attachment/index/chunkCheck'])}";
+        var check_area = 0;
+    </script>
+    <script>
+        //右下角接口
+        {if isset($hide_tools) && !$hide_tools}
+        layui.use('util', function(){
+            var util = layui.util;
+            //执行
+            //固定块
+            util.fixbar({
+                top : true ,
+                bar1: true
+                ,bar2: "&#xe688;"
+                ,css: {right: 50, bottom: 100}
+                ,bgcolor: '#393D49'
+                ,click: function(type){
+                    if(type === 'bar1'){
+                        var url = "http://www.mhcms.net/mhcms/doc/detail?page_route={:ROUTE_M}*{:ROUTE_C}*{:ROUTE_A}"
+                        window.open(url);
+                    } else if(type === 'bar2') {
+                        var url = "{:get_url()}"
+                        window.open(url);
+                    }
+
+                },
+                mouseover : function () {
+                    layer.msg('两个bar都可以设定是否开启')
+                }
+            });
+
+        });
+        {/if}
+    </script>
+    <link href="/statics/css/{$_W['theme']}/desktop/{:ROUTE_M}.css" rel="stylesheet" />
+</head>
+<body>
+<iframe name="zbn_cms" id="zbn_cms" class="hidden" style="display: none"></iframe>
+{// 模板导航 }
+
+<div class="index-main" style="height: 100%;padding: 0 5px">
+
+    {block name="sub-menu-top"}
+    <div class="sub-menu-top" style="border-top: 1px solid #e1e6eb; padding: 10px 0;overflow: hidden">
+
+        <div class="pull-left">
+            {volist name="sub_menu" id="admin_menu"}
+            {eq name="admin_menu.user_menu_display" value="1"}
+            <?php
+            $mini = $admin_menu['user_menu_mini']? $admin_menu['user_menu_mini'] : 'frame';
+            ?>
+            {:build_back_a($admin_menu['id'],$admin_menu['user_menu_params'],zlang($admin_menu['user_menu_name']),$mini,$admin_menu['class'],'90%','80%' , $mapping)}
+            {/eq}
+            {/volist}
+
+        </div>
+
+        <div class="pull-right">
+            {block name="table_form"}
+            {/block}
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+    {/block}
+
+    {block name="tips"}
+    <div class="text-info">
+
+    </div>
+    {/block}
+    {block name="main"}{/block}
+</div>
+</body>
+</html>

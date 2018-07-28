@@ -1,0 +1,46 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table" >
+            <tr>
+                <td class="w50">ID</td>
+                <td>用户名</td><td>姓名</td>
+                <td>数量</td>
+                <td>申请时间</td>
+                <td>状态</td>
+                <td>汇款信息</td>
+                <td>操作</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <?php
+            $tmp_user = \app\common\model\Users::get($var['user_id']);
+            $mapping = $var;
+            ?>
+            <tr >
+                <td>{$var.id}</td>
+                <td>{$tmp_user.user_name}</td>
+                <td>{$var.name}</td>
+                <td>{$var.amount}</td>
+                <td>{$var.create_time}</td>
+                <td>{$var.status}</td>
+                <td>
+                    <p>{$var.card_number}</p>
+                    <p>{:show_linkage($var['bank_id'])}</p>
+                    <p>{$var['bank_address']}</p>
+                </td>
+                <td>
+                    {volist name="sub_menu" id="menu"}
+                    {eq name="menu.user_menu_display" value="0"}
+                    {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%',$mapping)}
+                    {/eq}
+                    {/volist}
+                </td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$page}
+    </div>
+</form>
+{/block}

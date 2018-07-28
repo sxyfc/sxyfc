@@ -1,0 +1,115 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if(!isset($keyword)){
+    $keyword = "";
+}
+?>
+<form class="layui-form form-inline" method="post" action="">
+    <table class="layui-table form-group">
+        <td>
+            <input type="text" value="{$keyword}" name="keyword" class="layui-input" >
+        </td>
+        <td class="input-group">
+
+        <td>
+            <input type="submit" value="搜索"  class="layui-btn btn-success" /></td>
+        </td>
+    </table>
+</form>
+{/block}
+
+{block name="main"}
+<div>
+    {foreach $filter_info.fields as $k=>$field}
+    <a style="width: 120px;margin: 10px"  class="layui-btn layui-btn-primary ">{$field.slug}</a>
+
+    <a style="width: 120px;margin:10px "  class="layui-btn layui-btn-primary    {$field.class|default=""}" href="{$field.href}">全部</a>
+
+    {foreach $field.options as $option}
+    <a style="background-color: {$option.bgcolor};width: 120px;margin:10px " class="layui-btn layui-btn-primary  {$option.class|default=""}" href="{$option.href}">
+    {$option.module_name|default=""}
+    </a>
+    {/foreach}
+    {/foreach}
+</div>
+
+<script>
+    $('a.selected')
+        .transition({
+            animation  : 'pulse',
+
+            duration   : '2s',
+            onComplete : function() {
+                //    alert('done');
+            }
+        }).transition('set looping')
+    ;
+
+</script>
+
+
+
+<form class="layui-form form-horizontal" id="cate_action" action="{:\think\\Url::build('menu/update')}" target="zbn_cms" method="post">
+    <div class="tableBox">
+        {$pages}
+
+            {foreach $list as $var}
+        <?php
+        $_var = set_model("seo_tpl")->where(['seo_key'=>$var['seo_key']])->find();
+        ?>
+        <table class="layui-table" style="">
+            <tr class="" >
+                <td style="width: 250px">{:zlang('seo_key')}</td>
+                <td class="content_editable"   >
+                    {$var.seo_key}
+
+
+                    <?php
+                    $mapping = $var;
+                    ?>
+                    {volist name="sub_menu" id="menu"}
+                    {eq name="menu.user_menu_display" value="0"}
+                    {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
+                    {/eq}
+                    {/volist}
+                </td>
+            </tr>
+
+            <tr class="" >
+                <td>{:zlang('seo,页面名称')}</td>
+                <td class="content_editable"   >
+                    <input type="text" pk="seo_key"  pk_value="{$var.seo_key}" class="layui-input" field="seo_explain" model="seo" mini='blur' id="{$var.seo_explain}" value="{$var.seo_explain|default=$_var.seo_explain}" />
+                </td>
+            </tr>
+
+            <tr class="" >
+                <td>{:zlang('title')}</td>
+                <td style="">
+                    <input type="text" pk="seo_key"  pk_value="{$var.seo_key}" class="form-control layui-input " field="seo_title" model="seo" mini='blur' id="{$var.seo_title}" value="{$var.seo_title|default=$_var.seo_title}" /></td>
+            </tr>
+
+
+
+
+
+            <tr class="" >
+                <td>{:zlang('keywords')}</td>
+                <td class="content_editable"   >
+                    <input type="text" pk="seo_key"  pk_value="{$var.seo_key}"  class="form-control layui-input " field="seo_keywords" model="seo" mini='blur' id="{$var.seo_keywords}" value="{$var.seo_keywords|default=$_var.seo_keywords}" />
+                </td>
+            </tr>
+
+            <tr class="" >
+                <td>{:zlang('description')}</td>
+                <td class="content_editable"   >
+                    <input type="text" pk="seo_key"  pk_value="{$var.seo_key}" class="form-control layui-input " field="seo_desc" model="seo" mini='blur' id="{$var.seo_desc}" value="{$var.seo_desc|default=$_var.seo_desc}" />
+                </td>
+            </tr>
+        </table>
+        {/foreach}
+
+    </div>
+</form>
+{/block}

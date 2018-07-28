@@ -1,0 +1,85 @@
+{extend name="$front_base_layout" /}
+
+{block name="content_header"}{/block}
+{block name="main"}
+<div class="weui-cells__title" style="margin: 0;line-height: 35px">在线充值</div>
+<form  target="mhcms" action="" method="post">
+
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label"><span class="has-text-danger">*</span>充值金额</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number" id="amount" name="data[amount]"  min="0.0" step="0.01" placeholder="请输入一个金额">
+            </div>
+        </div>
+
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">手机号码</label></div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" type="number" name="data[mobile]" pattern="[0-9]*" placeholder="（选填） 方便联系您">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="weui-cells__title">请选择支付方式</div>
+
+    <div class="weui-cells weui-cells_radio">
+
+        <label class="weui-cell weui-check__label" for="x11">
+            <div class="weui-cell__bd">
+                <p>微信支付</p>
+            </div>
+            <div class="weui-cell__ft">
+                <input type="radio" class="weui-check" value="micropay" name="data[gateway]" id="x11" checked>
+                <span class="weui-icon-checked"></span>
+            </div>
+        </label>
+
+
+
+        <div class="weui-cell">
+            <div class="weui-cell__bd">
+                <textarea class="weui-textarea" placeholder="充值备注" name="data[note]" rows="3"></textarea>
+                <div class="weui-textarea-counter"><span>0</span>/200</div>
+            </div>
+        </div>
+
+    </div>
+
+                        {:token()}
+
+    <div class="weui-btn-area">
+        <button type="submit" class="weui-btn weui-btn_primary" href="javascript:" id="showTooltips">确定</button>
+    </div>
+
+
+
+                    </form>
+
+
+<!-- 微信环境 -->
+<script type="text/javascript">
+    require(['layui'] , function (layui) {
+        layui.use(['form'] , function () {
+            layui.form.render()
+        })
+    });
+
+</script>
+{/block}
+
+{block name="footer"}
+<div class="weui-tabbar" style="    z-index: 99999;position: fixed;box-shadow: 0px 7px 14px 5px #c0bfc4;">
+    <a href="/" class="weui-tabbar__item " >
+        <span style="display: inline-block;position: relative;">
+            <i class="weui-tabbar__icon"><i class="iconfont icon-shouye"></i></i>
+        </span>
+        <div class="weui-tabbar__label">返回首页</div>
+    </a>
+
+    <a  href="/member/wallet" class="weui-tabbar__item " >
+        <span class="weui-btn weui-btn_default">返回钱包</span>
+    </a>
+</div>
+{/block}

@@ -1,0 +1,19 @@
+<form id="cate_action" class="form-inline"  target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="tableBox">
+        <table class="table table-bordered" style="">
+
+            <tr>
+                <td class="left-td">{:lang('交易备注')}</td>
+                <td>
+                    <textarea class="form-control" name="data[description]" style="width: 80%" rows="5"></textarea>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
+                    <input type="submit" class="btn btn-primary" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</form>

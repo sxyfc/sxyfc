@@ -1,0 +1,59 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
+<style>
+    .selected{color: red}
+</style>
+<div>
+    {foreach $filter_info.fields as $k=>$field}
+    <div class="tableBox" >
+    <a style="background-color: {$option.bgcolor|default=""};width: 120px;margin: 10px"  class="layui-btn layui-btn-primary ">{$field.slug}</a>
+
+    <a style="background-color: {$option.bgcolor|default=""};width: 120px;margin:10px "  class="    {$field.class|default=""}" href="{$field.href}">全部</a>
+
+    {foreach $field.options as $option}
+    <a style="background-color: {$option.bgcolor};color: {$option.color} ;width: 120px;margin:10px " class=" {$option.class|default=""}" href="{$option.href}">
+    <i class="{$option.icon}"></i> {$option.name}</a>
+    {/foreach}
+    </div>
+    {/foreach}
+</div>
+
+<div class="tableBox" >
+    <table class="layui-table table-bordered" lay-size="sm">
+        <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+            <td>ID</td>
+            {foreach $field_list as $field}
+            <td>{$field['slug']}</td>
+            {/foreach}
+            <td>{:zlang('操作')}</td>
+        </tr>
+        {foreach $lists as $item}
+        <?php
+        $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
+        ?>
+        <tr>
+            <td>{$item.id}</td>
+            {foreach $field_list as $field}
+            <td><pre>{$_item[$field['field_name']]}</pre></td>
+            {/foreach}
+            <td>
+                <?php
+                $mapping = $item;
+                ?>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
+                {/eq}
+                {/volist}
+            </td>
+        </tr>
+
+        {/foreach}
+
+    </table>
+
+</div>
+<div>
+</div>
+{/block}

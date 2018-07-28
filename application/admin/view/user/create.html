@@ -1,0 +1,81 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form  class="layui-form form-inline"  target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="container"><div class="row"><div class="col-xs-12">
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>基础信息</legend>
+            <table   class="layui-table" >
+                <tr >
+                    <td class="lfTdBt" style="width: 180px">site id：</td>
+                    <td class="rgTdBt">
+                        <p> 你好， ： 您正在 增加会员 </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lfTdBt">用户名：</td>
+                    <td class="rgTdBt"><input type="text" name="data[user_name]" value="" class="layui-input w150" required/>
+
+                    </td>
+                </tr><tr>
+                <td class="lfTdBt">密码：</td>
+                <td class="rgTdBt"><input type="text" name="data[pass]" value="" class="layui-input w150" required />
+
+                </td>
+            </tr>
+
+                <tr>
+                    <td class="lfTdBt">角色：</td>
+                    <td class="rgTdBt">
+                        <select readonly=""  disabled name="data[user_role_id]" class="layui-select w150" onchange="check(this.value)" required>
+                            <option>请选择一个角色类型</option>
+                            {foreach name="roles" item="role"}
+                            <option {if $role.id == $role_id} selected{/if} value="{$role.id}">{$role.role_name}</option>
+                            {/foreach}
+                        </select>
+                        <input type="hidden" name="data[user_role_id]" value="{$role_id}" />
+                        <code>必须选择正确的角色</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lfTdBt">手机：</td>
+                    <td class="rgTdBt"><input type="text" name="data[mobile]" value="" class="layui-input w150"  />
+                        <code>手机不能为空</code>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lfTdBt">状态：</td>
+                    <td class="rgTdBt">
+                        <label>
+                        <input type="radio" checked name="data[status]" value="99"   required title="启用" /> </label>
+                        <label>
+                            <input type="radio" name="data[status]" value="0"  required  title="禁用"/>
+                        </label>
+
+                    </td>
+                </tr>
+            </table>
+        </fieldset>
+                {if isset($field_list) && $field_list}
+        <fieldset class="layui-elem-field layui-field-title">
+            <legend>扩展信息</legend>
+                <table class="layui-table" style="">
+                    {volist name="field_list" id="item"}
+                    <tr>
+                        <td width="15%">{$item['slug']}</td>
+                        <td>{$item['form_str']}</td>
+                    </tr>
+                    {/volist}
+                </table>
+        </fieldset>
+                {/if}
+
+        <div class="smtQr"><input type="submit" value="{:zlang('Create')}" class="layui-btn layui-btn-small " /></div>
+    </div></div></div>
+</form>
+
+<script>
+    layui.use(['layer' , 'form'] , function () {
+        var form = layui.form;
+    });
+</script>
+{/block}

@@ -1,0 +1,53 @@
+{extend name="$front_base_layout" /}
+{block name="table_form"}
+<form class="form-inline" method="get" action="{:\think\\Request::instance()->url()}">
+    <table class="table table-bordered">
+        <td>
+            {$start_form}
+        </td>
+        <td>
+            {$stop_form}
+        </td>
+        <td>
+            <input type="text" name="keyword" value="{$keyword}" class="form-control"/></td>
+        <td>
+            <input type="submit" value="搜索" class="btn btn-success"/>
+        </td>
+        <td>
+            <input type="button" value="下载" onclick="export_orders(this)" class="btn btn-success"/>
+        </td>
+    </table>
+</form>
+<script>
+    function export_orders(obj) {
+
+        layer.msg("温馨提示：默认下载本月报表 ，自定义时间需要先搜索才能进行下载！");
+        var url = "{:\think\\Request::instance()->url()}" + "&export=1"
+        goToUrl(url);
+    }
+</script>
+{/block}
+
+{block name="main"}
+<table class="table table-bordered table-striped">
+    <tr>
+        <td>订单编号</td>
+        <td>订单金额</td>
+        <td>付款方式</td>
+        <td>收银员</td>
+        <td>开始时间</td>
+    </tr>
+    {foreach $list as $val}
+    <?php
+    $_u = \app\common\model\Users::get($val['operator_id']);
+    ?>
+    <tr>
+        <td>{$val.order_id}</td>
+        <td>{$val.amount}</td>
+        <td>{$val.pay_type}</td>
+        <td>{$_u.user_name}</td>
+        <td>{$val.create_time}</td>
+    </tr>
+    {/foreach}
+</table>
+{/block}

@@ -1,0 +1,198 @@
+{extend name="$front_base_layout" /}
+
+{block name="jquery"}{/block}
+{block name="content_header"}{/block}
+{block name="mhcms_module_js"}{/block}
+
+{block name="mhcms_base_js"}{/block}
+{block name="semantic_css"}{/block}
+
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="bulma_css"}{/block}
+{block name="vue_js"}{/block}
+{block name="main"}
+<style>
+    .weui-pull-to-refresh__layer{
+        display: none;
+    }
+    .app_container{
+        padding: 0;
+    }
+</style>
+<div id="app_mhcms">
+<div class="wrap mapBox" style="position: fixed;width: 100%;height: 100%">
+    <div id="map_container" style="width: 100%;height: 100%">
+
+    </div>
+</div>
+
+
+
+
+<div class="weui-flex map-icon-bar has-text-centered" style="position: absolute;top: 0;
+left: 0;width: 100%;background: #f9f9f9">
+    <a :class="[ bus ? 'active' : '']" @click="search('公交' , 20, 'bus')"   class="js_search weui-flex__item bus"><i></i><span>公交</span>
+    </a>
+
+    <a :class="[ subway ? 'active' : '']" @click="search('地铁' , 20, 'subway')" class="js_search weui-flex__item subway" ><i></i><span>地铁</span>
+    </a>
+
+    <a :class="school ? 'active' : ''"  @click="search('学校' , 20, 'school')" id="wapxfzb_B01_06" class="js_search weui-flex__item school"><i></i><span>学校</span></a>
+
+    <a :class="hospital ? 'active' : ''" class="js_search weui-flex__item hospital" @click="search('医院' , 20, 'hospital')" ><i></i><span>医院</span></a>
+
+    <a :class="bank ? 'active' : ''"  @click="search('银行' , 20, 'bank')" class="js_search weui-flex__item bank"
+       flag="0"><i></i><span>银行</span></a>
+
+    <a :class="shop ? 'active' : ''"  @click="search('购物' , 20, 'shop')" class="js_search weui-flex__item shop"><i></i><span>购物</span></a>
+
+    <a :class="house ? 'active' : ''" id="wapxfzb_B01_10"  @click="search('房屋' , 20, 'house')" class="js_search weui-flex__item house" ><i></i><span>房屋</span></a>
+
+    <a :class="market ? 'active' : ''" id="wapxfzb_B01_10"  @click="search('超市' , 20, 'market')" class="js_search weui-flex__item house" ><i></i><span>超市</span></a>
+
+
+</div></div>
+{/block}
+
+{block name="vue_mine_js"}
+
+<script>
+    require(['Vue', 'axios'], function (Vue, axios) {
+        Vue.prototype.$http = axios;
+        new Vue({
+            el: "#app_mhcms",
+            data: {
+                map: {},
+                marker_groups: [] ,
+                objectClass: {
+                    classB: 'class-b',  // classB 的值为class-b, 则将classB的值添加到class列表
+                    classC: false,    // classC值为false,将不添加classC
+                    classD: true    // classD 值为true，classC将被直接添加到class列表
+                },
+                actives : {
+
+                },
+                is_active : true ,
+                bus: false,
+                subway: false,
+                school: false,
+                hospital: false,
+                bank: false,
+                shop: false,
+                house: false,
+                market: false
+            }
+            ,
+            mounted() {
+                var that = this;
+                // 百度地图API功能
+                // 创建Map实例
+                that.map = new BMap.Map("map_container", {enableMapClick: true});
+                // 初始化地图,设置中心点坐标和地图级别
+                that.map.centerAndZoom(new BMap.Point({$lnglat.0}, {$lnglat.1}), 15);
+
+                var marker = new BMap.Marker(new BMap.Point({$lnglat.0}, {$lnglat.1}) , {
+                    offset : new BMap.Size(10,15)
+                });  // 创建标注
+
+                that.map.addOverlay(marker);               // 将标注添加到地图中
+                marker.setAnimation(BMAP_ANIMATION_BOUNCE); //跳动的动画
+            },
+            methods: {
+                add_marker: function (e, en_name) {
+                    var icon = this.create_icon(en_name);
+                    var   i = new BMap.Icon(icon.url, icon.size, {imageSize: icon.imageSize, anchor: icon.anchor});
+                    var overlay = new BMap.Marker(new BMap.Point(e.point.lng, e.point.lat), {icon: i});
+                    this.map.addOverlay(overlay)
+                    return overlay
+                },
+                create_icon: function (en_name) {
+                    var groups = {
+                        bus: "1",
+                        subway: "2",
+                        school: "3",
+                        hospital: "4",
+                        bank: "5",
+                        shop: "6",
+                        house: "7",
+                        market: "8"
+                    }
+                    var a = groups[en_name];
+                    return {
+                        url: api_host + "statics/images/map_icon/" + a + ".png",
+                        size: new BMap.Size(24, 36),
+                        imageSize: new BMap.Size(24, 36),
+                        anchor: new BMap.Size(8, 12)
+                    }
+                },
+                remove_overlay : function (ename) {
+                    console.log("remove " + ename);
+                    var n = this.marker_groups[ename].length;
+                    console.log("remove " + n);
+                    if (void 0 !== this.marker_groups[ename]) {
+                        for (var a = 0;  a < n; a++) {
+                            this.map.removeOverlay(this.marker_groups[ename][a]);
+                        }
+                        this.marker_groups[ename] = [];
+                    } else{
+                        this.marker_groups[ename] = []
+                    }
+                    this.actives[ename] = false;
+                    this[ename] = false;
+                }
+                ,
+                search(name, num , ename) {
+                    console.log(this.actives[ename]);
+                    if(this.actives[ename] == true){
+                       this.remove_overlay(ename);
+                       return false;
+                    }
+                    var myIcon = new BMap.Icon("http://api.map.baidu.com/img/markers.png", new BMap.Size(23, 25), {
+                        offset: new BMap.Size(10, 25), // 指定定位位置
+                        imageOffset: new BMap.Size(0, 0 - 10 * 25) // 设置图片偏移
+                    });
+                    console.log(name);
+                    var that = this;
+                    that.marker_groups[ename] = that.marker_groups[ename] || [];
+                    var myKeys = [name];
+                    let local = new BMap.LocalSearch(that.map, {
+                        onSearchComplete: function (results) {
+                            console.log(results);
+                            results = results[0];
+                            if (local.getStatus() === BMAP_STATUS_SUCCESS) {
+                                for (var s, pois = [], i = 0; i < results.getCurrentNumPois(); i++) {
+                                    var poi = results.getPoi(i);
+                                    poi.address = poi.address ? poi.address : "",
+                                    "subway" === ename && poi.address.indexOf("\u7ebf") < 0 || pois.push(poi)
+                                }
+                                results._pois = pois;
+                                var poi_nums = results._pois.length;
+                                if (poi_nums > 0) {
+                                    for (var m = 0; m < poi_nums && m < num; m++) {
+                                        var marker = that.add_marker(s = results.getPoi(m), ename);
+                                        that.marker_groups[ename].push(marker)
+                                    }
+                                    that.actives[ename] = true;
+                                    that[ename]= true;
+                                    console.log( that.actives);
+                                } else {
+                                    console.log("\u5f53\u524d\u533a\u57df\u6682\u65e0" + "\u4fe1\u606f");
+                                    that[ename] = false;
+                                }
+                            } else {
+                                console.log("\u5f53\u524d\u533a\u57df\u6682\u65e0"+ "\u4fe1\u606f");
+                                that[ename] = false;
+                            }
+                        }
+                    });
+
+
+                    local.searchInBounds(myKeys, that.map.getBounds());
+                }
+            }
+        })
+        ;
+    });
+</script>
+{/block}

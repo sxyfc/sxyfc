@@ -1,0 +1,38 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+
+<div class="new_better_row row" style="    overflow: hidden;">
+    <div class="col-xs-12 new-better-user-menu" style="padding: 0;">
+
+        <form class="layui-form" action="" method="post" target="mhcms">
+            <div class="weui-cell"></div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">提款金额</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" type="number"  name="data[amount]"  required  lay-verify="required" pattern="[0-9]*" placeholder="请输入提款金额">
+                </div>
+            </div>
+
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">真实姓名</label></div>
+
+                <div class="weui-cell__bd">
+                    <input type="text" value=""  class="weui-input"  lay-verify="required" placeholder="请输入您的微信银行卡绑定姓名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="weui-cell"></div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{/block}

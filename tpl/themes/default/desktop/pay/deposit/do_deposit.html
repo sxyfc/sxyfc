@@ -1,0 +1,136 @@
+{extend name="$front_base_layout" /}
+
+{block name="main"}
+
+<div class="larry-fluid larry-wrapper">
+    <div class="layui-row lay-col-space20">
+        <div class="layui-cos-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
+            <section class="larry-body animated fadeInRightBig">
+                <div class="larry-body-header">
+                    <span class="tit">在线充值</span>
+                </div>
+                <div class="larry-body-content clearfix">
+                    <form class="layui-form" target="mhcms" action="" method="post">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">充值金额</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="data[amount]"  autocomplete="off" class="layui-input" value="" placeholder="请输入一个金额">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">手机号码</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="data[mobile]"  autocomplete="off" class="layui-input" placeholder="输入手机号码">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">支付方式</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="data[gateway]" value="micropay" title="微信支付" checked="">
+                                <input type="radio" name="data[gateway]" value="alipay" disabled title="支付宝">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">充值备注</label>
+                            <div class="layui-input-block">
+                                <textarea placeholder="" name="data[note]" value="" class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+
+                        {:token()}
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit="" lay-filter="demo1">立刻充值</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!-- 微信环境 -->
+<script type="text/javascript">
+    layui.use('form', function(){
+        var form = layui.form;
+
+        //各种基于事件的操作，下面会有进一步介绍
+    });
+</script>
+{if is_weixin()}
+<script type="text/javascript">
+function do_deposit() {
+    var amount = parseFloat( $("#amount").val());
+    {if !$user}
+    return layer.msg('清登录在进行操作！');
+    {else}
+    var user_balance = {$user['balance']};
+    if(user_balance >= amount){
+        console.log("do upgrade!");
+        do_upgrade();
+    }else{
+        check_balance(amount);
+        do_depo();
+    }
+    {/if}
+
+
+
+    }
+
+    //deposit
+    function do_depo() {
+        //$("#depo").submit();
+        var amount = parseFloat($("#amount").html());
+        var user_balance = {$user['balance']};
+
+        var need_depo_amount = (amount*100 -user_balance*100) / 100;
+
+        var url = "{:nb_url(['r'=>'pay.deposit.do_deposit'])}";
+        $.getJSON(url , {
+            gateway : "micropay" , amount : need_depo_amount , api : 1
+        } ,function (data) {
+            var index = layer.load(2, {time: 10*1000});
+            jsApiCall(data);
+        });
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    //调用微信JS api 支付
+    function jsApiCall($jsApiParameters)
+    {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            $jsApiParameters,
+            function(res){
+                WeixinJSBridge.log(res.err_msg);
+                if(res.err_msg == "get_brand_wcpay_request:ok"){
+                    layer.msg("支付成功！");
+
+                }else{
+                    alert("您取消了支付！");
+                }
+            }
+        );
+    }
+
+    function callpay()
+    {
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        }else{
+            jsApiCall();
+        }
+    }
+</script>
+{/if}
+{/block}

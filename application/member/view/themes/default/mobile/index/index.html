@@ -1,0 +1,125 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+
+<link href="{$cdn_url}static/css/market.css" rel="stylesheet"/>
+<link href="//at.alicdn.com/t/font_wxntx8z595ghkt9.css" rel="stylesheet"/>
+
+<div class="new_better_row row">
+<div class="member-top new-better-member">
+    <div class="member-info">
+        <div class="avatar-wrap" style="margin-top: -12px">
+            <img class="weui-media-box__thumb" src="{$user.avatar}" alt="" style="height: 98px;width: 98px;">
+        </div>
+        <div class="info-right">
+            <div style="text-indent: 1em;font-size: 18px" class="text-left"> {$user.nickname ? $user.nickname : $user.user_name}
+                {if $user['mobile_verify']} <span class="iconfont icon-renzheng97" style="    font-size: 28px;" aria-hidden="true"></span> {/if}
+            </div>
+            <p style="    color: #e6e6e6; padding: 10px;text-align: left;text-indent: 3em;}" > 注册时间：{$user.created}</p>
+        </div>
+    </div>
+</div>
+</div>
+
+
+<div class="new_better_row row" style="    overflow: hidden;height: 46px;">
+    <div class="col-xs-12 new-better-user-menu" style="padding: 0;">
+
+        <div class="weui-navbar">
+            <a href="{:nb_url(['r'=>'member/fund/index'])}"  class="weui-navbar__item text-success">
+                <span class="iconfont icon-qianbao" aria-hidden="true"></span> 我的钱包
+            </a>
+            <a href="{:nb_url(['r'=>'member/favourite/index'])}" class="weui-navbar__item  text-success">
+                <span class="iconfont icon-shoucang-shoucang" aria-hidden="true"></span>  收藏夹
+            </a>
+        </div>
+
+    </div>
+</div>
+
+
+    <div class="new_better_row row">
+        <div class="col-xs-12 new-better-user-menu">
+            <a class="user-menu-item" href="{:nb_url(['r'=>'market/user_product/on_sell'])}">
+                <span class="iconfont  icon-chushou" aria-hidden="true"></span> 出售中的宝贝
+
+                <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+            </a>
+
+            <a class="user-menu-item" href="{:nb_url(['r'=>'market/buyer/bought'])}">
+                <span class="iconfont icon-201" aria-hidden="true"></span> 已买到的宝贝
+
+                <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+            </a>
+
+            <a class="user-menu-item" href="{:nb_url(['r'=>'market/seller/sold'])}">
+                <span class="iconfont icon-icon6" aria-hidden="true"></span> 已卖出的宝贝
+
+                <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+            </a>
+
+            <a class="user-menu-item" href="{:nb_url(['r'=>'market/seller/sold'])}">
+                <span class="iconfont icon-icon6" aria-hidden="true"></span> 服务条款
+
+                <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+            </a>
+
+        </div>
+    </div>
+
+
+    <div class="new_better_row row">
+        <div class="col-xs-12 new-better-user-menu">
+            <a class="user-menu-item">  <span class="iconfont icon-bangzhu" aria-hidden="true"></span>
+                常见问题
+
+                <span class="glyphicon glyphicon-menu-right pull-right" aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+{/block}
+{block name="footer"}
+
+<link href="//at.alicdn.com/t/font_rzzlte12r31munmi.css" rel="stylesheet"/>
+
+<nav class="new-better-footer">
+
+    <div   class="col-xs-3 menu-item" style="width: 20%">
+        <a href="//www.yghyhome.com" >
+            <span class="glyphicon iconfont icon-shouyeshouye" aria-hidden="true"></span>
+            首页
+        </a>
+    </div>
+    <div   class="col-xs-3 menu-item" style="width: 20%">
+        <a href="{:nb_url(['r'=>'market/index/index'])}" >
+            <span class="glyphicon iconfont icon-shichang2" aria-hidden="true"></span>
+            集市
+        </a>
+    </div>
+
+    <div   class="col-xs-3 menu-item" style="width: 20%">
+        <a href="{:nb_url(['r'=>'search/index/index' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon iconfont icon-search" aria-hidden="true"></span>
+            搜索
+        </a>
+    </div>
+
+
+    <div   class="col-xs-3 menu-item" style="width: 20%">
+        <a href="{:nb_url(['r'=>'market/user_content/publish' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+
+            发布
+        </a>
+    </div>
+    <div   class="col-xs-3 menu-item" style="width: 20%">
+
+        <a href="{:nb_url(['r'=>'member/index/index' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 会员
+        </a>
+    </div>
+</nav>
+{/block}

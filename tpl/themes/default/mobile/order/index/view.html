@@ -1,0 +1,177 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}{/block}
+{block name="bulma_css"}{/block}
+{block name="semantic_css"}{/block}
+{block name="layui_css"}{/block}
+{block name="layui_js"}{/block}
+{block name="jquery"}{/block}
+{block name="baidu_map"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="mhcms_module_css"}{/block}
+{block name="mhcms_module_js"}{/block}
+
+{block name="vue_js"}{/block}
+{block name="main"}
+<div class="weui-msg" id="pay_app">
+    <div class="weui-msg__icon-area"><i class="weui-icon-success weui-icon_msg"></i></div>
+    <div class="weui-msg__text-area">
+        <h2 class="weui-msg__title">下单成功</h2>
+        <p class="weui-msg__desc">您需要支付的总金额<a href="javascript:void(0);">{$order['total_fee']} 元</a></p>
+    </div>
+    <div class="weui-msg__opr-area">
+        <p class="weui-btn-area">
+            <a   class="weui-btn weui-btn_primary" @click="navigateToPay">立刻支付</a>
+            <a href="/member/wallet" class="weui-btn weui-btn_default">返回钱包</a>
+            <a href="javascript:window.location.reload();" class="weui-btn weui-btn_default">刷新</a>
+        </p>
+    </div>
+    <div class="weui-msg__extra-area">
+        <div class="weui-footer">
+            <p class="weui-footer__links">
+                <a href="javascript:void(0);" class="weui-footer__link"></a>
+            </p>
+            <p class="weui-footer__text">Copyright © 2008-2016 </p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    require(['layui' , 'Vue','jquery' , 'wx'] , function (layui , Vue , $ , wx) {
+
+
+        new Vue({
+            el : "#pay_app",
+            data : {
+                isMiniProgram:false,
+            },
+            created(){
+                const _this = this;
+                this.checkIsFromMiniProgram(function(res){
+                    _this.isMiniProgram = res;
+                })
+            },
+            methods: {
+                //判断来源是否是小程序
+                checkIsFromMiniProgram: function(callback) {
+                    wx.miniProgram.getEnv(function(res) {
+                        console.log("minprogram:" + res.miniprogram); // true
+                        //  alert(JSON.stringify(res));
+                        if (res.miniprogram === true) {
+                            callback && callback(true);
+                            //     alert('isMiniprogram:' + res.miniprogram);
+                        } else {
+                            callback && callback(false);
+                            //    alert("========公众号");
+                        }
+                    });
+                },
+                //跳转到小程序
+                navigateToMiniProgram: function(payParam) {
+                    const url =
+                        "/pages/wxpay/main?payParam=" + encodeURIComponent(payParam);
+                    //alert('url:' + url);
+                    wx.miniProgram.navigateTo({
+                        url: url
+                    });
+                },
+                //小程序和公众号跳转不同页面
+                navigateToPay: function() {
+                    var that = this;
+                    if (this.isMiniProgram === true) {
+                        let    payParam = {};
+                        payParam.order_id= "{$order.id}";
+                        this.navigateToMiniProgram(JSON.stringify(payParam));
+                    } else {
+                        //原先支付逻辑不用修改;
+                        //todo get pay parmas
+
+                        var api_url = "{:url('wechat/api/get_pay_params')}";
+                        $.get(api_url , {
+                            site_id : {$_W['site']['id']},
+                            query : {
+
+                                order_id :  "{$order.id}"
+                            }
+                        } , function (resp) {
+                            //alert(JSON.stringify(resp));
+                            if(resp.code===1){
+                                if(resp.data.return_code == "FAIL"){
+                                    alert(resp.data.return_msg);
+                                    return;
+                                }
+                                if (typeof WeixinJSBridge === "undefined"){
+                                    if( document.addEventListener ){
+                                        document.addEventListener('WeixinJSBridgeReady', that.jsApiCall(resp.data), false);
+                                    }else if (document.attachEvent){
+                                        document.attachEvent('WeixinJSBridgeReady', that.jsApiCall(resp.data));
+                                        document.attachEvent('onWeixinJSBridgeReady', that.jsApiCall(resp.data));
+                                    }
+                                }else{
+                                    that.jsApiCall(resp.data);
+                                }
+                            }else{
+                                alert(resp.data.err_code_des);
+                            }
+                        } , 'json');
+
+                    }
+                },
+                jsApiCall : function (params) {
+                    WeixinJSBridge.invoke(
+                        'getBrandWCPayRequest',params,
+                        function(res){
+                            WeixinJSBridge.log(res.err_msg);
+                            layui.use(['layer'] , function () {
+
+                                if(res.err_msg == "get_brand_wcpay_request:ok"){
+                                    layer.msg("支付成功！");
+                                }else{
+
+                                        var layer = layui.layer;
+                                    layer.msg(  "您取消了支付！");
+                                }
+
+                            });
+                        }
+                    );
+                }
+            }
+        });
+    });
+</script>
+
+
+
+{if false}
+<script type="text/javascript">
+    //调用微信JS api 支付
+    function jsApiCall(params)
+    {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',params,
+            function(res){
+                WeixinJSBridge.log(res.err_msg);
+                if(res.err_msg == "get_brand_wcpay_request:ok"){
+                    layer.msg("支付成功！");
+                }else{
+                    layer.msg(  "您取消了支付！");
+                }
+            }
+        );
+    }
+
+    function call_pay()
+    {
+        if (typeof WeixinJSBridge === "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        }else{
+            jsApiCall();
+        }
+    }
+</script>
+{/if}
+{/block}

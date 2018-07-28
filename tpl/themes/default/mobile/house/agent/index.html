@@ -1,0 +1,47 @@
+{extend name="$front_base_layout" /}
+{block name="jquery"}{/block}
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="baidu_map"}{/block}
+{block name="content_header"}{/block}
+{block name="mhcms_module_js"}{/block}
+{block name="semantic_css"}{/block}
+{block name="main"}
+        <div class="ui top attached mhcms-panel">
+            <div class="ui  mhcms-panel-header" style="display: none">
+                <i class="{$cate['icon']}"></i>
+                {$cate['cate_name']}
+            </div>
+            <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+                <div class="ui mhcms-list unstackable items">
+                    {foreach $lists as $item}
+                    <?php
+                    $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
+                    $url = $_item['avatar']['0']['url'];
+                    $api_imag = url('attachment/image/view_thumb' , ['file_id'=>$_item['avatar']['0']['file_id']]);
+                    ?>
+                    <a href="{:url('house/agent/detail' , 'user_id='.$item['user_id'])}" class="ui item mhcms-list-item ">
+                        {if $url}
+                        <div class="ui image img-wrap">
+                            <img src="{$api_imag}" />
+                        </div>
+                        {/if}
+                        <div class="content">
+                            <div class="header mhcms-item-header">{$item.person_name}</div>
+                            <div class="meta">
+                                {$item.description}
+                            </div>
+                            <div class="extra"></div>
+                        </div>
+                    </a>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+
+{/block}
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}

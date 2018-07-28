@@ -1,0 +1,54 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+
+<link href="{$cdn_url}static/css/market.css" rel="stylesheet"/>
+<link href="//at.alicdn.com/t/font_wxntx8z595ghkt9.css" rel="stylesheet"/>
+
+<div class="new_better_row row">
+    <div class="member-top new-better-member">
+        <div class="member-info">
+            <div class="avatar-wrap" style="margin-top: -12px">
+                <img class="weui-media-box__thumb" src="{$user.avatar}" alt="" style="height: 98px;width: 98px;">
+            </div>
+            <div class="info-right">
+                <div style="text-indent: 1em;font-size: 25px" class="text-left">账号余额：{$user.balance}
+                    {if $user['mobile_verify']} <span class="iconfont icon-renzheng97" style="    font-size: 28px;" aria-hidden="true"></span> {/if}
+                </div>
+                <p style="    color: #e6e6e6;
+    padding: 10px;
+    text-align: left;
+    text-indent: 3em;
+}" >
+                    <a style="color:#FFF">财务明细</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="new_better_row row" style="    overflow: hidden;">
+    <div class="col-xs-12 new-better-user-menu" style="padding: 0;">
+
+
+
+<div class="weui-grids">
+    <a href="javascript:;" class="weui-grid">
+        <p class="weui-grid__label">待确认</p>
+    </a>
+    <a href="javascript:;" class="weui-grid">
+        <p class="weui-grid__label">提现中</p>
+    </a>
+    <a href="javascript:;" class="weui-grid">
+        <p class="weui-grid__label">已提现</p>
+    </a>
+</div>
+    </div>
+</div>
+
+<a href="{:nb_url(['r'=>'member/fund/wx_draw'])}" class="weui-btn weui-btn_primary">申请提现</a>
+{/block}

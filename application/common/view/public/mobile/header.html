@@ -1,0 +1,19 @@
+<?php
+if (ROUTE_C == "index" && ROUTE_A == "index" && module_exist('sites')  ) {
+    $target = nb_url(['r' => 'o2o.index.change']);
+} else {
+    $target = url(ROUTE_M . "/index/index");
+}
+?>
+
+<div class="mh_header columns is-mobile is-marginless">
+    <a class="back column is-narrow is-paddingless" href="/sites/site/change?m={:ROUTE_M}">
+        <span style="padding: 0px 0px 0 15px">{$_W['site']['site_name']}</span>
+        <i class="angle down iconfont icon-down"></i>
+    </a>
+    <span class="column is-paddingless" id="ipageTitle" style="font-size: 15px">{$_W['module_config']['system_name']|default=$_W['global_config']['system_name']}</span>
+    <span class=" column is-paddingless is-narrow">
+        <i class="type list iconfont icon-fenlei" id="nav_ico" onclick="show_sidebar()"></i>
+    </span>
+</div>
+

@@ -1,0 +1,54 @@
+<div class="column is-6" id="module_house">
+    <div class="card">
+        <header class="card-header">
+            <div class="card-header-title">
+                <div class="buttons has-addons">
+                    <a class="button" target="_blank" href="/{$module.module}">房产首页</a>
+                    <a class="button" target="_blank" href="/house/agent_user/index"> 经纪人</a>
+                    <a class="button" target="_blank" href="/house/employee_user/index">员工入口 </a>
+                    <a class="button" target="_blank" href="/house/dev_user/index"> 开发商入口</a>
+
+                    <a class="button" target="_blank" href="/{$module.module}/user/index"> 会员入口</a>
+                </div>
+            </div>
+            <a href="#" class="card-header-icon" aria-label="more options">
+              <span class="icon">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </a>
+        </header>
+        <div class="card-content">
+            <section class="info-tiles">
+                <div class="tile is-ancestor has-text-centered">
+                    <div class="tile is-parent">
+                        <article class="tile is-child box is-radiusless">
+                            <p class="title"><?php echo set_model("house_esf")->where(['site_id' => $_W['site']['id']])->count(); ?></p>
+                            <p class="subtitle">二手房</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child box  is-radiusless">
+                            <p class="title"><?php echo set_model("house_rent")->where(['site_id' => $_W['site']['id']])->count(); ?></p>
+                            <p class="subtitle">出租房</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child box is-radiusless">
+                            <p class="title"><?php echo set_model("house_appointment")->where(['site_id' => $_W['site']['id']])->count(); ?></p>
+                            <p class="subtitle">客户数量</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child box  is-radiusless">
+                            <p class="title">
+                                <?php echo set_model("house_esf")->where(['site_id' => $_W['site']['id'] ,'status' => 1])->count(); ?>
+                                / <?php echo set_model("house_rent")->where(['site_id' => $_W['site']['id'] ,'status' => 1])->count(); ?>
+                            </p>
+                            <p class="subtitle">待审出租/出售</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

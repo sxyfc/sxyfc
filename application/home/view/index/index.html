@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>欢迎使用鸣鹤CMS</title>
+    <meta name="keywords" content=""/>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="Generator" content="mhcms"/>
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport"/>
+
+
+    <style>
+        body {
+            background: #F7F7F7;
+        }
+
+        a {
+            text-decoration: none;
+            color: #006600 !important
+        }
+
+        .main {
+            max-width: 768px;
+            margin: 150px auto;
+        }
+
+        .header {
+            line-height: 80px;
+            text-align: center;
+            text-shadow: 1px 1px #ccc;
+        }
+
+        #logo {
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            vertical-align: bottom;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .nav {
+            overflow: hidden;
+            clear: both;
+        }
+
+        .nav .item {
+            float: left;
+            width: 24.8%;
+            margin-top: 50px;
+            text-align: center;
+            text-shadow: 1px 1px #ccc;
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="main">
+    <h1 class="header"><img id="logo" src="/statics/images/logo.png"> 欢迎使用鸣鹤CMS</h1>
+
+    <div class="nav">
+        <div class="item"><a href="http://www.mhcms.net">官方网站</a></div>
+        <div class="item"><a href="http://doc.bao8.org">说明文档</a></div>
+        <div class="item"><a href="http://www.mhcms.net/">在线体验</a></div>
+        <div class="item"><a href="http://www.mhcms.net/">授权查询</a></div>
+    </div>
+    <div class="nav">
+        <div class="item" style="width: 100%"><a>QQ群:496729831</div>
+    </div>
+
+    <div class="nav">
+        {foreach $modules as $module}
+        <div class="item" style="float: left;line-height: 30px"><a href="{:url($module.web_route)}">{$module.module_name}</a>
+        </div>
+        {/foreach}
+    </div>
+
+</div>
+</body>
+</html>

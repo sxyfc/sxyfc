@@ -1,0 +1,16 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<div class="tableBox">
+    <table class="layui-table table-bordered" style="">
+        <tr>
+            <th>排序</th>
+            <th>编号</th>
+            <th>菜单名称</th>
+            <th>菜单类型</th>
+            <th>是否导航</th>
+            <th>操作</th>
+        </tr>
+        {$tree_data}
+    </table>
+</div>
+{/block}

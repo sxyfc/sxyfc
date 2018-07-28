@@ -1,0 +1,48 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form action="" method="post" target="zbn_cms">
+<div class="remote-qiniu" >
+<div class="alert alert-info">
+    启用七牛云存储后，请把/attachment目录（不包括此目录）下的子文件及子目录上传至七牛云存储, 相关工具：<br>
+    <ul class="link-list">
+        <li><a target="_blank" href="https://portal.qiniu.com/signin" class="product-grey-font" >七牛云存储</a></li>
+    </ul>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">Accesskey</label>
+    <div class="col-sm-9">
+        <input type="text" name="qiniu[accesskey]" class="layui-input" value="{$remote['qiniu']['accesskey']}" placeholder="" />
+        <span class="help-block">用于签名的公钥</span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">Secretkey</label>
+    <div class="col-sm-9">
+        <input type="text" name="qiniu[secretkey]" class="form-control encrypt" value="{$remote['qiniu']['secretkey']}" placeholder="" />
+        <span class="help-block">用于签名的私钥</span>
+    </div>
+</div>
+<div class="form-group" id="qiniubucket">
+    <label class="col-sm-2 control-label">Bucket</label>
+    <div class="col-sm-9">
+        <input type="text" name="qiniu[bucket]" class="layui-input" value="{$remote['qiniu']['bucket']}" placeholder="" />
+        <span class="help-block">请保证bucket为可公共读取的</span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">Url</label>
+    <div class="col-sm-9">
+        <input type="text" name="qiniu[url]" class="layui-input" value="{$remote['qiniu']['url']}" placeholder="" />
+        <span class="help-block">七牛支持用户自定义访问域名。注：url开头加http://或https://结尾不加 ‘/’例：http://abc.com</span>
+    </div>
+</div>
+<div class="form-group">
+    <div class="">
+        <button name="submit" class="layui-btn" value="submit">保存配置</button>
+        <button name="button" type="button" class="btn btn-info js-checkremoteqiniu" value="check">测试配置（无需保存）</button>
+        <input type="hidden" name="token" value="{$_W['token']}" />
+    </div>
+</div>
+</div>
+</form>
+{/block}

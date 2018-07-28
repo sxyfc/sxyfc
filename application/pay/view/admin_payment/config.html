@@ -1,0 +1,109 @@
+<form id="cate_action" class="form-inline" target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="tableBox">
+        <table class="layui-table" style="" id="jq_action_list">
+            <tr>
+                <td>
+                    <label>main config name</label>
+                </td>
+                <td class="left-td">
+                    {$payment.name}
+                </td>
+
+                <td> main config description</td>
+                <td>{$payment.desc}</td>
+            </tr>
+
+            <tr>
+                <td>{:zlang('config,key')}</td>
+                <td>{:zlang('config,value')}</td>
+                <td>{:zlang('config,description')}</td>
+                <td>{:zlang('operation')}</td>
+            </tr>
+            {foreach name="detail.config" item="vo" key="k"}
+            <tr id="property_{$k}">
+                <td class="left-td">
+                    <input type="text" value="{$k}" name="keys[]" class="keys layui-input form-control"  readonly />
+                </td>
+                <td>
+                    <label><input type="text" class="layui-input form-control value" name="datas[{$k}][value]" value="{$vo.value}"/></label>
+                </td>
+                <td>
+                    <label><textarea  type="text" class="layui-input form-control tips" name="datas[{$k}][tips]">{$vo.tips}</textarea></label>
+                </td>
+                <td>
+                    <a class="layui-btn layui-btn-sm btn-danger" onclick="delete_tr(this);">delete</a>
+                </td>
+            </tr>
+            {/foreach}
+
+        </table>
+        <div>
+            <table class="layui-table">
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" class="layui-btn"/>
+                        <input type="button" class="layui-btn" value="{:zlang('add,config,option')}"  id="jq_action_add"/>
+
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    layui.use(['layer'] , function () {
+        var $ = layui.$;
+
+        $(document).ready(function () {
+            //bint_events();
+            var action_num = 0;
+            $("#jq_action_add").click(function () {
+                html = '<tr> \
+            <td class="left-td"><input type="text" value="" class="keys form-control" required name="keys[]" /></td> \
+            <td><label><input type="text" class="form-control value" name="" required value=""/></label></td> \
+            <td><label><input type="text" class="form-control tips" name="" required value=""/></label></td> \
+            <td><a class="btn btn-danger" onclick="delete_tr(this);">delete</a> 如作为核心配置的，添加完成以后只能修改无法移除</td> \
+            </tr>'
+                $("#jq_action_list").append(html);
+            });
+        });
+
+        $(document).on("blur", ".keys", function (e) {
+            var self = $(this);
+
+            self.parents('tr').attr('class',"property_" + self.val());
+            self.parents('tr').find('.value').attr('name',"datas["+self.val()+"][value]");
+            self.parents('tr').find('.tips').attr('name',"datas["+self.val()+"][tips]");
+
+
+            //check if here already exist property
+            console.log($(".property_"+self.val()).length);
+            if($(".property_"+self.val()).length > 1){
+                layer.msg('duplicate property',{shade:1},function(){
+                    self.focus();
+                    self.val("");
+                });
+                return false;
+            }else{
+//change name of the form control
+                console.log(self.parents('tr').length);
+
+            }
+        });
+    });
+
+
+    //key name bindings
+
+
+    function delete_tr(obj) {
+        layui.use(['layer'], function () {
+            var $ = layui.$;
+            $(obj).parents('tr').remove();
+        });
+    }
+
+
+</script>
+

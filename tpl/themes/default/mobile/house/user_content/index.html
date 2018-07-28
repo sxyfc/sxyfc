@@ -1,0 +1,63 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+{/block}
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+
+{block name="main"}
+
+<div class="ui two column stackable grid container" style="margin: 0">
+    <div class="ui twelve wide  column stackable  mhcms_mobile_column" >
+
+        <div class="ui top attached mhcms-panel">
+            <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+                <ul class="ui mhcms-list unstackable items">
+                    {foreach $lists  as $item}
+
+                    <?php
+                    $_item = \app\common\model\Models::get_item($item['id'] , 'house_info');
+                    $thumb = $_item['thumb'][0]['url'];
+                    ?>
+
+                    <article class="media" href="{:url('house/loupan/detail' , ['id'=>$item['id'] ])}">
+                        {if $thumb}
+                        <figure class="media-left" style="overflow: hidden;margin: 0 1em 0 0; ">
+                            <p class="image is-64x64">
+                                <img src="{$thumb}">
+                            </p>
+                        </figure>
+                        {/if}
+                        <div class="media-content">
+                            <div class="content">
+                                <p>
+                                    <strong>{$_item.title}</strong>
+                                    <br>
+                                    {$_item.content}
+                                </p>
+                            </div>
+                            <nav class="level is-mobile">
+                                <div class="level-left">
+                                    <a class="level-item">
+                                        <span class="icon  "><i class="icon edit"></i> </span>
+                                    </a>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="media-right">
+                            <button class="delete"></button>
+                        </div>
+                    </article>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}
+{block name="copyright"}
+{/block}

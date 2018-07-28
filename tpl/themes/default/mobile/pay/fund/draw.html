@@ -1,0 +1,55 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+{/block}
+{block name="main"}
+{/block}
+
+{extend name="$front_member_layout" /}
+
+{block name="main"}
+<form  action="" method="post" target="mhcms">
+
+    <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__hd">余额提现：余额提现暂时仅支持微信</div>
+        <div class="weui-panel__bd">
+
+
+
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">提款金额</label></div>
+                    <div class="weui-cell__bd">
+                        <input class="weui-input" type="number"  name="data[amount]"  required  lay-verify="required"  min="0.0" step="0.01" placeholder="请输入提款金额">
+                    </div>
+                </div>
+
+                <div class="weui-cell">
+                    <div class="weui-cell__hd"><label class="weui-label">真实姓名</label></div>
+
+                    <div class="weui-cell__bd">
+                        <input type="text" value=""  class="weui-input"  lay-verify="required" placeholder="请输入您的微信银行卡绑定姓名" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+
+
+        </div>
+    </div>
+
+
+
+    <div class="weui-btn-area">
+        <button class="weui-btn weui-btn_primary" href="javascript:" lay-submit lay-filter="formSubmit">确定</button>
+    </div>
+
+</form>
+{/block}
+{block name="footer"}
+<div class="weui-tabbar" style="    z-index: 99999;position: fixed;box-shadow: 0px 7px 14px 5px #c0bfc4;">
+    <a href="/" class="weui-tabbar__item " >
+        <span style="display: inline-block;position: relative;">
+            <i class="weui-tabbar__icon"><i class="iconfont icon-shouye"></i></i>
+        </span>
+        <div class="weui-tabbar__label">返回首页</div>
+    </a>
+</div>
+{/block}

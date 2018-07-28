@@ -1,0 +1,63 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+{/block}
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+<div class="ui two column stackable grid container" style="margin: 0">
+    <div class="ui twelve wide  column stackable  mhcms_mobile_column" >
+
+        <div class="ui top attached mhcms-panel">
+            <div class="ui  mhcms-panel-header" ><i class="{$cate['icon']}"></i>我的看房预约</div>
+            <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+
+
+    <ul class="ui mhcms-list unstackable items">
+{foreach $appointments as $appointment}
+
+    {if $appointment['kft_id']}
+        <?php
+        $kft = \app\common\model\Models::get_item($appointment['kft_id'] , 'house_kft');
+
+        $thumb = $kft['thumb'][0]['url'];
+        ?>
+
+        <div class="ui item mhcms-list-item ">
+            {if $thumb}<a  class=" image tiny ui" > <img src="{$thumb}"  >
+                <span class="mhcms-img-cover">看房团</span>
+            </a>{/if}
+            <div class="content">
+                <a class="header mhcms-item-header" href1="{:url('house/loupan/detail' , ['id'=>$item['id'] ])}">{$kft.title}</a>
+                <div class="meta">
+                    {$appointment.note}
+                    <p>
+                       约定时间: {$appointment.kanfang_date}
+                    </p>
+                </div>
+                <div class="extra">
+                    {$appointment.status}
+                </div>
+            </div>
+
+        </div>
+
+    {else}
+
+
+
+    {/if}
+{/foreach}
+    </ul>
+</div>
+        </div>
+    </div>
+</div>
+{/block}
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}
+{block name="copyright"}{/block}

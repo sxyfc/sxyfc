@@ -1,0 +1,97 @@
+{extend name="admin@public/content_frame" /}
+{block name="breadcrumb"}{/block}
+{block name="sub-menu-top"}{/block}
+{block name="mhcms-header"}{/block}
+{block name="main"}
+
+<script src="/statics/plugins/ztree/js/jquery.ztree.all.min.js"></script>
+<link rel="stylesheet" href="/statics/plugins/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+
+<SCRIPT type="text/javascript">
+    <!--
+    var setting = {
+        radio: {
+            enable: true
+        },
+        key : {
+            name : 'cate_name',
+            title: "cate_name"
+        } ,
+        data: {
+            simpleData: {
+                idKey : "user_menu_id" ,
+                pIdKey: "user_menu_parentid",
+                enable: false
+            }
+        },
+        callback: {
+            onCheck: onCheck
+        }
+    };
+
+    function onCheck(e, treeId, treeNode) {
+        console.log(treeNode);
+        var treeObj=$.fn.zTree.getZTreeObj("treeDemo"),
+            nodes=treeObj.getCheckedNodes(true),
+            v="";
+        for(var i=0;i<nodes.length;i++){
+            v+=nodes[i].user_menu_id + ",";
+        }
+        var url = "{:\think\\Request::instance()->url()}";
+        $.post(url , {
+            menu_ids : v
+        } , function (data) {
+            layer.msg(data.msg);
+        });
+    }
+
+    var zNodes = {:json_encode($cates)};
+
+    $(document).ready(function(){
+        $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+    });
+    //-->
+</SCRIPT>
+
+<div class=""  style="    height: 100%;
+    float: left;
+    width: 200px;
+    border-right: solid 3px #46abe6;">
+    <div class=""><div class="zTreeDemoBackground left">
+        <ul id="treeDemo" class="ztree"></ul>
+    </div>
+
+</div>
+</div>
+
+
+<div class="sub_frame" id="sub_frame_wrap" style="margin-left: 200px;">
+    <iframe class="larry-iframe" style="border: none;width: 100%;" data-id='0' name="sub_frame" id='sub_frame'  src="{:nb_url(['r'=>'admin.index.main'])}"></iframe>
+
+</div>
+
+<script>
+    //注意：导航 依赖 element 模块，否则无法进行功能性操作
+
+</script>
+<script>
+
+
+    $(document).ready(function () {
+        function change_frame_height() {
+            var parent_h = $(document).height();
+            $("#sub_frame").height(parent_h -10);
+        }
+
+        change_frame_height();
+
+        layui.use( ['element'], function(){
+            var element = layui.element;
+
+            //…
+        });
+    });
+
+
+</script>
+{/block}

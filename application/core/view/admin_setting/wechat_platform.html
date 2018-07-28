@@ -1,0 +1,83 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+
+<form class="layui-form" action="" target="zbn_cms" method="post">
+
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否开启开放平台</label>
+        <div class="layui-input-block">
+            <input type="radio" name="data[enable]" value="1" title="关闭" {if !isset($config.enable) || $config.enable=="1"} checked {/if}>
+            <input type="radio" name="data[enable]" value="2" title="开启" {if isset($config.enable) && $config.enable=="2"} checked {/if}>
+        </div>
+    </div>
+
+
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">Appid</label>
+        <div class="layui-input-block">
+            <input name="data[app_id]" placeholder="在微信开放平台注册且审核通过后可以获取到AppId" class="layui-input" value="{$config.app_id|default=""}" />
+        </div>
+    </div>
+
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">AppSecret</label>
+        <div class="layui-input-block">
+            <input name="data[app_secret]" placeholder="在微信开放平台注册且审核通过后可以获取到AppSecret" class="layui-input" value="{$config.app_secret|default=""}" />
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">公众号消息加解密Key</label>
+        <div class="layui-input-block">
+            <input type="text" name="data[encodingaeskey]" value="{$config.encodingaeskey|default=""}" placeholder="公众号消息加解密Key" autocomplete="off" class="layui-input">
+            与公众平台接入设置值一致，必须为英文或者数字，长度为43个字符. 请妥善保管, EncodingAESKey 泄露将可能被窃取或篡改平台的操作数据.
+        </div>
+
+
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">公众号消息校验Token</label>
+        <div class="layui-input-block">
+            <input type="text" name="data[token]" value="{$config.token|default=""}" placeholder="系统名字" autocomplete="off" class="layui-input">
+            与公众平台接入设置值一致，必须为英文或者数字，长度为3到32个字符. 请妥善保管, Token 泄露将可能被窃取或篡改平台的操作数据.
+        </div>
+
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">开放平台回掉域名</label>
+        <div class="layui-input-block">
+            <input type="text" name="data[redirect_uri]" value="{$config.redirect_uri|default=""}" placeholder="开放平台回掉域名" autocomplete="off" class="layui-input">
+        </div>
+
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+        });
+    });
+</script>
+{/block}

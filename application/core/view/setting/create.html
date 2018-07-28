@@ -1,0 +1,101 @@
+<form id="cate_action" class="form-inline" target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="tableBox">
+        <table class="layui-table" style="">
+            <tr>
+                <td>
+                    <label>main config name</label>
+                </td>
+                <td class="left-td">
+                    <input type="text" class="layui-input" name="config_name" required value=""/>
+                </td>
+
+                <td> main config description</td>
+                <td><textarea type="text" class="layui-input" name="config_description" required value=""></textarea></td>
+            </tr>
+<tbody id="jq_action_list"></tbody>
+            <tr>
+                <td>{:zlang('config,key')}</td>
+                <td>{:zlang('config,value')}</td>
+                <td>{:zlang('config,description')}</td>
+                <td>{:zlang('operation')}</td>
+            </tr>
+            <tr>
+                <td>是否作为全局配置</td>
+                <td colspan="3">
+                    <label><input type="radio" name="is_global"  value="1"> 是</label>
+                    <label><input type="radio" name="is_global" checked value="0"> 否</label><br />
+                    <span class="text-info">全局配置是所有分站和主网站任意地方都可以调用 ， 否则会分配到当前网站 ， </span><br />
+                    <span class="text-danger ">请勿修改系统的全局配置到分站 否则系统崩溃</span>
+                </td>
+            </tr>
+            <tr>
+                <td>是否作为核心配置</td>
+                <td colspan="3">
+                    <label><input type="radio" name="is_core"   value="1"> 是</label>
+                    <label><input type="radio" name="is_core" checked value="0"> 否</label>
+                    <span class="text-danger ">请不要修改系统配置为普通配置 ， 否则误删除会导致系统不能正常工作！</span>
+
+                </td>
+            </tr>
+        </table>
+        <div>
+            <table class="layui-table">
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" class="layui-btn layui-btn-small "/>
+                        <input type="button" class="layui-btn layui-btn-small " value="{:zlang('add,config,option')}"
+                               id="jq_action_add"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var action_num = 0;
+        $("#jq_action_add").click(function () {
+            html = '<tr> \
+            <td class="left-td"><input type="text" value="" class="keys form-control" required name="keys[]" /></td> \
+            <td><label><input type="text" class="layui-input value" name="" required value=""/></label></td> \
+            <td><label><input type="text" class="layui-input tips" name="" required value=""/></label></td> \
+            <td><a class="btn btn-danger" onclick="delete_tr(this);">delete</a></td> \
+            </tr>'
+            $("#jq_action_list").append(html);
+        });
+    });
+
+    //key name bindings
+    function delete_tr(obj){
+        $(obj).parents('tr').remove();
+    }
+
+        $(document).on("blur", ".keys", function (e) {
+            var self = $(this);
+
+            self.parents('tr').attr('class',"property_" + self.val());
+            self.parents('tr').find('.value').attr('name',"datas["+self.val()+"][value]");
+            self.parents('tr').find('.tips').attr('name',"datas["+self.val()+"][tips]");
+
+
+            //check if here already exist property
+            console.log($(".property_"+self.val()).length);
+            if($(".property_"+self.val()).length > 1){
+                layer.msg('duplicate property',{shade:1},function(){
+                    self.focus();
+                    self.val("");
+                });
+                return false;
+            }else{
+//change name of the form control
+                console.log(self.parents('tr').length);
+
+            }
+        });
+</script>
+
+
+
+
+

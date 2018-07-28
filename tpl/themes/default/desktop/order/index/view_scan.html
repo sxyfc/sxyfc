@@ -1,0 +1,36 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+
+{block name="main"}
+<img class="img-responsive" style="display: block; width: 200px;margin:30px auto" src="{:url('core/common_service/str_to_qr' , ['str'=>urlencode($result['code_url'])])}">
+
+
+<div class="text-info text-center" style="width: 80%;margin: auto;line-height: 35px;text-align: center">
+    您好，缴费金额 {$order.total_fee}
+</div>
+<div class="text-info text-center" style="text-align: center;width: 80%;margin: auto;line-height: 35px">
+    拿起手机打开微信扫一扫开始支付！
+</div>
+
+<script>
+    function check_order_if_payed (order_id) {
+        var url = "{:nb_url(['r'=>'order.common_service.get_order'])}";
+        $.getJSON( url , {
+            id : order_id ,
+        } , function (data) {
+
+            if(data.status != '已支付'){
+                setTimeout(function () {
+                    check_order_if_payed(order_id);
+                } , 3000);
+            }else{
+                layer.msg(data.status ,function () {
+                    window.location.href= "{$to_url}"
+                });
+            }
+        });
+    }
+    //check_order_if_payed("{$order.id}");
+</script>
+{/block}

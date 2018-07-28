@@ -1,0 +1,69 @@
+<div class="" style="margin: 45px">
+    <div class="ui indicating teal  progress" id="sync_process">
+        <div class="bar">
+            <div class="progress"></div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    var fans_down_load_api = "{$fans_down_load_api}";
+    get_all_fans();
+    function get_all_fans(next_open_id) {
+
+        require(['jquery' , 'layui' , 'semantic'] , function ($, layui, semantic) {
+            layer.load(2, {
+                shadeClose: false
+            });
+
+            $.get(fans_down_load_api, {
+                next_open_id: next_open_id
+            }, function (data) {
+                if (data.code == 1) {
+                    if (data.next != "") {
+                        get_all_fans(data.next);
+                    } else {
+                        $('#sync_process')
+                            .progress({
+                                onSuccess: function (total) {
+
+                                }, onChange: function (percent, value, total) {
+
+                                    console.log(percent);
+                                }
+                            })
+                        ;
+                        load_next_page("{$fans_sync_api}");
+                    }
+                }else{
+                    layer.msg(data.msg  , function () {
+                        layer.closeAll();
+                    });
+                }
+            });
+        });
+
+
+
+    }
+
+
+    function load_next_page($next_url) {
+
+        $.get($next_url, {}, function (data) {
+            $('#sync_process')
+                .progress({
+                    percent: data.percent
+                })
+            ;
+            if (data.next_url != "") {
+                load_next_page(data.next_url);
+            } else {
+
+                layer.closeAll();
+            }
+        });
+    }
+
+
+</script>

@@ -1,0 +1,110 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if(!isset($keyword)){
+    $keyword = "";
+}
+?>
+<form class="layui-form form-inline" method="post" action="">
+    <table class="layui-table form-group">
+        <td>
+            <input type="text" value="{$nickname}" name="nickname" class="layui-input" >
+        </td>
+        <td class="input-group">
+            {foreach $fans_groups as $group}
+            <?php
+            if($group_ids && array_search($group['wechat_tag_id'] , $group_ids)!==false){
+                $checked = "checked";
+            }else{
+                $checked = "";
+            }
+            ?>
+            <input type="checkbox" lay-filter="search" {$checked} data-id="{$item.id}" lay-skin="primary" name="group_id[]" value="{$group.wechat_tag_id}" tabindex="" title="{$group.group_name}">
+            {/foreach}
+        <td>
+            <input type="submit" value="搜索"  class="layui-btn btn-success" /></td>
+        </td></table>
+</form>
+{/block}
+
+
+{block name="main"}
+<form class="layui-form tableBox">
+    <table class="layui-table table-bordered" lay-size="sm">
+        <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+            <td>ID</td>
+            <td>{:zlang('头像')}</td>
+            <td>{:zlang('昵称')}</td>
+            <td>{:zlang('关注时间')}</td>
+            <td>{:zlang('会员编号')}</td>
+
+            <td>{:zlang('openid')}</td>
+            <td>{:zlang('会员分组')}</td>
+            <td>{:zlang('操作')}</td>
+        </tr>
+        {foreach $lists as $item}
+        <tr>
+            <td>{$item.id}</td>
+            <td><img src="{$item.avatar}" class="image tiny" style="max-width: 30px"></td>
+            <td>{$item.nickname}</td>
+            <td>{$item.follow_time}</td>
+            <td>{$item.user_id}</td>
+            <td>{$item.openid}</td>
+            <td>
+                <?php
+                $ids =array_filter(explode("," ,$item['group_ids'] )) ;
+                ?>
+                {foreach $fans_groups as $group}
+                <?php
+                if(array_search($group['wechat_tag_id'] , $ids)!==false){
+                    $checked = "checked";
+                }else{
+                    $checked = "";
+                }
+                ?>
+                <input type="checkbox" lay-filter="change" {$checked} data-id="{$item.id}" lay-skin="primary" name="group_{$item.id}" value="{$group.id}" tabindex="" title="{$group.group_name}">
+                {/foreach}
+
+            </td>
+            <td>
+                <?php
+                $mapping = $item;
+                ?>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
+                {/eq}
+                {/volist}
+            </td>
+        </tr>
+
+        {/foreach}
+
+    </table>
+
+</>
+<div>
+    {:$lists->render()}
+</div>
+<script>
+    require(['jquery' , 'layui'] ,function ($ , layui) {
+        layui.use(['form'], function () {
+            var form = layui.form;
+
+            var api = "{:url('wechat/admin_service/update_fans_group')}";
+
+            form.on('checkbox(change)', function (data) {
+                $.get(api, {
+                    id : $(data.elem).data("id") ,
+                    operation: data.elem.checked,
+                    group_id: data.value
+                }, function (resp) {
+                    console.log(resp);
+                })
+            });
+        });
+    })
+
+</script>
+{/block}

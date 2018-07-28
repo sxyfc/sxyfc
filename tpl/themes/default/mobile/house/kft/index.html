@@ -1,0 +1,95 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+{block name="jquery"}{/block}
+{block name="content_header"}{/block}
+
+{block name="main"}
+{foreach $lists as $item}
+<?php
+
+$where_loupan = [];
+$where['id'] = ["IN" , array_filter(explode("," , $item['loupans'])) ] ;
+
+$loupans = \app\common\model\Models::list_item($where , 'house_loupan');
+
+$_item = \app\common\model\Models::get_item($item['id'] , $content_model_id);
+$url  = $_item['thumb']['0']['url'];
+?>
+<div class="ui two column stackable grid container  aligned padded mhcms_filter">
+    <div class="ui sixteen wide  column stackable  mhcms_mobile_column" >
+
+        <div class="ui top attached mhcms-panel">
+            <div class="ui  mhcms-panel-header" style="display: none"><i class="{$cate['icon']}"></i>{$item['title']}</div>
+            <div class="ui  mhcms-panel-body" style="margin-bottom: 10px">
+
+                <ul class="ui mhcms-list unstackable items">
+
+                    {if $url}
+                    <a  class=" image  ui" href="{:url('house/kft/detail' , ['id'=>$item['id'] ])}" > <img src="{$url}"  >
+                        <span class="mhcms-img-cover">{$item['title']}</span>
+                    </a>{/if}
+
+                    <div class="thumbs">
+
+                        <div class="swiper-container loupans swiper-container-horizontal new-better-swiper-container" id="loupan_huxing">
+                            <div  class="swiper-wrapper">
+                                {foreach $loupans as $loupan}
+                                <?php
+                                $loupan_thumb = $loupan['thumb']['0']['url'];
+                                ?>
+                                <a href="{:url('house/loupan/detail' , ['id'=>$loupan['id'] ])}" class="  mhcms-list-pic-item swiper-slide swiper-slide-prev" style="height: 100px">
+                                    <img class=" image  ui" src="{$loupan_thumb}">
+                                    <span class="mhcms-img-cover">{$loupan.loupan_name}</span>
+                                </a>
+                                {/foreach}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ui item mhcms-list-item ">
+
+                        <div class="content">
+                            <div class=" mhcms-item-header" href="{:url('house/loupan/detail' , ['id'=>$item['id'] ])}">
+                                途经楼盘
+                                <a href="{:url('house/appointment/kft_create' , ['kft_id'=>$item.id])}" class="layui-btn layui-btn-sm" style="float: right">我要报名</a>
+                            </div>
+
+
+                            <div class="meta" style="line-height: 30px">
+                                集合地点：{$item.address} <br />
+                                报名截止：{$item.end_time}<br />
+                                报名电话：{$item.mobile}<br />
+                                {if $item.contractor}
+                                联系人：{$item.contractor}
+                                {/if}
+                            </div>
+                            <div class="extra">
+                            </div>
+                        </div>
+
+                    </div>
+                </ul>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    require(['jquery' , 'swiper4' ] , function ($ , Swiper) {
+        $(document).ready(function () {
+            var swiper = new Swiper('.loupans', {
+                slidesPerView : 3,spaceBetween : 10,
+            });
+        });
+    });
+</script>
+{/foreach}
+{/block}
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}

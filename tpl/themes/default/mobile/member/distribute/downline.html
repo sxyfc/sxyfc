@@ -1,0 +1,51 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+{/block}
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+<div class="ui top attached mhcms-panel" >
+    <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+        {if count($users)}
+    {foreach $users as $item}
+        <div class="nav_item columns is-mobile"  >
+            <div class="column is-narrow">
+            <i style=" color: #fff;   background: #63aef8;text-align: center" class="iconfont icon-jingjiren"></i>
+            </div>
+            <div class="column">
+                {$item.user_name} <br />
+
+                {$item.created}
+            </div>
+
+        </div>
+    {/foreach}
+        {else}
+        <div class="nav_item columns is-mobile">
+            <div class="column">
+                您还没有推荐任何人!继续努力哦!
+            </div>
+
+        </div>
+        {/if}
+    </div>
+</div>
+{/block}
+
+
+{block name="footer"}
+<div class="weui-tabbar" style="    z-index: 99999;position: fixed;box-shadow: 0px 7px 14px 5px #c0bfc4;">
+    <a href="/" class="weui-tabbar__item " >
+        <span style="display: inline-block;position: relative;">
+            <i class="weui-tabbar__icon"><i class="iconfont icon-shouye"></i></i>
+        </span>
+        <div class="weui-tabbar__label">返回首页</div>
+    </a>
+</div>
+{/block}
+{block name="copyright"}
+
+{/block}

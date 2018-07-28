@@ -1,0 +1,20 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form action="" method="post" target="zbn_cms" class="layui-form layui-container">
+    <div class="remote-qiniu layui-row" >
+
+        <div class="layui-form-item">
+            <label class="col-sm-2 layui-form-label">Url</label>
+            <div class="layui-input-block">
+                <input type="text" name="{$attach_sign}[url]" class="layui-input" value="{$config['url']}" placeholder="" />
+                <span class="help-block">自定义访问域名。</span>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="">
+                <button name="submit" class="layui-btn layui-btn-primary" value="submit">保存配置</button>
+            </div>
+        </div>
+    </div>
+</form>
+{/block}

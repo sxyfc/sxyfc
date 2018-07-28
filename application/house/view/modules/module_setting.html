@@ -1,0 +1,534 @@
+{extend name="admin@public/content_frame" /}
+{block name="sub-menu-top"}{/block}
+
+{block name="mhcms-header"}{$module.module_name} 模块配置{/block}
+{block name="main"}
+<?php
+
+?>
+<form class="layui-form" action="" target="zbn_cms" method="post">
+
+    <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="basic">基本配置</a>
+        <a class="item " data-tab="web">网页版配置</a>
+        <a class="item " data-tab="esf">二手房系统配置</a>
+        <a class="item " data-tab="rent">出租系统配置</a>
+        <a class="item " data-tab="agent">经纪人配置</a>
+        <a class="item " data-tab="small_app">小程序配置</a>
+    </div>
+    <!--二手房-->
+    <div class="ui bottom attached tab segment  " data-tab="esf">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">非经纪人二手房房源统一展示这个联系方式</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[esf_mobile]" value="{$config.esf_mobile|default=""}" placeholder=" " autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">发布二手房是否需要审核</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[check_esf]" value="1" {if isset($config.check_esf) && $config.check_esf==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否关闭二手房功能</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[close_esf]" value="1" {if isset($config.close_esf) && $config.close_esf==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+        <div class="layui-form-item" id="top_esf_set" style="padding: 10px 0">
+            <label class="layui-form-label" >置顶收费设置
+                <input type="button"  value="添加" @click="add_set" class="layui-btn layui-btn-normal  layui-btn-inline"></label>
+            <div class="layui-input-block" v-for="(item,key) in top_esf_set" style="    overflow: hidden;margin-bottom: 10px">
+                <input type="text"  :name="'data[top_esf_set]['+key+'][days]'" v-model="item.days" placeholder="天数" autocomplete="off" class="layui-input layui-input-inline">
+                <input type="text"  :name="'data[top_esf_set]['+key+'][money]'"  v-model="item.money" placeholder="金额" autocomplete="off" class="layui-input layui-input-inline">
+
+                <select :name="'data[top_esf_set]['+key+'][unit_type]'" required   v-model="item.unit_type" lay-ignore class="layui-select layui-select-inline" style="width: 80px;display: inline-block">
+                    <option value="point">
+                        积分
+                    </option>
+                    <option value="balance">
+                        余额
+                    </option>
+                </select>
+                <input type="button"  value="删除" @click="delete_set(key)" class="layui-btn layui-btn-danger  layui-btn-inline">
+                <p> 金额 请填写数字 , 积分请写整数 ， 金币支持两位小数</p>
+            </div>
+
+        </div>
+
+        <?php
+
+        if(!$config['top_esf_set']){
+            $config['top_esf_set'] = "{}";
+        }else{
+            $config['top_esf_set'] = json_encode( $config['top_esf_set']);
+        }
+        ?>
+
+        <script>
+            new Vue({
+                    el : "#top_esf_set" ,
+                    data : {
+                        top_esf_set : {$config.top_esf_set}
+                },
+                methods : {
+
+                add_set (){
+                    this.$set(this.top_esf_set , Math.random() , {
+                        days : '' , money : '' , unit_type : ''
+                    })
+                },
+
+                delete_set(index){
+                    this.$delete(this.top_esf_set , index)
+                    //this.top_set.splice(index,1);//= null;
+                    console.log(this.top_esf_set);
+                }
+            }
+            });
+        </script>
+
+
+    </div>
+    <!--rent-->
+    <div class="ui bottom attached tab segment  " data-tab="rent">
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否关闭出租房功能</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[close_rent]" value="1" {if isset($config.close_rent) && $config.close_rent==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">非经纪人出租房房源统一展示这个联系方式</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[rent_mobile]" value="{$config.rent_mobile|default=""}" placeholder=" " autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">发布出租房是否需要审核</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[check_rent]" value="1" {if isset($config.check_rent) && $config.check_rent==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+        <div class="layui-form-item" id="top_rent_set" style="padding: 10px 0">
+            <label class="layui-form-label" >置顶收费设置
+                <input type="button"  value="添加" @click="add_set" class="layui-btn layui-btn-normal  layui-btn-inline"></label>
+            <div class="layui-input-block" v-for="(item,key) in top_rent_set" style="    overflow: hidden;margin-bottom: 10px">
+                <input type="text"  :name="'data[top_rent_set]['+key+'][days]'" v-model="item.days" placeholder="天数" autocomplete="off" class="layui-input layui-input-inline">
+                <input type="text"  :name="'data[top_rent_set]['+key+'][money]'"  v-model="item.money" placeholder="金额" autocomplete="off" class="layui-input layui-input-inline">
+
+                <select :name="'data[top_rent_set]['+key+'][unit_type]'" required   v-model="item.unit_type" lay-ignore class="layui-select layui-select-inline" style="width: 80px;display: inline-block">
+                    <option value="point">
+                        积分
+                    </option>
+                    <option value="balance">
+                        余额
+                    </option>
+                </select>
+                <input type="button"  value="删除" @click="delete_set(key)" class="layui-btn layui-btn-danger  layui-btn-inline">
+                <p> 金额 请填写数字 , 积分请写整数 ， 金币支持两位小数</p>
+            </div>
+
+        </div>
+
+        <?php
+
+        if(!$config['top_rent_set']){
+            $config['top_rent_set'] = "{}";
+        }else{
+            $config['top_rent_set'] = json_encode( $config['top_rent_set']);
+        }
+        ?>
+
+        <script>
+            new Vue({
+                    el : "#top_rent_set" ,
+                    data : {
+                        top_rent_set : {$config.top_rent_set}
+                },
+                methods : {
+
+                add_set (){
+                    this.$set(this.top_rent_set , Math.random() , {
+                        days : '' , money : '' , unit_type : ''
+                    })
+                },
+
+                delete_set(index){
+                    this.$delete(this.top_rent_set , index)
+                    //this.top_set.splice(index,1);//= null;
+                    console.log(this.top_rent_set);
+                }
+            }
+            });
+        </script>
+
+    </div>
+    <!--agent-->
+    <div class="ui bottom attached tab segment  " data-tab="agent">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">首页是否展示经纪人</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[show_agent]" value="1" {if isset($config.show_agent) && $config.show_agent==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">经纪人入驻是否需要审核</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[check_agent]" value="1" {if isset($config.check_agent) && $config.check_agent==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">经纪人录入房源时候是否检测重复</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[check_repeat]" value="1" {if isset($config.check_repeat) && $config.check_repeat==1} checked {/if} lay-skin="switch">
+                <div>检测条件是：房型和客户手机号码</div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否关闭经纪人系统</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[close_agent]" value="1" {if isset($config.close_agent) && $config.close_agent==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否关闭经纪人申请</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[noreg_agent]" value="1" {if isset($config.noreg_agent) && $config.noreg_agent==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item" id="agent_reg_set" style="padding: 10px 0">
+            <label class="layui-form-label" >经纪人入住收费
+                <input type="button"  value="添加" @click="add_set" class="layui-btn layui-btn-normal  layui-btn-inline"></label>
+            <div class="layui-input-block" v-for="(item,key) in agent_reg_set" style="    overflow: hidden;margin-bottom: 10px">
+                <input type="text"  :name="'data[agent_reg_set]['+key+'][days]'" v-model="item.days" placeholder="天数" autocomplete="off" class="layui-input layui-input-inline">
+                <input type="text"  :name="'data[agent_reg_set]['+key+'][money]'"  v-model="item.money" placeholder="金额" autocomplete="off" class="layui-input layui-input-inline">
+
+                <select :name="'data[agent_reg_set]['+key+'][unit_type]'" required   v-model="item.unit_type" lay-ignore class="layui-select layui-select-inline" style="width: 80px;display: inline-block">
+                    <option value="point">
+                        积分
+                    </option>
+                    <option value="balance">
+                        余额
+                    </option>
+                </select>
+                <input type="button"  value="删除" @click="delete_set(key)" class="layui-btn layui-btn-danger  layui-btn-inline">
+                <p> 金额 请填写数字 , 积分请写整数 ， 金币支持两位小数 , 0代表免费试用 仅第一个0生效</p>
+            </div>
+
+        </div>
+        <?php
+
+        if(!$config['agent_reg_set']){
+            $config['agent_reg_set'] = "{}";
+        }else{
+            $config['agent_reg_set'] = json_encode( $config['agent_reg_set']);
+        }
+        ?>
+
+        <script>
+            new Vue({
+                    el : "#agent_reg_set" ,
+                    data : {
+                        agent_reg_set : {$config.agent_reg_set}
+                },
+                methods : {
+
+                add_set (){
+                    this.$set(this.agent_reg_set , Math.random() , {
+                        days : '' , money : '' , unit_type : ''
+                    })
+                },
+
+                delete_set(index){
+                    this.$delete(this.agent_reg_set , index)
+                    //this.top_set.splice(index,1);//= null;
+                    console.log(this.agent_reg_set);
+                }
+            }
+            });
+        </script>
+
+
+    </div>
+
+    <!--basic-->
+    <div class="ui bottom attached tab segment active" data-tab="basic">
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否关闭模块</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[close_site]" value="1" {if isset($config.close_site) && $config.close_site==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">关闭原因</label>
+            <div class="layui-input-block">
+                <textarea name="data[close_site_tips]" placeholder="关闭模块用户提示语" class="layui-textarea">{$config.close_site_tips|default="模块维护中请稍后访问"}</textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否必须验证手机</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="data[force_mobile]" value="1" {if isset($config.force_mobile) && $config.force_mobile==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">{:zlang('默认缩略图')}</label>
+            <div class="layui-input-block">
+                <?php
+                echo \app\common\util\forms\Forms::single_uploader('default_thumb' , $config['default_thumb'] , 'data');
+                ?>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">管理员Openid</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[admin_openid]" value="{$config.admin_openid|default=""}" placeholder="管理员Openid" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">信息刷新最短时间间隔</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[refresh_gap]" value="{$config.refresh_gap|default="0"}" placeholder="信息刷新最短时间间隔" autocomplete="off" class="layui-input">
+                <p>信息刷新最短时间间隔 请填写数字  单位分钟</p>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">信息发布最短时间间隔</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[publish_gap]" value="{$config.publish_gap|default="0"}" placeholder="信息发布最短时间间隔" autocomplete="off" class="layui-input">
+                <p>信息发布最短时间间隔 请填写数字 单位分钟</p>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">个人可免费发布信息条数</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[free_amount]" value="{$config.free_amount|default="0"}" placeholder="个人可免费发布信息条数" autocomplete="off" class="layui-input">
+                <p>个人可免费发布信息条数 请填写数字</p>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">普通经纪人可免费发布条数</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[normal_agent_free_amount]" value="{$config.normal_agent_free_amount|default="0"}" placeholder="普通经纪人可免费发布条数" autocomplete="off" class="layui-input">
+                <p>普通经纪人可免费发布条数 请填写数字</p>
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否开启发布信息收费</label>
+            <div class="layui-input-block">
+                <input type="radio" name="data[charge_on_publish]" value="0" title="关闭" {if !isset($config.charge_on_publish) || $config.charge_on_publish=="0"} checked {/if}>
+                <input type="radio" name="data[charge_on_publish]" value="1" title="开启" {if isset($config.charge_on_publish) && $config.charge_on_publish=="1"} checked {/if}>
+            </div>
+        </div>
+
+        <div class="layui-form-item" title="仅开启收费才生效">
+            <label class="layui-form-label">信息收费类型</label>
+            <div class="layui-input-block">
+                <input type="radio" name="data[charge_unit_type]" value="0" title="金币" {if !isset($config.charge_unit_type) || $config.charge_unit_type=="0"} checked {/if}>
+                <input type="radio" name="data[charge_unit_type]" value="1" title="积分" {if isset($config.charge_unit_type) && $config.charge_unit_type=="1"} checked {/if}>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">发布信息收费金额</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[charge_amount]" value="{$config.charge_amount|default="0"}" placeholder="发布信息收费金额" autocomplete="off" class="layui-input">
+                <p>发布信息收费金额 请填写数字 , 积分请写整数 ， 金币支持两位小数</p>
+            </div>
+        </div>
+
+
+
+
+
+
+
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="web">
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否开启模板自配</label>
+            <div class="layui-input-block">
+                <input type="radio" name="data[auto_fit_tpl]" value="1" title="关闭" {if !isset($config.auto_fit_tpl) || $config.auto_fit_tpl=="1"} checked {/if}>
+                <input type="radio" name="data[auto_fit_tpl]" value="2" title="开启" {if isset($config.auto_fit_tpl) && $config.auto_fit_tpl=="2"} checked {/if}>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">访问统计基数</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[visits]" value="{$config.visits|default=""}" placeholder="访问统计基数" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">访问统计基数</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[infos]" value="{$config.infos|default=""}" placeholder="房源统计基数" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">强制模板</label>
+            <div class="layui-input-block">
+                <input type="radio" name="data[fixed_device]" value="mobile" title="手机模板" {if !isset($config.fixed_device) || $config.fixed_device=="mobile"} checked {/if}>
+                <input type="radio" name="data[fixed_device]" value="desktop" title="桌面模板" {if isset($config.fixed_device) && $config.fixed_device=="desktop"} checked {/if}>
+            </div>
+            <div class="layui-form-mid layui-word-aux">关闭模板自配此项才会生效 ， 另外模块配置会覆盖掉此配置</div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">统计代码</label>
+            <div class="layui-input-block">
+                <textarea name="data[tongji]" placeholder="统计代码" class="layui-textarea">{$config.tongji|default=""}</textarea>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">客服信息</label>
+            <div class="layui-input-block">
+                <textarea name="data[kefu]" placeholder="客服信息" class="layui-textarea">{$config.kefu|default=""}</textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">底部版权信息</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[copyright]" value="{$config.copyright|default=""}" placeholder="版权设置" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">系统名字</label>
+            <div class="layui-input-block">
+                <input type="text" name="data[system_name]" value="{$config.system_name|default=""}" placeholder="系统名字" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块主题</label>
+            <div class="layui-input-block">
+                <?php
+                $field_config = [
+                    'node_field_data_source_type' => 'theme',
+                    'node_field_data_source_config' => "",
+                    'node_field_form_name' => 'theme',
+                    'node_field_name'=> 'theme',
+                    'node_field_mode' => 'theme_selector',
+                    'field_type_name' => 'mhcms_static',
+                    'node_field_default_value'=> isset($config['theme']) && $config['theme'] ? $config['theme'] : 'default',
+                    'node_field_form_id' => 'field_type_name',
+                    'node_field_class_name' => ' form-control',
+                    'node_field_pk_key' => 'theme_dir',
+                    'node_field_name_key' => 'theme_name',
+                    'node_field_parentid_key' => '',
+                    'node_field_form_property' => '  required ',
+                    'node_field_primary_option' => 'Please,Select',
+                    'form_group' => 'data' ,
+                    'module' =>  $module['module']
+                ];
+                $form_factory->model_id = "NotSet";
+                $form_factory->module = $module['module'];
+                /** @var \app\common\util\forms\FormFactory $form_factory */
+                $def = [];
+                echo $form_factory->config_model_form($field_config ,  $def);
+                ?>
+            </div>
+
+        </div>
+
+
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="small_app">
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    $('.menu .item')
+        .tab()
+    ;
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+        });
+    });
+</script>
+{/block}

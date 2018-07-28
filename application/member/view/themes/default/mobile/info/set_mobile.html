@@ -1,0 +1,161 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="main"}
+
+<div class="new_better_row row">
+    <div class="col-xs-12 new-better-user-menu">
+
+        <form class="layui-form" action="" method="post" style="padding-top: 50px">
+
+            <div class="layui-form-item hidden">
+                <label class="layui-form-label">安全码</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input pull-left" id="code_input" name="code" placeholder="验证码">
+                </div>
+                <img id="code" src="{:captcha_src()}" onclick="this.src = this.src +'?i=' + Math.random()"
+                     alt="captcha"/>
+                <button type="button" class="layui-btn layui-btn-normal">获取手机验证码</button>
+            </div>
+            <div class="weui-cell">
+                验证手机号码以后才可以发布
+            </div>
+
+            <div class="weui-cell weui-cell_vcode">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">手机号</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" id="mobile" type="tel" name="mobile" required lay-verify="phone"
+                           value="{$user.mobile}" placeholder="请输入手机号">
+                </div>
+                <div class="weui-cell__ft">
+                    <div class="weui-vcode-btn" id="send_btn" onclick="send_sms()">获取验证码</div>
+                </div>
+            </div>
+
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">验证码</label></div>
+                <div class="weui-cell__bd">
+                    <input class="weui-input" pattern="[0-9]*" placeholder="请输入验证码" lay-verify="required" required name="code" type="number">
+                </div>
+            </div>
+
+            <div class="weui-cell">
+            </div>
+            <div class="weui-btn-area">
+                <button class="weui-btn weui-btn_primary"  lay-submit lay-filter="formSubmit" id="showTooltips">确定</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+    var set_mobile = function () {
+        this.count = 60;
+    };
+
+    set_mobile.prototype.send_sms = function (mobile) {
+        var that = this;
+        //初始化类型类型
+        var url = "{:nb_url(['r'=>'service/sms/send_code'])}";
+        $.get(url, {mobile: mobile},
+            function (res) {
+                if (res.code == 0) {
+                    layer.msg("已经发送！",);
+                    that.recount();
+                } else {
+                    layer.msg("对不起 操作失败！" + res.msg,);
+                }
+            } , 'json'
+        );
+    };
+
+    set_mobile.prototype.recount = function () {
+        var that = this;
+        if (that.count > 0) {
+            setTimeout(function () {
+                that.count--;
+                that.recount()
+            }, 1000);
+            $("#send_btn").html(that.count);
+        } else {
+            that.count = 60;
+            $("#send_btn").html("获取验证码");
+        }
+    };
+
+
+    function send_sms() {
+        var mobile = new set_mobile();
+        var mobile_number = $("#mobile").val();
+        mobile.send_sms(mobile_number);
+    }
+
+    layui.use(['layer', 'form'], function(){
+        var layer = layui.layer
+            ,form = layui.form();
+
+        //监听提交
+        form.on('submit(formSubmit)', function(data){
+            console.log(data);
+            var api_url = "{:\think\\Request::instance()->url()}";
+            //TODO 跳转到浏览订单页面
+            var form_data = JSON.stringify(data.field);
+            $.post(api_url , {
+                'data' :  form_data
+            } , function (ret) {
+                layer.msg(ret.msg);
+                if(ret.code==0){
+                    setTimeout(function () {
+                        goToUrl(ret.url);
+                    } , 2000);
+                }
+            });
+            return false;
+        });
+    });
+
+</script>
+{/block}
+
+
+{block name="footer"}
+
+<link href="//at.alicdn.com/t/font_2yf6dr83a86ez5mi.css" rel="stylesheet"/>
+<nav class="new-better-footer">
+
+    <div   class="col-xs-3 menu-item">
+        <a href="{:nb_url(['r'=>'market/index/index'])}" >
+            <span class="glyphicon iconfont icon-shouyeshouye" aria-hidden="true"></span>
+            首页
+        </a>
+    </div>
+
+
+    <div   class="col-xs-3 menu-item">
+        <a href="{:nb_url(['r'=>'search/index/index' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon iconfont icon-search" aria-hidden="true"></span>
+            搜索
+        </a>
+    </div>
+
+
+    <div   class="col-xs-3 menu-item">
+        <a href="{:nb_url(['r'=>'market/user_content/publish' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+
+            发布
+        </a>
+    </div>
+    <div   class="col-xs-3 menu-item">
+
+        <a href="{:nb_url(['r'=>'member/index/index' , 'site_id'=>$site['site_id']])}" >
+            <span class="glyphicon glyphicon-user" aria-hidden="true"></span> 会员
+        </a>
+    </div>
+</nav>
+{/block}

@@ -1,0 +1,22 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="mhcms-header"}<a target="_blank" href="http://www.mhcms.net">自助查询</a> {/block}
+{block name="main"}
+<div class="tableBox">
+    <form class="layui-form" action="" target="zbn_cms" method="post">
+
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">授权码</label>
+        <div class="layui-input-block">
+            <textarea name="data[product_licence_code]" placeholder="授权码" class="layui-textarea">{$licence.product_licence_code|default=""}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+        </div>
+    </div>
+    </form>
+</div>
+{/block}

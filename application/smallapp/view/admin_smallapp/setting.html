@@ -1,0 +1,79 @@
+{extend name="admin@public/content_frame" /}
+{block name="sub-menu-top"}{/block}
+
+{block name="mhcms-header"}{$module.module_name} 模块配置{/block}
+{block name="main"}
+<?php
+
+?>
+<form class="layui-form" action="" target="zbn_cms" method="post">
+
+    <div class="ui bottom attached tab segment active" data-tab="basic">
+
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否自动生成账号</label>
+            <div class="layui-input-block">
+                <input type="radio" name="data[auto_account]" value="0" title="否" {if !isset($config.auto_account) ||
+                       $config.auto_account=="0"} checked {/if}>
+                <input type="radio" name="data[auto_account]" value="1" title="是" {if isset($config.auto_account) &&
+                       $config.auto_account=="1"} checked {/if}>
+                <p>如果没有绑定开放平台建议填否</p>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否强制用户验证手机</label>
+            <div class="layui-input-block">
+                <input type="radio" name="data[force_mobile]" value="0" title="否" {if !isset($config.force_mobile) ||
+                       $config.force_mobile=="0"} checked {/if}>
+                <input type="radio" name="data[force_mobile]" value="1" title="是" {if isset($config.force_mobile) &&
+                       $config.force_mobile=="1"} checked {/if}>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">验证手机号码方式</label>
+            <div class="layui-input-block">
+                <input type="radio" name="data[verify_mobile]" value="0" title="不验证" {if !isset($config.verify_mobile) ||
+                       $config.verify_mobile=="0"} checked {/if}>
+                <input type="radio" name="data[verify_mobile]" value="1" title="短信验证" {if isset($config.verify_mobile) &&
+                       $config.verify_mobile=="1"} checked {/if}>
+                <input type="radio" name="data[verify_mobile]" value="2" title="微信验证" {if isset($config.verify_mobile) &&
+                       $config.verify_mobile=="2"} checked {/if}>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">数据缓存时间</label>
+            <div class="layui-input-block">
+                <input type="number" name="data[expire]" value="{$config.expire|default=""}" placeholder="数据缓存时间 单位秒"  class="layui-input">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<script>
+    $('.menu .item')
+        .tab()
+    ;
+    //Demo
+    layui.use('form', function () {
+        var form = layui.form;
+
+        //监听提交
+        form.on('submit(formDemo)', function (data) {
+        });
+    });
+</script>
+{/block}

@@ -1,0 +1,50 @@
+{extend name="$front_base_layout" /}
+{block name="main"}
+<div class="ui two column stackable grid container" style="margin-top:0px">
+    <div class="ui twelve wide  column stackable  mhcms_mobile_column">
+
+        <div class="ui top attached mhcms-panel">
+            <div class="ui  mhcms-panel-header"><i class="{$cate['icon']}"></i>经纪人录入客户</div>
+            <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+
+
+            </div>
+            <form class="layui-form form-inline" target="mhcms" method="post"
+                  action="{:\think\\Request::instance()->url()}" style="padding-right: 10px">
+                <br>
+                {foreach $field_list as $k=>$field}
+                <div class="layui-form-item" id="row_{$k}">
+                    <label class="layui-form-label">{$field['slug']}</label>
+                    <div class="layui-input-block">
+                        {$field['form_str']}
+                    </div>
+                </div>
+                {/foreach}
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        {:token()}
+                        <button class="layui-btn" lay-submit lay-filter="*">立即推荐</button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+    layui.use(['layer', 'form'], function () {
+        var form = layui.form;
+        var $ = layui.$;
+        form.render();
+    });
+</script>
+{/block}
+
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}
+
+{block name="copyright"}{/block}

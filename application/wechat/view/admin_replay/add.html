@@ -1,0 +1,74 @@
+<div class="layui-container">
+    <div class="layui-row">
+        <form class="layui-form form-inline" target="zbn_cms" method="post"
+              action="{:\think\\Request::instance()->url()}">
+            <br>
+            {foreach $field_list as $k=>$field}
+            <div class="layui-form-item" id="row_{$k}">
+                <label class="layui-form-label">{$field['slug']}</label>
+                <div class="layui-input-block">
+                    {$field['form_str']}
+                </div>
+            </div>
+            {/foreach}
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <pre>
+        正值表达式提示：
+
+        用户进行交谈时，对话内容符合述关键字中定义的模式才会执行这条规则。
+        注意：如果你不明白正则表达式的工作方式，请不要使用正则匹配
+        注意：正则匹配使用MySQL的匹配引擎，请使用MySQL的正则语法
+        示例：
+        ^微信匹配以“微信”开头的语句
+        微信$匹配以“微信”结尾的语句
+        ^微信$匹配等同“微信”的语句
+        微信匹配包含“微信”的语句
+        [0-9.-]匹配所有的数字，句号和减号
+        ^[a-zA-Z_]$所有的字母和下划线
+        ^[[:alpha:]]{3}$所有的3个字母的单词
+        ^a{4}$aaaa
+        ^a{2,4}$aa，aaa或aaaa
+        ^a{2,}$匹配多于两个a的字符串
+    </pre>
+</div>
+<script>
+    layui.use(['layer' , 'form'] , function () {
+        var form = layui.form;
+        var $ = layui.$;
+        form.render();
+
+        radio_detect();
+        form.on('radio', function(data){
+            radio_detect();
+        });
+
+
+    });
+    
+    function radio_detect() {
+        var $action = $("input[name='data[action]']:checked").val();
+        if($action == 1){
+            layer.msg("模块托管为程序开发者专用，普通用户更改有可能引起系统异常！");
+            $("#row_module").show();
+            $("#row_reply_type").hide();
+
+        }
+
+        if($action == 2){
+
+            $("#row_module").hide();
+            $("#row_reply_type").show();
+
+        }
+    }
+</script>

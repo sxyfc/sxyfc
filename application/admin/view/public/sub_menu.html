@@ -1,0 +1,12 @@
+﻿{if isset($sub_menu)}
+
+{foreach $sub_menu as $_admin_menu}
+{eq name="_admin_menu.user_menu_display" value="1"}
+<?php
+$mini = $_admin_menu['user_menu_mini']? $_admin_menu['user_menu_mini'] : 'frame';
+?>
+{:build_back_a($_admin_menu['id'],$_admin_menu['user_menu_params'],zlang($_admin_menu['user_menu_name']),$mini,$_admin_menu['class'],'90%','80%' , $mapping)}
+{/eq}
+{/foreach}
+
+{/if}

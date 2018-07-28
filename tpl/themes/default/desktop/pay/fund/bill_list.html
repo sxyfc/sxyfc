@@ -1,0 +1,57 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+
+{block name="main"}
+<div class="larry-fluid larry-wrapper">
+    <div class="layui-row lay-col-space20">
+        <div class="layui-cos-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
+            <section class="larry-body animated fadeInRightBig">
+                <div class="larry-body-header">
+                    <span class="tit">收支明细</span>
+                </div>
+                <div class="larry-body-content clearfix">
+                    <div role="tabpanel">
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div id="top_lishi">
+                                <div class="waikuang00">
+                                    <table class="layui-table table-bordered table-striped">
+                                        <tr class="sekuai_01">
+                                            <td width="100">时间</td>
+                                            <td width="100">金额</td>
+                                            <td width="120">类型</td>
+                                            <td width="100">备注</td>
+                                        </tr>
+
+                                        {foreach $list as $log}
+                                        <?php
+                                        ?>
+                                        <tr align="center">
+                                            <td align="center">{$log.create_at}</td>
+                                            <td align="center">{$log.total_fee}</td>
+                                            <td align="center">{$log.unit_type_text}</td>
+                                            <td align="center">
+                                                <span style="color:#FF0000;">{$log.note}</span>
+                                            </td>
+                                        </tr>
+                                        {/foreach}
+
+                                    </table>
+                                    <div class="panel-footer">
+                                        {$list->render()}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+</div>
+
+
+{/block}

@@ -1,0 +1,54 @@
+<div class="layui-container">
+    <div class="layui-row">
+        <form class="layui-form form-inline" target="zbn_cms" method="post"
+              action="{:\think\\Request::instance()->url()}">
+            <br>
+            {foreach $field_list as $k=>$field}
+            <div class="layui-form-item" id="row_{$k}">
+                <label class="layui-form-label">{$field['slug']}</label>
+                <div class="layui-input-block">
+                    {$field['form_str']}
+                </div>
+            </div>
+            {/foreach}
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['layer' , 'form'] , function () {
+        var form = layui.form;
+        var $ = layui.$;
+        form.render();
+
+        radio_detect();
+        form.on('radio', function(data){
+            radio_detect();
+        });
+
+
+    });
+
+    function radio_detect() {
+        var $action = $("input[name='data[action]']:checked").val();
+        if($action == 1){
+            $("#row_module").show();
+            $("#row_reply_type").hide();
+
+        }
+
+        if($action == 2){
+
+            $("#row_module").hide();
+            $("#row_reply_type").show();
+
+        }
+    }
+</script>

@@ -1,0 +1,358 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form class="layui-form" action="" target="zbn_cms" method="post">
+
+    <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="first">网站设置</a>
+        {if module_exist('sites')} <a class="item" data-tab="second">站群设置</a> {/if}
+        <a class="item " data-tab="email">邮箱配置</a>
+        <a class="item " data-tab="attach">附件配置</a>
+        <a class="item " data-tab="map">地图配置</a>
+        <a class="item " data-tab="third">安全设置</a>
+        <a class="item " data-tab="distribute">分销配置</a>
+    </div>
+
+
+    <!--distribute-->
+    <div class="ui bottom attached tab segment" data-tab="distribute">
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否开启分销</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="distribute[status]" value="1"  {if isset($config.distribute.status) && $config.distribute.status==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">分销商是否需要手机认证</label>
+            <div class="layui-input-block">
+                <?php
+                $datas = [
+                    [
+                        'id' => 0, 'name' => '否'
+                    ],[
+                        'id' => 1, 'name' => '是'
+                    ],
+                ];
+                echo \app\common\util\forms\Forms::radio($datas , $config['distribute']['verify_mobile'] , 'verify_mobile' , 'distribute');
+                ?>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">分销商加入模式</label>
+            <div class="layui-input-block">
+
+
+
+
+
+                <div class=" layui-input-inline"><input type="radio" name="distribute[mode]" value="0" title="自动成为" {if !isset($config.distribute.mode) || $config.distribute.mode==0} checked {/if}></div>
+                <div class=" layui-input-inline"><input type="radio" name="distribute[mode]" value="1" title="需要审核" {if isset($config.distribute.mode) && $config.distribute.mode=="1"} checked {/if}></div>
+
+                <div class=" layui-input-inline is-hidden">
+
+                    <input type="radio" name="distribute[mode]" value="2" title="消费金额满" {if isset($config.distribute.mode) && $config.distribute.mode=="2"} checked {/if}>
+
+                    <input type="text" name="distribute[mode_val]" class="layui-input" >
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">分成模式</label>
+            <div class="layui-input-block">
+                <div class=" layui-input-inline">
+
+                    <input type="radio" name="distribute[profit_mode]" value="0" title="绑定关系" {if !isset($config.distribute.profit_mode) || $config.distribute.profit_mode==0} checked {/if}>
+                </div>
+                <div class=" layui-input-inline is-hidden">
+                    <input type="radio" name="distribute[profit_mode]" value="1" title="每次引导" {if isset($config.distribute.profit_mode) && $config.distribute.profit_mode=="1"} checked {/if}>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">分成层级</label>
+            <div class="layui-input-block">
+
+                <input type="radio" name="distribute[level]" value="0" title="不分成" {if !isset($config.distribute.level) || $config.distribute.level==0} checked {/if}>
+                <input type="radio" name="distribute[level]" value="1" title="一级分成" {if isset($config.distribute.level) && $config.distribute.level=="1"} checked {/if}>
+                <input type="radio" name="distribute[level]" value="2" title="二级分成" {if isset($config.distribute.level) && $config.distribute.level=="2"} checked {/if}>
+                <input type="radio" name="distribute[level]" value="3" title="三级分成" {if isset($config.distribute.level) && $config.distribute.level=="3"} checked {/if}>
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+    <!--map-->
+    <div class="ui bottom attached tab segment " data-tab="map">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">腾讯地图密钥</label>
+            <div class="layui-input-block">
+                <input type="text" name="map[tx_key]"  value="{$config.map.tx_key}" placeholder="腾讯地图密钥" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">百度地图密钥</label>
+            <div class="layui-input-block">
+                <input type="text" name="map[bd_key]"  value="{$config.map.bd_key}" placeholder="度地图密钥" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">地区中心设置</label>
+            <div class="layui-input-block">
+                <?php
+                echo \app\common\util\map\BaiduMap::render('site_coordinate' , $config['map']['site_coordinate'] , 'map');
+                ?>
+
+            </div>
+        </div>
+
+
+    </div>
+
+    <!--Basic-->
+    <div class="ui bottom attached tab segment active" data-tab="first">
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否关闭网站</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="close_site" value="1"  {if isset($config.close_site) && $config.close_site==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">关闭原因</label>
+            <div class="layui-input-block">
+                <textarea name="close_site_tips" placeholder="关闭网站用户提示语" class="layui-textarea">{$config.close_site_tips|default="网站维护中"}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">统计代码</label>
+            <div class="layui-input-block">
+                <textarea name="tongji" placeholder="统计代码" class="layui-textarea">{$config.tongji|default=""}</textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">底部版权信息</label>
+            <div class="layui-input-block">
+                <input type="text" name="copyright"   value="{$config.copyright|default=""}" placeholder="版权设置" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">系统名字</label>
+            <div class="layui-input-block">
+                <input type="text" name="system_name" required value="{$config.system_name|default=""}"  lay-verify="required" placeholder="系统名字" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div>
+            <label class="layui-form-label">{:zlang('Logo上传')}</label>
+            <div class="layui-input-block">
+                <?php
+                $field_config = [
+                    'node_field_data_source_type' => '',
+                    'node_field_data_source_config' => "jpg,gif,png,jpeg",
+                    'node_field_form_name' => 'logo',
+                    'slug'=> 'Logo上传',
+                    'node_field_name'=> 'logo',
+                    'node_field_length' => 1 ,
+                    'node_field_mode' => 'layui_single_upload',
+                    'field_type_name' => 'upload',
+                    'node_field_default_value'=> $config['data']['logo'],
+                    'node_field_form_id' => 'logo',
+                    'node_field_class_name' => 'layui-select form-control',
+                    'node_field_pk_key' => 'field_type_name',
+                    'node_field_name_key' => 'field_type_name_desc',
+                    'node_field_parentid_key' => '',
+                    'node_field_form_property' => ' "',
+                    'node_field_primary_option' => ''
+                ];
+                $_base = [];
+                echo $form_factory->config_model_form($field_config , $_base);
+                ?>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">默认模板主题</label>
+            <div class="layui-input-block">
+                <input type="text" name="theme"  value="{$config.theme|default=""}" placeholder="不写默认模板主题为default" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item" style="display: none">
+            <label class="layui-form-label">是否隐藏产品信息</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="hide_mhcms_info" value="1"  {if isset($config.hide_mhcms_info) && $config.hide_mhcms_info==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+    </div>
+
+
+    <!--sites-->
+    {if module_exist('sites')}
+        <div class="ui bottom attached tab segment" data-tab="second">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否自动增加区县站点</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="sites[auto_create_site]" value="1" {if isset($config.auto_create_site) && $config.sites.auto_create_site==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">单体支付模式</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="sites[single_pay]" value="1" {if isset($config.sites.single_pay) && $config.sites.single_pay==1} checked {/if} lay-skin="switch">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">账号共享</label>
+            <div class="layui-input-block">
+                <input type="radio" name="group[share_account]" value="0" title="否" {if !isset($config.group.share_account) || $config.group.share_account==0} checked {/if}>
+                <input type="radio" name="group[share_account]" value="1" title="是" {if isset($config.group.share_account) && $config.group.share_account=="1"} checked {/if}>
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">单点登录域名</label>
+            <div class="layui-input-block">
+                <input type="text" name="sso_domain"  value="{$config.sso_domain|default=""}"  placeholder="单点登录域名,如 www.mhcms.net " autocomplete="off" class="layui-input">
+            </div>
+        </div>
+    </div>
+    {/if}
+
+    <div class="ui bottom attached tab segment " data-tab="email">
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱smtp</label>
+            <div class="layui-input-block">
+                <input type="text" name="email[smtp]"  value="{$config.email.smtp|default=""}" placeholder="邮箱smtp" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">SMTP端口</label>
+            <div class="layui-input-block">
+                <input type="text" name="email[port]"  value="{$config.email.port|default=''}" placeholder="SMTP端口" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" name="email[user_name]"  value="{$config.email.user_name|default=''}" placeholder="用户名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">SMTP安全模式</label>
+            <div class="layui-input-block">
+                <input type="radio" name="email[secure]" value="" title="无" {if !isset($config.email.secure) || $config.email.secure==''} checked {/if}>
+                <input type="radio" name="email[secure]" value="ssl" title="ssl" {if isset($config.email.secure) && $config.email.secure=="ssl"} checked {/if}>
+                <input type="radio" name="email[secure]" value="tls" title="tls" {if isset($config.email.secure) && $config.email.secure=="tls"} checked {/if}>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="email[password]"  value="{$config.email.password|default=''}" placeholder="密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">发送者邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="email[sender]"  value="{$config.email.sender|default=''}" placeholder="要显示的发送者邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="ui bottom attached tab segment " data-tab="attach">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">是否压缩图片</label>
+            <div class="layui-input-block">
+
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <div class="ui bottom attached tab segment " data-tab="third">
+        <div class="layui-form-item">
+            <label class="layui-form-label">登录加密密钥</label>
+            <div class="layui-input-block">
+                <input type="text" name="auth_key"  value="{$config.auth_key|default=random(32)}" placeholder="密钥可随便填写" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">管理员openid</label>
+            <div class="layui-input-block">
+                <input type="text" name="secure[admin_openid]"  value="{$config.secure.admin_openid|default=''}" placeholder="管理员openid" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">屏蔽的IP</label>
+            <div class="layui-input-block">
+                <textarea name="secure[bad_ip]" placeholder="屏蔽的IP " class="layui-textarea">{$config.secure.bad_ip|default=""}</textarea>
+                <p>多个用#隔开</p>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    //Demo
+    require(['layui' , 'jquery' , 'semantic'] , function (layui, $, semantic) {
+        layui.use(['form' ,'element'], function(){
+            var form = layui.form;
+            var element = layui.element;
+            //监听提交
+            form.on('submit(formDemo)', function(data){
+
+            });
+        });
+
+        $('.menu .item')
+            .tab()
+
+    });
+
+</script>
+
+{/block}

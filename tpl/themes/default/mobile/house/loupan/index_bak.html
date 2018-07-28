@@ -1,0 +1,68 @@
+{extend name="$front_base_layout" /}
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="jquery"}{/block}
+{block name="baidu_map"}{/block}
+{block name="bulma_css"}{/block}
+{block name="content_header"}{/block}
+{block name="main"}
+<div class="ui  menu  pointing equal width center aligned padded grid mhcms_filter">
+    {foreach $filter.fields as $k=>$field}
+    <div class="ui dropdown item   column dropdown" href="#">   <span class="text">{$field.slug} <i class="dropdown icon"></i></span>
+        {if $field.options}
+        <div class="menu  ">
+            {foreach $field.options as $option}
+            <a   class=" item {$option.class}" href="{$option.href}">
+                <i class="{$option.icon}"></i> {$option.name}
+            </a>
+            {/foreach}
+        </div>
+        {/if}
+    </div>
+    {/foreach}
+</div>
+
+<div class="ui two column stackable grid container">
+    <div class="ui twelve wide  column stackable  mhcms_mobile_column" >
+        <div class="ui top attached mhcms-panel">
+            <div class="ui  mhcms-panel-header" style="display: none"><i class="{$cate['icon']}"></i>{$cate['cate_name']}</div>
+            <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
+                <ul class="ui mhcms-list unstackable items">
+                    {foreach $lists as $item}
+                    <?php
+                    $_item = \app\common\model\Models::get_item($item['id'] , $content_model_id);
+                    $url  = $_item['thumb']['0']['url'];
+                    ?>
+                    <div class="ui item mhcms-list-item ">
+                        {if $url}<a  class=" image tiny ui" > <img src="{$url}"  >
+                            <span class="mhcms-img-cover">{$item['price']} 元/平方</span>
+                        </a>{/if}
+                        <div class="content">
+                            <a class="header mhcms-item-header" href="{:url('house/loupan/detail' , ['id'=>$item['id'] ])}">{$item.loupan_name}</a>
+                            <div class="meta">
+                                {$item.loupan_desc}
+                            </div>
+                            <div class="extra">
+                                <span>{$_item.tags}</span>
+                                <span>{$item.create_at}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+{/block}
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}

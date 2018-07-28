@@ -1,0 +1,31 @@
+.layui-form-label {width: 110px;
+}
+
+.layui-upload-list > .layui-upload-img{
+    float: left;    position: relative;
+    text-align: center;
+    font-size: 23px;
+    line-height: 80px;
+}
+.layui-upload-list > .layui-upload-img .close{
+    position: absolute;
+    right: -4px;
+    top: 0;
+    background-color: #7a7a7a;
+    opacity: 0.5;
+    width: 25px;
+    height: 25px;
+    line-height: 30px;
+    color: red;
+}
+input.listorder{
+    max-width: 45px;text-align: center;    padding: 0;height: 28px;
+}
+
+div.layui-upload-img {
+    overflow: hidden;
+    margin-right: 8px;
+    line-height: 80px;
+    font-size: 28px;
+    box-shadow: 0px 0px 8px #ccc;
+}

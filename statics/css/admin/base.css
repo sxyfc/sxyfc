@@ -1,0 +1,127 @@
+@import "//at.alicdn.com/t/font_347998_v2idczvglrk65hfr.css";
+*{
+    box-sizing: border-box;
+}
+html {
+    font-size: 82.5%; /*10 ÷ 16 × 100% = 62.5%*/
+    min-height: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+body {
+    font-size: 12px;
+}
+div.layui-upload-img{
+    overflow: hidden;margin-right: 8px;
+}
+div.layui-upload-img .layui-upload-img{
+    max-width: 100%;display: block;margin: auto;
+}
+
+.layui-form-label{
+    min-width: 110px;
+}
+.ui.red{
+    color: red;
+}
+
+.larry-wrapper{
+    margin: 15px;
+    padding: 0px;
+    border-radius: 3px;
+    background: #ffffff;
+    border: 1px solid #F1F2F7;
+    box-shadow: 0px 1px 1px #F1F2F7;
+}
+.larry-body{
+    margin: 0 auto;
+    width: 100%;
+    height: auto;
+}
+.larry-body .larry-body-header{
+    width: 100%;
+    border-bottom: 1px solid #EEEFF1;
+    padding:10px 20px;
+}
+.larry-body .larry-body-header span.tit{
+    line-height: 50px;
+    font-size: 16px;
+    color: #666666;
+    font-weight: 300;
+}
+.larry-body .larry-body-content{
+    padding: 20px;
+}
+
+.layui-form .layui-form-item label.layui-form-label{
+}
+.layui-input-block{
+    margin-left: 160px;
+    width: auto;
+}
+.layui-disabled{
+    background: #EEEEEE;
+    color: #595963 !important;
+}
+.layui-disabled:hover{
+    color: #595963 !important;
+}
+.layui-input-block textarea{
+    height: 90px;
+}
+/* Ã¤Â¿Â®Ã¦â€Â¹Ã¥Â¯â€ Ã§Â Â */
+.larry-body .changepwd{
+    padding-bottom: 60px;
+}
+.larry-body-content .change-submit{
+    padding-top: 20px;
+}
+.larry-body-content .change-submit .larry-tj{
+    margin-right: 20px;
+}
+
+.layui-fixbar li {
+    width: 40px;
+    height: 40px;
+    line-height: 42px;
+    margin-bottom: 1px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 25px;
+    background-color: #9F9F9F;
+    color: #fff;
+    border-radius: 2px;
+    opacity: .95;
+}
+
+.layui-fixbar .layui-fixbar-top {
+    font-size: 25px!important;
+}
+td a i.icon{
+    margin: 0;
+}
+.layui-table[lay-size=sm] td, .layui-table[lay-size=sm] th {
+    font-size: 12px;
+    padding: 5px 5px;
+}
+
+.layui-form-item:hover{
+    background: #F2F2F2;
+}
+
+.layui-table td, .layui-table th {font-size: 12px;
+}
+.breadcrumb a{
+    padding:  0 0.15em;
+    font-size: 12px;
+}
+
+td pre{
+    padding: 0;background: transparent;
+}
+.larry-body{
+    overflow-x: auto;
+}
+.layui-btn.selected
+{
+background: #0D9BF2;color: #fff;
+}

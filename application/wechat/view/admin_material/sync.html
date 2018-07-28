@@ -1,0 +1,42 @@
+<div class="layui-container">
+    <div class="layui-row" style="padding: 45px">
+        <div class="ui indicating teal  progress"  id="sync_process">
+            <div class="bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('#sync_process')
+            .progress({
+                total: {$total_page} ,
+                onSuccess : function (total) {
+
+                }
+            })
+        ;
+
+        $('#sync_process').progress('increment');
+        load_next_page("{$next_url}");
+
+        function load_next_page($next_url) {
+
+            $.get($next_url , {
+
+            } , function (data) {
+
+                $('#sync_process').progress('increment');
+                if (data.code == 1) {
+                    if(data.next_url != ""){
+                        load_next_page(data.next_url);
+                    }
+                }else{
+                    layer.msg(data.msg ,function () {
+                        layer.closeAll();
+                    });
+                }
+            });
+        }
+
+
+    </script>

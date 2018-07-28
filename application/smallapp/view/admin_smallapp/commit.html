@@ -1,0 +1,51 @@
+<link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+
+<div class="wrapper wrapper-content animated fadeInRight container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="alert alert-block alert-success">
+                        <button type="button" class="close" data-dismiss="alert">
+                            <i class="ace-icon fa fa-times"></i>
+                        </button>
+                        <i class="ace-icon fa fa-check green"></i>
+                        小程序对应的分类应该在微信官方小程序后台设置后才能在这里设置并提交代码审核！注意：本页面的操作系统不会保存，直接提交给腾讯服务器;
+                    </div>
+                    <form class="" target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"><span
+                                    class="c-red">*</span>设置关键字：</label>
+                            <div class="col-sm-9">
+                                <input type="text" value="" placeholder="关键字腾讯小程序搜索的时候用请用空格隔开最多10个,每个不能超过20个字符"  id="keyword" name="keyword" class="form-control"/>
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label no-padding-right"><span
+                                    class="c-red">*</span>选择分类：</label>
+                            <div class="col-sm-9">
+                                <select name="cat" id="cat" class="category form-control">
+                                    <?php foreach($category['category_list'] as $k=>$val){?>
+                                        <option value="<?=$k;?>"><?=$val['first_class'];?>=><?=$val['second_class'];?>=><?=isset($val['third_class'])?$val['third_class']:'';?></option>
+                                    <?php }?>
+                                </select>
+                            </div>
+                            <div class="is-clearfix"></div>
+                        </div>
+                        <div class="clearfix form-actions form-group">
+                            <div class="col-md-offset-3 col-md-9">
+                                <button mini="submit" for="form-create" class="btn btn-info" type="submit">
+                                    <i class="ace-icon fa fa-check bigger-110"></i>
+                                    提交审核
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

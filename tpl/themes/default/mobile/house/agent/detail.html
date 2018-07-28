@@ -1,0 +1,196 @@
+{extend name="$front_base_layout" /}
+{block name="jquery"}{/block}
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="baidu_map"}{/block}
+{block name="content_header"}{/block}
+{block name="mhcms_module_js"}{/block}
+{block name="semantic_css"}{/block}
+{block name="main"}
+<?php
+$url = $detail['avatar'];
+$api_imag = url('attachment/image/view_thumb' , ['file_id'=>$detail['avatar']]);
+?>
+<div class="media" style="padding:10px ;background: url('/statics/images/house/shop_new_img.jpg') no-repeat center 100%">
+    <div class="media-left">
+        <p class="image is-64x64" style="overflow: hidden;-webkit-border-radius: 50%;-moz-border-radius: 50%;border-radius: 50%;">
+            <img src="{$api_imag}">
+        </p>
+    </div>
+    <div class="media-content">
+        <div class="content has-text-white">
+            <p style="    font-size: 14px;">
+                <strong class=" has-text-white">{$detail.person_name}</strong> <small>{$detail.mobile}</small> <small></small>
+                <br>
+                {$detail.description}
+            </p>
+        </div>
+        <nav class="level is-mobile">
+            <div class="level-left">
+                <a class="level-item">
+                    <span class="icon is-small"><i class="fas fa-reply"></i></span>
+                </a>
+                <a class="level-item">
+                    <span class="icon is-small"><i class="fas fa-retweet"></i></span>
+                </a>
+                <a class="level-item">
+                    <span class="icon is-small"><i class="fas fa-heart"></i></span>
+                </a>
+            </div>
+        </nav>
+    </div>
+    <div class="media-right">
+
+    </div>
+</div>
+<div class="bk10"></div>
+<div class="tabs is-toggle is-toggle-rounded">
+    <ul>
+        <li :class="{'is-active' : model_id=='esf'}" @click="model_id='esf'">
+            <a>
+                <span class="icon is-small"><i class="fas fa-music"></i></span>
+                <span>出租房源</span>
+            </a>
+        </li>
+        <li :class="{'is-active' : model_id=='rent'}" @click="model_id='rent'">
+            <a>
+                <span class="icon is-small"><i class="fas fa-film"></i></span>
+                <span>出租房</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+<div v-if="model_id=='esf'"  class="ui segment" v-if="items.length > 0">
+
+    <a  v-for="item in items"  :href="'/house/esf/detail?id=' + item.id" class="weui-media-box weui-media-box_appmsg">
+        <div class="weui-media-box__hd is-clipped" style="width: 120px;height: 90px;">
+            <img :src="item.thumb[0].url" alt="" class="weui-media-box__thumb">
+        </div>
+        <div class="weui-media-box__bd" style="align-self: flex-start;">
+            <h4 class="weui-media-box__title"> {{item.title}}</h4>
+            <p class="weui-media-box__desc" style="  font-size: 12px">{{item.address}} </p>
+            <p class="weui-media-box__desc" style="padding-top: 5px">
+            </p>
+            <div class="mtags">
+                <span v-for="(tag , i ) in item.tags.split(' , ')" :class="'mtag tag_' + i">{{tag}} </span>
+            </div>
+            <p></p>
+
+            <p class="weui-media-box__desc has-text-right">
+                <span class="price has-text-danger">{{item.price}} 元/平方</span>
+            </p>
+
+        </div>
+    </a>
+
+
+
+
+</div>
+
+
+<div v-if="model_id=='rent'"  class="ui segment" v-if="items.length > 0">
+
+    <a  v-for="item in items"  :href="'/house/rent/detail?id=' + item.id" class="weui-media-box weui-media-box_appmsg">
+        <div class="weui-media-box__hd is-clipped" style="width: 120px;height: 90px;">
+            <img :src="item.thumb[0].url" alt="" class="weui-media-box__thumb">
+        </div>
+        <div class="weui-media-box__bd" style="align-self: flex-start;">
+            <h4 class="weui-media-box__title"> {{item.title}}</h4>
+            <p class="weui-media-box__desc" style="  font-size: 12px">{{item.address}} </p>
+            <p class="weui-media-box__desc" style="padding-top: 5px">
+            </p>
+            <div class="mtags">
+                <span v-for="(tag , i ) in item.tags.split(' , ')" :class="'mtag tag_' + i">{{tag}} </span>
+            </div>
+            <p></p>
+
+            <p class="weui-media-box__desc has-text-right">
+                <span class="price has-text-danger" v-if="item.price !==0">{{item.price}} 元/平方</span>
+                <span class="price has-text-danger"  v-if="item.price ===0">租金面议</span>
+            </p>
+
+        </div>
+    </a>
+
+</div>
+
+
+<div id="infinite"  v-bind:class="loading ? 'loading' :''" v-if="has_more" @click="load_list" class="ui segment has-text-centered has-text-grey">查看更多</div>
+<div id="infinite" v-if="!has_more" class=" ui segment has-text-centered has-text-grey">已经到了尽头</div>
+{/block}
+{block name="vue_mine_js"}
+<script>
+    var service_url = "{:url('house/service/list_agent_resource')}";
+    var agent_id =  {$detail.id};
+    require(['jquery'] , function ($ ) {
+        new Vue({
+            el : "#mhcms-app" ,
+            data :{
+                model_id : "esf" ,
+                page : 1 ,
+                items : [] ,
+                loading : false ,
+                agent_id : agent_id ,
+                has_more : true
+
+            },
+            watch : {
+                model_id : function (new_data) {
+                    this.page = 1;
+                    this.load_list(1);
+                    console.log(new_data);
+                }
+            },
+            methods : {
+                load_list : function (init) {
+                    var that = this;
+                    if(init===1){
+                        that.items = [];
+                    }
+
+                    this.loading = true;
+                    $.get(service_url , {
+                        model_id : this.model_id ,
+                        agent_id : this.agent_id ,
+                        site_id : "{:$_W['site']['id']}" ,
+                        page : that.page
+                    } , function (ret) {
+                        that.loading = false;
+                        if(ret.code===1){
+                            for (var i = 0; i <= ret.data.data.length - 1; i++) {
+                                that.items.push(ret.data.data[i])
+                            }
+
+                            if(ret.data.last_page >ret.data.current_page ){
+                                that.page++;
+                                that.has_more = true;
+                            }else{
+                                that.has_more = false;
+                            }
+                            if(that.has_more){
+                            }
+                        }else{
+
+                        }
+                    } , 'json');
+
+                }
+            }
+            ,
+            created : function () {
+                var that = this;
+                this.load_list(1);
+                //add watch
+
+
+
+            }
+        });
+    });
+</script>
+{/block}
+{block name="copyright"}{/block}

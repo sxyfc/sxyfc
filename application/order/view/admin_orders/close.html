@@ -1,0 +1,60 @@
+{if $order['status'] != "已退款" || $order['status'] != "已完成"|| $order['status'] != "已关闭"}
+
+<form id="cate_action" class="col-xs-12 form-inline layui-form" method="post" action="{:\think\\Request::instance()->url()}">
+    <table class="table table-bordered container-fluid"  >
+        <tr>
+        <td >请填写取消理由</td>
+        <td class="layui-form-item layui-form-text">
+            <div class="">
+                <textarea placeholder="请输入内容" lay-verify="required" cols="80" name="description" class="form-control layui-textarea"></textarea>
+            </div>
+        </td>
+        </tr>
+        <tr>
+        <td colspan="2" class="layui-input-block">
+            <button class="layui-btn btn btn-primary" lay-submit lay-filter="formBuy">
+                {if $order['status'] == "退款中"}
+                同意退款
+                {else}
+                取消订单
+                {/if}
+            </button>
+        </td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    layui.use(['layer', 'form'], function(){
+        var layer = layui.layer
+            ,form = layui.form();
+        //各种基于事件的操作，下面会有进一步介绍
+
+        //监听提交
+        form.on('submit(formBuy)', function(data){
+            //TODO 创建订单
+
+            var api_url = "{:\think\\Request::instance()->url()}";
+            //TODO 跳转到浏览订单页面
+            var cancle_data = JSON.stringify(data.field);
+            $.post(api_url , {
+                'data' :  cancle_data
+            } , function (ret) {
+                layer.msg(ret.msg);
+                layer.closeAll();
+            });
+            return false;
+        });
+    });
+
+
+</script>
+{else}
+<script>
+    layui.use(['layer', 'form'], function(){
+        layer.msg("取消成功！" , function () {
+            layer.closeAll();
+        });
+    });
+</script>
+{/if}

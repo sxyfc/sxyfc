@@ -1,0 +1,30 @@
+<div class="mhcms-panel">
+    <div class=" ">
+        <a href="/house/loupan/detail?id={$detail.id}" class="weui-media-box weui-media-box_appmsg">
+            <div class="weui-media-box__hd is-clipped" style="width: 120px;height: 90px;">
+                <img src="{$detail.thumb.0.url}" alt="" class="weui-media-box__thumb">
+            </div>
+            <div class="weui-media-box__bd" style="    align-self: flex-start;"><h4 class="weui-media-box__title"><!----> {$detail.loupan_name}
+
+                </h4>
+                <p class="weui-media-box__desc" style="  font-size: 12px">{$detail.address} </p>
+                <p class="weui-media-box__desc" style="padding-top: 5px">
+                </p><div>
+                    <span class="tag">海景房</span>
+
+                </div>
+                <p></p>
+
+                <p class="weui-media-box__desc has-text-right">
+                    <span class="price has-text-danger">6500 元/平方</span>
+                </p>
+
+            </div>
+        </a>
+    </div>
+    <div class="weui-media-box weui-media-box_appmsg">
+
+        {$detail.old_data.content}
+    </div>
+
+</div>

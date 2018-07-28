@@ -1,0 +1,249 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
+<style>
+    .selected{color: red}
+
+    .suite{
+        display: inline-block;
+        border: solid 1px #ccc;
+        width: 50px;
+        cursor: pointer;
+        margin: 2px;
+    }
+    .floor.suite{
+        font-weight: bold;
+    }
+
+
+
+    .status_1 {
+        background-color: #0D9BF2;color: #fff;
+    }
+    .status_2{
+        background-color: #9D0200;color: #fff;
+    }    .active{
+             background: red;color: #fff;
+         }
+</style>
+<div>
+    {foreach $filter_info.fields as $k=>$field}
+    <div class="tableBox" >
+        <a style="background-color: {$option.bgcolor|default=""};width: 120px;margin: 10px"  class="layui-btn layui-btn-primary ">{$field.slug}</a>
+
+        <a style="background-color: {$option.bgcolor|default=""};width: 120px;margin:10px "  class="    {$field.class|default=""}" href="{$field.href}">全部</a>
+
+        {foreach $field.options as $option}
+        <a style="background-color: {$option.bgcolor};color: {$option.color} ;width: 120px;margin:10px " class=" {$option.class|default=""}" href="{$option.href}">
+        <i class="{$option.icon}"></i> {$option.name}</a>
+        {/foreach}
+    </div>
+    {/foreach}
+</div>
+<script src="/statics/components/vue/vue.js"></script>
+
+<div id="xiaokongtu">
+
+    <div class="ui stackable three column grid  center aligned padded grid" v-for="building in buildings">
+       <div class="row"> {{building.building_name}}</div>
+
+        <div class="column " v-for="(unit , unit_index) in building.units" >
+            {{unit_index}} 单元
+
+
+            <div class="floor" v-for="(floor , floor_index) in reserve_floor(unit.floors)">
+                <span class="suite floor">{{floor.floor}} F</span>
+
+                <template v-for="_suite in floor.suites">
+
+                <span v-bind:data-build_id="building.id"  v-bind:data-unit_id="unit_index" v-bind:data-floor_id="floor.floor" v-bind:data-suite_id="_suite.id" v-bind:class="[current_suite == building.id+ unit_index+floor.floor+_suite.id ? 'active' : '' , _suite.product ? 'status_' + _suite.product.status : '']"  v-on:click="select_product"  class="suite " >
+                        {{_suite.room_name}}
+                </span>
+                </template>
+            </div>
+        </div>
+
+
+        <div id="product" v-if="product_id">
+            <house_product :suite="suite" >
+
+            </house_product>
+        </div>
+
+
+    </div>
+
+
+
+</div>
+<template id="product_panel">
+
+    <div>
+        <table  class="ui celled table column sixteen">
+            <thead>
+            <tr>
+                <th>产品名称</th>
+                <th>状态</th>
+                <th>户型</th>
+                <th>姓名</th>
+                <th>电话</th>
+                <th>售价</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tr>
+                <td contenteditable="true" >
+                    <input type="text" class="layui-input layui-input-inline" v-model="suite.room_name">
+                </td>
+                <td >
+                    <label v-for="s in status">
+                        {{s.text}}
+                    <input type="radio" @change="updateProduct" v-model="suite.status" v-bind:value="s.code">
+                    </label>
+                </td>
+                <td >
+
+                </td>
+                <td>
+                    <input type="text" @blur="updateProduct" class="layui-input layui-input-inline" v-model="suite.real_name">
+                </td>
+                <td>
+                    <input type="text" @blur="updateProduct" class="layui-input layui-input-inline" v-model="suite.price">
+                </td>
+                <td>
+                    <input type="text" @blur="updateProduct" class="layui-input layui-input-inline" v-model="suite.mobile">
+                </td>
+                <td>
+
+                </td>
+            </tr>
+
+        </table>
+    </div>
+</template>
+
+<script>
+
+
+    var product_api = "{:url('house/admin_service/get_product')}";
+    var product_update_api = "{:url('house/admin_service/update_product')}";
+    var buildings = {:json_encode($buildings)};
+    var huxings = {:json_encode($huxings)};
+
+    Vue.component('house_product' , {
+        template: "#product_panel",
+        props : ['suite'] ,
+        data : function () {
+            var status = [
+                1 , 2
+            ];
+            return {
+                product_stat : this.suite.status ,
+                status : [
+                    {code :1 , text : "在售"} , {code :2 , text : "已售"}
+                ]
+            };
+        },
+        methods : {
+            updateProduct : function (event) {
+                loading("open");
+                console.log(this.suite);
+                $.get(product_update_api , this.suite , function (data) {
+                    console.log(data);
+                    loading("close");
+                    if(data.code ==1){
+
+                    }else{
+                        layer.msg(data.msg);
+                    }
+                }, 'json');
+            }
+        }
+    });
+    var vm = new Vue({
+        el: "#xiaokongtu",
+        data: {
+            product_id: 0 ,
+            suite: {
+
+            },
+            buildings: buildings ,
+            huxings : huxings ,
+            current_suite : ""
+        },
+        methods: {
+            init_building: function () {
+                for (var building in buildings) {
+                    for (var unit in buildings[building].units) {
+
+                    }
+                }
+            },
+            select_product: function ($event) {
+
+                var that=this;
+                loading("open");
+                $obj = $($event.target);
+
+                var loupan_id = "{$loupan_id}";
+                var build_id = $obj.data('build_id') ;
+                var floor_id = $obj.data('floor_id');
+                var unit_id = $obj.data('unit_id');
+                var suite_id = $obj.data('suite_id');
+                var product_name = $obj.html();
+
+                var target_suite =  build_id + "" + unit_id+floor_id+suite_id;
+
+                if(this.current_suite == target_suite){
+                    that.product_id = 0;
+                    this.current_suite = "";
+                    loading("close");
+                }else{
+                    this.current_suite = target_suite;
+                    $.get(product_api , {
+                        suite_id:$obj.data('suite_id') ,
+                        unit_id:$obj.data('unit_id') ,
+                        build_id:$obj.data('build_id') ,
+                        floor_id:$obj.data('floor_id') ,
+                        loupan_id: loupan_id,
+                        product_name : product_name
+                    } , function (data) {
+                        loading("close");
+                        if(data.code ==1){
+
+                            that.product_id = data.item.id;
+                            that.suite = data.item;
+                            $obj.attr("id" , "product_" + data.item.id);
+
+                            console.log(data.item);
+                        }else{
+                            layer.msg(data.msg);
+                        }
+
+                    }, 'json');
+                }
+
+            }
+            ,
+            reserve_floor: function (floors) {
+                var arr = Object.keys(floors);
+                var new_floors = [];
+                var reserved = arr.reverse();
+                for (var floor in reserved) {
+                    new_floors.push(floors[reserved[floor]]);
+                }
+                return new_floors;
+            }
+
+        },
+        watch : {
+            suite : function (query) {
+                console.log(query);
+            }
+        },
+        created: function () {
+
+        }
+    });
+</script>
+{/block}

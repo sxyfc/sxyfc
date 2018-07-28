@@ -1,0 +1,126 @@
+.banner_mag {
+    width: 760px;
+    position: absolute;
+    z-index: 333;
+    left: 50%;
+    top: 100px;
+    margin-left: -380px;
+    text-align: left;
+}
+
+.banner_magnr {
+    width: 760px;
+    height: 235px;
+    padding: 40px 0 0 40px;
+    color: #fff;
+    text-align: left;
+    background: url(../images/searchbj.png) no-repeat!important;
+    margin: 0 auto;
+}
+
+.banner_show {
+    width: 100%;
+    text-align: center;
+    height: 464px;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+.news02 {
+    width: 720px;
+    height: 36px;
+    margin-top: 30px;
+    z-index: 888;
+    position: relative;
+}
+.news02 .s1 a {
+    float: left;
+    padding: 0 10px;
+    font-size: 15px;
+    color: #fff;
+    line-height: 35px;
+    text-decoration: none;
+}
+.danmu_inbox {
+    position: absolute;
+    left: 49%;
+    top: 0;
+    z-index: 1;
+}
+.house_index_ad .swiper-slide img{
+    margin-left: -1045px;left: 49%;    width: 100%
+}
+
+.news02 .s1 a.cur {
+    background: #df2f30;
+    border-radius: 3px;
+}
+
+.news03 {
+    position: relative;
+    margin-top: 20px;
+}
+.tab-header .column , .title-header .column{
+    padding: 5px;
+}
+
+.tab-header  .column div{
+    font-size: 18px;
+    line-height: 45px;
+    height: 45px;background: #f0f0f0;
+}
+
+.tab-header  .column.active div{
+    border-bottom: solid 2px #eb7350;
+}
+
+.pic-ho .image{
+    height: 163px;
+    overflow: hidden;
+}
+
+.pic-ho .text_title {
+    height: 26px;
+    line-height: 26px;
+    overflow: hidden;
+    font-size: 12px;
+    margin-top: 6px;
+}
+.pic-ho .text_title b {
+    font-style: normal;
+    font-size: 14px;
+    padding-right: 5px;
+    color: #df2f30;
+}
+.pic-ho .text_title em {
+    font-style: normal;
+    color: #df2f30;
+}
+.mhcms-box{
+    margin-top: 20px;
+}
+.mhcms-box .title-header div {
+    height: 50px;
+    font-size: 18px;
+    background: #f3f3f3;
+    line-height: 50px;
+
+    text-indent: 2em;
+
+}
+
+.mhcms-box .title-header h2{
+    height: 50px;
+    line-height: 50px;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-left: 15px;
+}
+
+.mhcms-container{
+    width: 1200px;
+}
+#mhcms-app{
+    min-width: 1200px;
+}

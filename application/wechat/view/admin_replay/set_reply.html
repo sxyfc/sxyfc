@@ -1,0 +1,126 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
+
+<div class="layui-container">
+    <div class="layui-row">
+        <form class="layui-form form-inline" target="zbn_cms" method="post"
+              action="{:\think\\Request::instance()->url()}">
+            <br>
+            {foreach $field_list as $k=>$field}
+            <div class="layui-form-item" id="row_{$k}">
+                <label class="layui-form-label">{$field['slug']}</label>
+                <div class="layui-input-block">
+                    {$field['form_str']}
+                </div>
+            </div>
+            {/foreach}
+            <div class="layui-form-item" id="row_reply_content">
+
+                <label class="layui-form-label">回复内容</label>
+                <div class="layui-input-block">
+
+                {if $detail.reply_type=="text"}
+                <textarea class="layui-textarea" name="data[reply_content]">{$detail.reply_content}</textarea>
+                {else}
+
+                <textarea class="layui-textarea" name="data[reply_content]">{$detail.reply_content}</textarea>
+                {/if}
+                </div>
+            </div>
+
+            <div id="view" style="display: none"></div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+
+    var tmp_text =  $("#row_reply_content").html();
+    var default_action = $("input[name='data[reply_type]']:checked").val();
+
+
+    layui.use(['layer' , 'form'] , function () {
+        var form = layui.form;
+        var $ = layui.$;
+        form.render();
+
+        $(function () {
+
+
+
+            //radio_detect($action);
+            form.on('radio', function(data){
+                radio_detect(data.value);
+            });
+
+        });
+
+
+
+    });
+
+    function radio_detect($action) {
+        console.log($action);
+        var service_api = "{:url('wechat/admin_service/list_material')}" +  "?material_type=" + $action;
+
+        if($action != default_action){
+            $("#row_reply_content").html("");
+        }else{
+            $("#row_reply_content").html(tmp_text);
+        }
+
+
+        if($action != "text"){
+            $("#row_reply_content").html("");
+            //todo popup
+            layui.use(['layer'] , function () {
+                var $obj = $("<i width='80%' height='90%' href='"  +service_api +"' ></i>");
+                mhcms_frame_work.mhcms_frame($obj);
+            });
+
+        }else{
+            layer.msg("请直在下方直接输入");
+            $("#row_reply_content").html(tmp_text);return;
+        }
+
+
+
+
+    }
+    
+    function choose_media($data) {
+        var getTpl =$("#render_media").html();
+        var view = document.getElementById('view');
+        layui.use(['layer' , 'laytpl'] , function () {
+            var $ = layui.$ , layer = layui.layer;
+            var laytpl = layui.laytpl;
+            laytpl(getTpl).render($data, function(html){
+
+                $("#row_reply_content").html(html);// = html;
+                layer.closeAll()
+            });
+        });
+
+    }
+</script>
+
+
+<script id="render_media" type="text/html">
+    <div class="layui-form-item">
+        <label class="layui-form-label">回复内容</label>
+        <div class="layui-input-block">
+            {{d.image || ''}}
+            {{ d.title || d.filename || d.tag.title }}
+            <input type="hidden" value="{{ d.media_id }}" name="data[reply_content]">
+        </div>
+    </div>
+</script>
+{/block}

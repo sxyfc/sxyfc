@@ -1,0 +1,116 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+<style>
+    .layui-form-label{
+        min-width: 110px;
+    }
+</style>
+
+
+
+<div class="ui borderless main menu" style="margin: 0">
+    <div class="ui  container">
+        <a href="/" class="header item">
+            <img class="logo" src="/statics/images/logo.png">
+            {$_W['global_config']['system_name']}
+        </a>
+
+        <div class="right menu">
+
+            {if !$user}
+            <div href="#" class="ui  floated dropdown item">
+                <a class="" href="{:url('sso/passport/login')}">  <i class="iconfont icon-wode"></i> 登录</a>
+            </div>
+            <div href="#" class="ui  floated dropdown item">
+                <a href="{:url('sso/passport/register')}">
+                    <i class="iconfont icon-ruzhuanquan"></i> 注册
+                </a>
+            </div>
+            {else}
+
+            <a class="ui item" >
+                欢迎您：{$user.user_name}
+            </a>
+
+            <a class="ui item"  href="{:url('member/index/init')}">
+                <i class="dollar icon"></i>会员中心
+            </a>
+            <a class="ui button  item"  href="{:url('sso/passport/logout')}">
+                <span class="ui red"><i class="sign out icon"></i>注销</span>
+            </a>
+            {/if}
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+{block name="main"}
+{if $verifyed==1}
+{if $detail['personal_verify']==1}
+<div class="layui-container">
+    <div class="layui-row">
+        您已经通过了个人认证
+    </div>
+</div>
+{/if}
+
+{if $detail['company_verify']==1}
+<div class="layui-container">
+    <div class="layui-row">
+        您已经通过了企业认证
+    </div>
+</div>
+{/if}
+
+
+{else}
+
+<div class="layui-container" style="margin-top: 50px">
+    <div class="layui-row">
+        <fieldset class="layui-elem-field site-demo-button" style="padding: 15px">
+            <legend> 实名认证 </legend>
+            <div class="protocol">
+                <p>
+                </p><div class="well">
+                </div>
+
+                <p></p>
+        <form class="layui-form form-inline" target="mhcms" method="post"
+              action="{:\think\\Request::instance()->url()}">
+            <br>
+            {volist name="list" id="item"}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$item['slug']}</label>
+                <div class="layui-input-block">
+                    {$item['form_str']}
+                </div>
+            </div>
+            {/volist}
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</fieldset>
+
+</div>
+</div>
+<script>
+    layui.use(['form'] , function () {
+        var form = layui.form;
+        form.render();
+    });
+</script>
+
+{/if}
+{/block}

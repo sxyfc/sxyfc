@@ -1,0 +1,200 @@
+{extend name="$front_base_layout" /}
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="mhcms_base_js"}{/block}
+{block name="jquery"}{/block}
+{block name="baidu_map"}{/block}
+{block name="content_header"}{/block}
+{block name="semantic_css"}{/block}
+{block name="vue_js"}{/block}
+{block name="mhcms_module_js"}{/block}
+{block name="main"}
+
+<div class="weui-navbar filter" :class="fixed ? 'fixed' : ''">
+
+    <div class="weui-navbar__item">
+        <area_filter :multi="false" :field_name="'area_id'" :area_id="params.area_id" :show_filter="current_filter=='area_id' ? true : false" :text="names.area_id || '地区'" @post_area_name="set_names" @applied="change_options" @show_filter="show_filter" ></area_filter>
+    </div>
+
+    <div class="weui-navbar__item">
+        <comp_filter_option :multi="true" :model_id="'house_info'" :field_name="'zhuangxiu'" :text="names.zhuangxiu || '意向装修'" :ids="params.zhuangxiu" :show_filter="current_filter=='zhuangxiu' ? true : false" @post_name="set_names" @applied="change_options" @show_filter="show_filter"></comp_filter_option>
+    </div>
+
+    <div class="weui-navbar__item">
+        <comp_filter_option :multi="true" :model_id="'house_info'" :field_name="'shi'" :text="names.shi || '意向户型'" :ids="params.shi" :show_filter="current_filter=='shi' ? true : false" @post_name="set_names" @applied="change_options" @show_filter="show_filter"></comp_filter_option>
+    </div>
+
+    <div class="weui-navbar__item">
+        <comp_filter_option :multi="false" :model_id="'house_info'" :field_name="'type'" :text="names.type || '信息类型'" :ids="params.type" :show_filter="current_filter=='type' ? true : false" @post_name="set_names" @applied="change_options" @show_filter="show_filter"></comp_filter_option>
+    </div>
+
+</div>
+
+<div v-cloak>
+    <div  class="esf weui-panel" :class="fixed ? 'noscroll' :''">
+        <div class="weui-panel__bd">
+            <a v-for="(item, index) in items"  :href="'tel:'+item.mobile" class="weui-media-box weui-media-box_appmsg">
+                <div class="weui-media-">
+                    <i class="icon-dianhua iconfont"></i>
+                </div>
+                <div class="weui-media-box__bd">
+                    <h4 class="weui-media-box__title">【{{item.type}}】 {{item.title}}
+
+
+                    </h4>
+                    <p class="weui-media-box__desc">{{item.area_id}}   {{item.zhuangxiu}}   {{item.shi}}</p>
+
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <mhui_bottom_loading :has_more="has_more" :is_loading="is_loading"></mhui_bottom_loading>
+</div>
+
+<div class="bk10"></div>
+<div class="bk10"></div>
+<div class="bk10"></div>
+<div class="bk10"></div>
+<div class="bk10"></div>
+
+<div v-if="fixed" :style="{height: fixed? '100%' : 0}" @touchmove.prevent="" @click="show_filter('' , false)" class="modal-background" style="z-index: 99;height:0;position: fixed;opacity: 0.5;">
+{/block}
+
+
+{block name="vue_mine_js"}
+
+<script>
+    require([ 'Vue' , 'axios' ,'vue!mhcms_ui' ,  'vue!mhcms_filters', 'vue!house' ] , function (Vue , axios) {
+        Vue.prototype.$http = axios;
+        new Vue({
+            el: "#mhcms-app",
+            data: {
+                model_id: 'info',
+                items: [],
+                page: 1,
+                has_more: true,
+                is_loading: false,
+                current_filter: "",
+                params: {},
+                names: {},
+                shadow: false,
+                fixed: false
+            },
+            methods: {
+                set_names($field_name, $field_value) {
+                    this.names[$field_name] = $field_value;
+                    localStorage.setItem("info_names", JSON.stringify(this.names))
+                },
+                show_filter(current_filter, show_filter_mask) {
+                    console.log(show_filter_mask);
+                    this.fixed = show_filter_mask;
+                    if (show_filter_mask === true) {
+                        this.current_filter = current_filter;
+                    } else {
+                        this.current_filter = "";
+                    }
+
+                },
+                change_more_options($params) {
+                    this.params = Object.assign(this.params, $params);
+                    localStorage.setItem("info_params", JSON.stringify(this.params))
+                    console.log(this.params);
+                    this.has_more = true;
+                    this.load_list(1);
+                },
+                change_options($field_name, $field_value) {
+                    this.params[$field_name] = $field_value;
+                    console.log(this.params);
+                    this.has_more = true;
+                    localStorage.setItem("info_params", JSON.stringify(this.params))
+                    this.show_filter('');
+                    this.load_list(1);
+                },
+                load_list(init) {
+
+                    let that = this;
+                    if(!that.has_more || that.is_loading){
+                        return;
+                    }
+                    let api_url = api_host + 'house/service/list_info_resource';
+                    console.log("load_list" + api_host);
+                    if (init === 1) {
+                        that.items = [];
+                        that.page = 1
+                    }
+                    that.is_loading = true;
+                    that.has_more = true;
+                    this.params.page = that.page
+
+                    this.$http.get(api_url, {
+                        params: {
+                            site_id: {$_W.site.id}, query: this.params
+                    }
+                }).then(function (ret) {
+                        ret = ret.data
+                        if (ret.code === 1) {
+                            for (let i = 0; i <= ret.data.data.length - 1; i++) {
+                                console.log(ret.data.data[0]);
+                                that.items.push(ret.data.data[i])
+                            }
+
+                            if (ret.data.has_more === true) {
+                                that.page++;
+                                that.has_more = true;
+                            } else {
+                                that.has_more = false;
+                            }
+                            that.is_loading = false;
+                        } else {
+                            console.log("code err");
+                            console.log(ret);
+                        }
+                    }, function (error) {
+                        // failure
+                        console.log(error);
+                    });
+                },
+                //获取页面顶部被卷起来的高度
+                scrollTop() {
+                    return Math.max(
+                        //chrome
+                        document.body.scrollTop,
+                        //firefox/IE
+                        document.documentElement.scrollTop);
+                },
+                //获取页面文档的总高度
+                documentHeight() {
+                    //现代浏览器（IE9+和其他浏览器）和IE8的document.body.scrollHeight和document.documentElement.scrollHeight都可以
+                    return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+                },
+                //获取页面浏览器视口的高度
+                windowHeight() {
+                    //document.compatMode有两个取值。BackCompat：标准兼容模式关闭。CSS1Compat：标准兼容模式开启。
+                    return (document.compatMode == "CSS1Compat") ?
+                        document.documentElement.clientHeight :
+                        document.body.clientHeight;
+                }
+            },
+
+            created() {
+                var that = this;
+                this.params.model_id = this.model_id;
+                this.params = JSON.parse(localStorage.getItem("info_params")) || {};
+                this.names = JSON.parse(localStorage.getItem("info_names")) || {};
+                this.load_list(1)
+
+                window.addEventListener('scroll', () => {
+                    /*滚动响应区域高度取50px*/
+                    if(that.scrollTop() + that.windowHeight() >= (that.documentHeight() - 1)){
+                        that.load_list();
+                    }
+                })
+            }
+        });
+    });
+</script>
+{/block}
+{block name="footer"}
+{include file="public/footer" /}
+{/block}

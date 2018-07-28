@@ -1,0 +1,53 @@
+{extend name="admin@public/content_frame" /}
+{block name="table_form"}
+{/block}
+
+{block name="main"}
+<table class="layui-table" style="">
+    <tr>
+        <th>模块名称</th><th>标志</th><th>本地版本/服务器</th>
+
+
+        <th>授权有效期</th>
+        <th>升级服务</th>
+
+        <th>介绍</th><th>作者</th><th>状态</th> <th>操作</th>
+    </tr>
+    {foreach $modules as $module}
+    <?php
+
+    $_module = module_exist($module['app_sign']);
+
+    $module_version = get_module_version($module['app_sign']);
+    ?>
+
+    <tr>
+        <td>{$module.app_name}</td>
+        <td>{$module.app_sign}</td>
+        <td>{$module_version.module_version} / {$module.version}</td>
+        <td>永久</td>
+        <td> {$module.licence.expire_at}</td>
+        <td>{$module.description}</td>
+        <td>{$module.author}</td>
+        <td>
+            {if $_module.status ==1}
+            已安装
+            {else}
+            未安装
+            {/if}
+        </td>
+        <td>
+            <?php
+            $mapping['module'] = $module['app_sign'];
+            $mapping['id'] = $_module['id'];
+            ?>
+            {volist name="sub_menu" id="menu"}
+            {eq name="menu.user_menu_display" value="0"}
+            {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],"",'90%','80%' , $mapping)}
+            {/eq}
+            {/volist}
+        </td>
+    </tr>
+    {/foreach}
+</table>
+{/block}

@@ -1,0 +1,39 @@
+<aside class="menu">
+    <ul class="layui-nav layui-bg-green  layui-nav-tree" lay-filter="test">
+        <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
+        <li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:;">在线委托</a>
+            <dl class="layui-nav-child">
+                <dd><a href="/house/weituo/esf_buy">我要买房</a></dd>
+                <dd><a href="/house/weituo/create?type=1">我要卖房</a></dd>
+                <dd><a href="/house/weituo/rent_add">我要租房</a></dd>
+                <dd><a href="/house/weituo/create?type=2">我要出租</a></dd>
+                <dd><a href="/house/weituo/index">委托管理</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item  layui-nav-itemed">
+            <a href="javascript:;">关于我的</a>
+            <dl class="layui-nav-child">
+                <dd><a href="/house/user/kanfang_log">看房记录</a></dd>
+                <dd><a  onclick="parent.show_message('暂未开放')">我的足迹</a></dd>
+                <dd><a onclick="parent.show_message('暂未开放')">投诉管理</a></dd>
+                <dd><a href="/member/info/verify">实名认证</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:;">信息管理</a>
+            <dl class="layui-nav-child">
+                {if !$_W['module_config']['close_esf']}
+                <dd><a href="/house/user_content/my_esf_lists">二手房管理</a></dd>
+                {/if}
+
+                {if !$_W['module_config']['close_rent']}
+                <dd><a href="/house/user_content/my_rent_lists">出租管理</a></dd>
+                <dd><a href="/house/user_content/my_info_lists">求租求购</a></dd>
+                {/if}
+            </dl>
+        </li>
+    </ul>
+
+</aside>
+

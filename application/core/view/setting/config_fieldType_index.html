@@ -1,0 +1,26 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form id="cate_action" action="{:\think\\Url::build('menu/update')}" target="baocms_frm" method="post">
+	<div class="tableBox">
+		<table class="layui-table" style="">
+			<tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+				<td>分类</td>
+				<td>排序</td>
+				<td>操作</td>
+			</tr>
+			{foreach $configList as $var}
+				 
+					<tr class="menu_level1" >
+						<td style="">{$var.site_name}</td>
+						<td style=""><input name="orderby[{$var.city_id}]" value="{$var.listorder}" type="text" class="remberinput w80" /></td>
+						<td style="text-align:center;">
+							{:build_back_a(25,array("city_id"=>$var['city_id']),'编辑','frame','btn btn-default','600px',280)}
+							{:build_back_a(26,array("city_id"=>$var['city_id']),'删除','confirm','btn btn-danger','600px',280)}
+						</td>
+					</tr>
+					   
+			{/foreach}  
+		</table>
+	</div>
+</form> 
+{/block}

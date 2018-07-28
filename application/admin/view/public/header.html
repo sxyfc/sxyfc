@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<?php
+global $_W;
+global $_GPC;
+?>
+<html style="height: auto">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{$admin_menu.user_menu_name}</title>
+    <meta name="description" content="管理后台" />
+    <meta name="keywords" content="管理后台" />
+    <link rel="stylesheet" href="/statics/css/font-awesome.min.css">
+    <script type="text/javascript">
+    var single_url = "{:nb_url(['r'=>'/admin/index/update_field'])}";
+    </script>
+    <script src="/statics/js/jquery.min.js"></script>
+
+    <script src="/statics/components/layui/layui.js"></script>
+    <script type="text/javascript" src="/statics/js/admin/gobal.js"></script>
+    <link rel="stylesheet" type="text/css" href="/statics/components/layui/css/layui.css" media="all">
+    <link rel="stylesheet" type="text/css" href="/statics/css/reset.css" media="all">
+
+
+    <script src="/statics/js/admin/base_common.js"></script>
+    <link rel="stylesheet" href="/statics/components/semantic/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/statics/components/bulma/bulma.min.css" media="all">
+    <script src="/statics/components/semantic/semantic.min.js"></script>
+    <script src="/statics/components/vue/vue.js"></script>
+
+
+    <link rel="stylesheet" href="/statics/components/weui/weui.min.css">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript">
+        var reload_menu = "<?php echo (int) input('param.reload_menu'); ?>";
+        var m_c_d = "{$m_c_d}" , site_id = '{$site.id}';
+        var upload_url = "{:nb_url(['r'=>'attachment/index/upload'])}";
+        var check_md5 = "{:nb_url(['r'=>'attachment/attach/check_md5'])}";
+        var save_attach = "{:nb_url(['r'=>'attachment/attach/save'])}";
+        var check_chunk = "{:nb_url(['r'=>'attachment/index/chunkCheck'])}";
+    </script>
+    <link rel="stylesheet" type="text/css" href="/statics/css/admin/base.css" media="all">

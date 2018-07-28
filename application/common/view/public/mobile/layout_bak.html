@@ -1,0 +1,144 @@
+{block name="header_base"}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{$seo.seo_title}</title>
+    <meta content="{$seo.seo_desc}" name="deacription">
+    <meta name="keywords" content="{$seo.seo_keywords}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    {/block}
+    {block name="header_css"}
+    <link href="//apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.bootcss.com/weui/1.1.2/style/weui.min.css" rel="stylesheet">
+    <link href="{$cdn_url}static/css/mobile/front_base.css" rel="stylesheet" type="text/css" />
+    {/block}
+    <script type="text/javascript">
+        {if ($user['site_id'] && $site['site_id']!=10000) || isset($no_check_area)}
+        var check_area = 0;
+        {else}
+        var check_area = 1;
+        {/if}
+        var reload_menu = "<?php echo (int) input('param.reload_menu'); ?>";
+        var m_c_d = "{$m_c_d}" , site_id = '{$site.site_id}';
+        var upload_url = "{:nb_url(['r'=>'attachment/index/upload'])}";
+        var check_md5 = "{:nb_url(['r'=>'attachment/attach/check_md5'])}";
+        var save_attach = "{:nb_url(['r'=>'attachment/attach/save'])}";
+        var check_chunk = "{:nb_url(['r'=>'attachment/index/chunkCheck'])}";
+        var current_district = "{$linkage.name}";
+    </script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=MKqiLv4hVg6G9gU6tIzbR9OBASGBt4zW"></script>
+
+    <script type="text/javascript" src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    {block name="header_js"}
+    <script src="//apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="/addons/jarry_core/static/plugins/swiper/swiper-3.4.0.jquery.min.js"></script>
+    <script src="{$cdn_url}static/js/mobile/front_base.js" ></script>
+    <link rel="stylesheet" href="{$cdn_url}static/plugins/layui/css/layui.css">
+    <script src="{$cdn_url}static/plugins/layui/layui.js"></script>
+    {/block}
+
+    {if is_weixin()}
+    <script src="//res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <?php
+    if(!$share_img){
+        $share_img = $cdn_url . "static/images/logo.jpeg";
+    }
+    ?>
+    <script>
+        wx.config({
+            debug: false,
+            appId: '<?php echo $signPackage["appId"];?>',
+            timestamp: <?php echo $signPackage["timestamp"];?>,
+            nonceStr: '<?php echo $signPackage["nonceStr"];?>',
+            signature: '<?php echo $signPackage["signature"];?>',
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'onMenuShareWeibo',
+                'hideMenuItems',
+                'showMenuItems',
+                'hideAllNonBaseMenuItem',
+                'showAllNonBaseMenuItem',
+                'translateVoice',
+                'startRecord',
+                'stopRecord',
+                'onRecordEnd',
+                'playVoice',
+                'pauseVoice',
+                'stopVoice',
+                'uploadVoice',
+                'downloadVoice',
+                'chooseImage',
+                'previewImage',
+                'uploadImage',
+                'downloadImage',
+                'getNetworkType',
+                'openLocation',
+                'getLocation',
+                'hideOptionMenu',
+                'showOptionMenu',
+                'closeWindow',
+                'scanQRCode',
+                'chooseWXPay',
+                'openProductSpecificView',
+                'addCard',
+                'chooseCard',
+                'openCard',
+                'openAddress'
+            ]
+        });
+        var  share_data = {
+            title: '{$seo.seo_title}',
+            desc: '{$seo.seo_desc}',
+            link: "//" + m_c_d + '{:\think\\Request::instance()->url()}',
+            imgUrl: 'http:{$share_img}',
+            success: function(){
+                layer.msg('分享成功');
+            }
+        };
+
+        $(function(){
+
+            wx.ready(function () {
+                wx.onMenuShareAppMessage(share_data);
+                wx.onMenuShareTimeline(share_data);
+                wx.onMenuShareQQ(share_data);
+                wx.onMenuShareWeibo(share_data);
+            });
+        });
+    </script>
+    {/if}
+</head>
+
+{block name="content_header"}
+{include file="$header_tpl" /}
+{/block}
+
+
+{block name="main"}{/block}
+
+{block name="scripts"}
+{/block}
+
+{block name="copyright"}
+<div class="weui-footer" style="padding: 50px 0;line-height: 30px;font-size: 13px">
+    <p class="weui-footer__links">
+        <span class="weui-footer__link"> 中盛CMS</span>
+    </p>
+    <p class="weui-footer__text">Tel:18371078778 Copyright © 2008-2017 </p>
+</div>
+{/block}
+
+{block name="tab_bar"}
+
+{/block}
+
+{block name="footer"}
+
+{include file="$footer_tpl" /}
+{/block}

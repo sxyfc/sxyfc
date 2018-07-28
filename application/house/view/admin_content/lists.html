@@ -1,0 +1,68 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if(!isset($keyword)){
+    $keyword = "";
+}
+?>
+<form class="form-inline" method="get" action="">
+    <table class="layui-table form-group">
+        <td class="input-group">
+            <input type="text" name="keyword" value="{$keyword}" class="layui-input form-control" /></td>
+        <td><input type="submit" value="搜索"  class="layui-btn btn-success" /></td>
+        </td></table>
+</form>
+{/block}
+
+
+{block name="main"}
+<div class="tableBox" >
+    <table class="layui-table table-bordered" lay-size="sm">
+        <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+            <td>排序</td>
+            <td>ID</td>
+            {foreach $field_list as $field}
+            <td>{$field['slug']}</td>
+            {/foreach}
+            <td>{:zlang('操作')}</td>
+        </tr>
+        {foreach $lists as $item}
+        <?php
+        $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
+
+        ?>
+        <tr>
+            <td>
+                <input type="text" pk="id" pk_value="{$item.id}" class="layui-input listorder" field="listorder" model="{$cate.model_id}" mini='blur' id="{$item.id}" value="{$item.listorder}" />
+            </td>
+            <td>{$item.id}</td>
+            {foreach $field_list as $field}
+            <?php
+            if(is_array($_item[$field['field_name']])){
+                test($_item[$field['field_name']]);
+            }
+            ?>
+            <td><pre>{$_item[$field['field_name']]}</pre></td>
+            {/foreach}
+            <td>
+                <?php
+                $mapping = $item;
+                ?>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
+                {/eq}
+                {/volist}
+            </td>
+        </tr>
+
+        {/foreach}
+
+    </table>
+
+</div>
+<div>
+    {:$lists->render()}
+</div>
+{/block}

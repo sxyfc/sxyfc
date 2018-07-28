@@ -1,0 +1,40 @@
+{extend name="admin@public/content_frame" /}
+{block name="table_form"}
+{/block}
+
+{block name="main"}
+<table class="layui-table" style="">
+    <tr>
+        <th>模块名称</th><th>版本好</th><th>作者</th><th>介绍</th> <th>操作</th>
+    </tr>
+    {foreach $modules as $module}
+    <tr>
+        <td>{$module.module_info.name}</td>
+        <td>{$module.module_info.version}</td>
+        <td>{$module.module_info.author}</td>
+        <td>{$module.module_info.description}</td>
+        <td>
+            <?php
+                    $params = array("id"=>$var['node_id']);
+            $mapping['module'] = $module['module'];
+            ?>
+            {volist name="sub_menu" id="menu"}
+            {eq name="menu.user_menu_display" value="0"}
+            <?php
+                        if($menu['id'] == 148){
+                            if($var['node_status']){
+                                continue;
+                            }
+                            $menu['user_menu_name'] = "审核";
+                        }
+                        $mini = $menu['user_menu_mini'];
+                        $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
+                        ?>
+            {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$mini,$menu['class'],'90%','80%' , $mapping)}
+            {/eq}
+            {/volist}
+        </td>
+    </tr>
+    {/foreach}
+</table>
+{/block}

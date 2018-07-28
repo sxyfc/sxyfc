@@ -1,0 +1,25 @@
+
+<div class="layui-container"><form id="cate_action" class="layui-form  inline"  target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}">
+    <div class="selectNr container-fluid"><div class="row"><div class="col-xs-12">
+                <table class="layui-table table-bordered" style="">
+                    {volist name="list" id="item"}
+                    <tr>
+                        <td width="20%" style="width: 100px">{$item['slug']}</td>
+                        <td width="80%">{$item['form_str']}</td>
+                    </tr>
+                    {/volist}
+                    <tr>
+                        <td colspan="2">
+                            <input type="submit" class="layui-btn" />
+                        </td>
+                    </tr>
+                </table>
+            </div></div></div>
+</form>
+</div>
+<script>
+    layui.use(['form'] , function () {
+        var form = layui.form;
+        form.render();
+    })
+</script>

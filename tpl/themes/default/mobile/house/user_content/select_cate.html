@@ -1,0 +1,71 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}
+{/block}
+{block name="breadcrumb"}
+{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+
+{block name="bulma_css"}{/block}
+{block name="main"}
+<div class="ui  container" >
+
+
+    <div class="ui five column grid  padded  mhcms_user_menu">
+
+
+        <div class="ui sixteen wide column mhcms-header-column" style="border-bottom: solid 1px #f0f0f0;text-align: left">
+            选择发布分类
+        </div>
+        <div class="ui sixteen wide column">
+
+            <div class="ui vertical menu">
+<?php
+?>
+                {foreach $cate_tree as $cate}
+                {if $cate['cate_type'] == 1 && $cate['allow_post']==1}
+                {if $cate['children']}
+                <div class="ui left pointing dropdown link item">
+                    <i class="dropdown icon"></i>
+                    {$cate.cate_name}
+                    <div class="menu">
+                        {foreach $cate['children'] as $_cate}
+                        <a class="item" href="{:url('house/user_content/publish' , ['cate_id'=>$_cate['id']])}">{$_cate.cate_name} <i class="angle right icon"></i></a>
+                        {/foreach}
+                    </div>
+                </div>
+                {else}
+
+                <a class="item" href="{:url('house/user_content/publish' , ['cate_id'=>$cate['id']])}">
+                    {$cate.cate_name}  <i class="angle right icon"></i>
+                </a>
+                {/if}
+                {/if}
+                {/foreach}
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+    require(['jquery' , 'semantic'] , function ($, semantic) {
+        $('.ui.dropdown')
+            .dropdown({
+                maxSelections: 3
+            })
+        ;
+    });
+
+</script>
+{/block}
+
+
+{block name="footer"}
+{include file="public/footer" /}
+{/block}
+
+{block name="copyright"}
+<div style="height: 35px"></div>
+{/block}

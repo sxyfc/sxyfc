@@ -1,0 +1,44 @@
+{
+    "name": "sweajie/mhcms",
+    "description": "大曹网络",
+    "type": "project",
+    "keywords": [
+        "framework",
+        "thinkphp",
+        "ORM"
+    ],
+    "homepage": "http://fc.xyzswl.cn/",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "sweajie",
+            "email": "582128925@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0",
+        "topthink/framework": "5.0.19",
+        "topthink/think-captcha": "^1.0",
+        "zoujingli/wechat-php-sdk": "^1.3",
+        "topthink/think-image": "^1.0",
+        "anerg2046/alidayu": "^1.1",
+        "qiniu/php-sdk": "^7.1",
+        "flc/alidayu": "^2.0",
+        "php-ffmpeg/php-ffmpeg": "^0.11.0",
+        "topthink/think-worker": "^1.0",
+        "workerman/gateway-worker": "^3.0",
+        "qcloud/cos-sdk-v5": "^1.1"
+    },
+    "extra": {
+        "think-path": "thinkphp"
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}

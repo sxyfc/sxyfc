@@ -1,0 +1,37 @@
+
+<form name="myform"  target="zbn_cms" action="{:\think\\Request::instance()->url()}" method="post" id="myform">
+    <div class="container-fluid"><div class="row"><div class="col-xs-12"> <table width="100%" class="layui-table">
+        <tr>
+            <td><?php echo zlang('linkage,name')?></td>
+            <td>
+                <input type="text" name="data[name]" value="" class="input-text" id="name" size="30"></input>
+            </td>
+        </tr>
+
+        <tr>
+            <td><?php echo zlang('menu_description')?></td>
+            <td>
+                <textarea name="data[description]" rows="2" cols="20" id="description" class="inputtext" style="height:45px;width:300px;"></textarea>
+            </td>
+        </tr>
+
+        <tr>
+            <td><?php echo zlang('menu_style')?></td>
+            <td>
+                <label><input name="data[style]" value="0" checked="checked" type="radio">&nbsp;<?php echo zlang('linkage,style')?>&nbsp;&nbsp;</label>
+                <label><input name="data[style]" value="1" type="radio">&nbsp;<?php echo zlang('drop,style')?></label>
+            </td>
+        </tr>
+
+        <tr>
+            <td><?php echo zlang('site,id')?></td>
+            <td>
+                <label><input type="radio" name="data[siteid]" value="0" checked> all sites  can see!</label>
+                <label><input type="radio" name="data[siteid]" value="{$site['site_id']}" > only current site  can see!</label>
+            </td>
+        </tr>
+    </table>
+
+    <div class="bk15"></div>
+    <input name="dosubmit" type="submit" value="<?php echo zlang('submit')?>" class="layui-btn layui-btn-small " id="dosubmit">
+    </div></div></div></form>

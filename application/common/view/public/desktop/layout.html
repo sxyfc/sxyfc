@@ -1,0 +1,157 @@
+{block name="header_base"}<!DOCTYPE html><?php
+global $_W,$_GPC;
+?>
+<html><!--鸣鹤CMS 头部开始-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>{$seo.seo_title|default=""}</title>
+<meta content="desktop" name="device">
+<meta content="{$seo.seo_desc|default=""}" name="description">
+<meta name="keywords" content="{$seo.seo_keywords|default=""}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+<meta name="mobile-agent" content="format=html5;url={:\think\\Request::instance()->url()}">
+<meta name="Generator" content="mhcms" />
+<script type="text/javascript">
+    {if isset($user) && $user}
+    var  is_login= 1;
+    {else}
+    var  is_login= 0;
+    {/if}
+    var  hide_tools= 0;
+    {if isset($hide_tools) && $hide_tools==1}
+    var  hide_tools= 1;
+    {/if}
+        {if ($_W['site']['id'])}
+    var check_area = 0;
+    {else}
+    var check_area = 1;
+    {/if}
+    var reload_menu = "<?php echo (int) input('param.reload_menu'); ?>";
+    var m_c_d = "{$_W.global_config.sso_domain}" , site_id = '{$_W.site.id}'  , api_host = "{$_W['siteroot']}";
+    var upload_url = "{:nb_url(['r'=>'attachment/index/upload'])}";
+    var check_md5 = "{:nb_url(['r'=>'attachment/attach/check_md5'])}";
+    var save_attach = "{:nb_url(['r'=>'attachment/attach/save'])}";
+    var check_chunk = "{:nb_url(['r'=>'attachment/index/chunkCheck'])}";
+    var current_district = "{$linkage.name|default=""}";
+    var wechat_download_url = "{:nb_url(['r'=>'attachment/WechatRes/download'])}";
+</script>
+{/block}
+{block name="jquery"}
+<script type="text/javascript" src="//cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+{/block}
+    {block name="bulma_css"}
+    <link rel="stylesheet" href="/statics/components/bulma/bulma.min.css">
+    {/block}
+
+    {block name="semantic_css"}
+    <link rel="stylesheet" href="/statics/components/semantic/semantic.min.css">
+    {/block}
+
+    {block name="weui_css"}
+    <link rel="stylesheet" href="/statics/components/weui/weui.min.css">
+    {/block}
+
+
+{block name="layui_js"}
+<script type="text/javascript" src="/statics/components/layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/statics/components/layui/libs/'
+    });
+</script>
+{/block}
+{block name="layui_css"}
+<link rel="stylesheet" href="/statics/components/layui/css/layui.css">
+{/block}
+{block name="header_css"}
+<link rel="stylesheet" href="/statics/css/{$_W.DEVICE_TYPE_TPL}/front_base.css?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}" />
+{/block}
+
+{block name="vue_js"}
+{if $_W['debug']}
+<script type="text/javascript" src="/statics/components/vue/vue.js"></script>
+{else}
+<script type="text/javascript" src="/statics/components/vue/vue.min.js"></script>
+{/if}
+{/block}
+{block name="require_js"}
+<script type="text/javascript" src="/statics/js/require.js"></script>
+<script type="text/javascript" src="/statics/js/config.js"></script>
+
+    <script>
+
+        var vue_global = {};
+        require([ 'jquery' ,'pjax'   ,  'mhcms' , 'layui'] , function ($,pjax  ,mhcms , layui) {
+            $(document).ready(function () {
+                $('#mha_loadingToast').hide();
+                $(document).pjax('a[data-mha]', '.app_container')
+                $(document).on('pjax:send', function(event) {
+                    event.preventDefault()
+                    $('#mha_loadingToast').show()
+                })
+                $(document).on('pjax:complete', function() {
+                    if(event.currentTarget.status > 0 && event.currentTarget.status !== 200){
+                        event.preventDefault()
+                        history.back();
+                    }
+                    console.log(event);
+                    $('#mha_loadingToast').hide();
+                });
+                $(document).on('pjax:timeout', function(event) {
+                    event.preventDefault()
+                })
+                $(document).on('pjax:error', function(event) {
+                });
+            });
+
+            setTimeout(function () {
+                $('#mha_loadingToast').hide();
+            } , 3000)
+
+        });
+    </script>
+{/block}
+{block name="mhcms_base_js"}
+<script src="/statics/js/{$_W.DEVICE_TYPE_TPL}/front_base.js?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}"></script>
+{/block}
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+<![endif]-->
+{block name="mhcms_module_css"}
+<link href="/tpl/themes/{$_W['theme']}/desktop/{:ROUTE_M}/static/css/{:ROUTE_M}.css{if $_W['debug']}?v={:time()}{/if}" rel="stylesheet" />
+{/block}
+
+
+{block name="header_extra"}{/block}
+</head>
+<body>
+<iframe name="mhcms" id="鸣鹤CMS"  style="display: none"></iframe>
+<iframe name="zbn_cms" id="鸣鹤CMS"  style="display: none"></iframe>
+
+<!-- Following Menu -->
+{block name="following_menu"}{/block}
+<div class="pusher" id="mhcms-app">
+    <div class="app_container">
+        {block name="content_header"}{/block}
+        {block name="main"}{/block}
+    </div>
+</div>
+{block name="scripts"}{/block}
+
+{block name="footer"}
+{include file="$footer_tpl" /}
+{/block}
+
+{block name="vue_mine_js"}
+{/block}
+
+
+{block name="mhcms_module_js"}
+<script src="/tpl/themes/{$_W['theme']}/desktop/{:ROUTE_M}/static/js/{:ROUTE_M}.js?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}" type="text/javascript"></script>
+{/block}<!--鸣鹤CMS 内容结束-->
+
+
+<p style="display: none">{$_W.global_config.tongji}</p>
+</body>
+</html>

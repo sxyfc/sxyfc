@@ -1,0 +1,60 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
+<div>
+    {foreach $filter_info.fields as $k=>$field}
+    <a style="width: 120px;margin: 10px"  class="layui-btn layui-btn-primary ">{$field.slug}</a>
+
+    <a style="width: 120px;margin:10px "  class="layui-btn layui-btn-primary    {$field.class}" href="{$field.href}">全部</a>
+
+    {foreach $field.options as $option}
+    <a style="background-color: {$option.bgcolor};width: 120px;margin:10px " class="layui-btn layui-btn-primary  {$option.class}" href="{$option.href}">{$option.name}</a>
+    {/foreach}
+    {/foreach}
+</div>
+
+<script type="text/javascript">
+    $('a.selected').transition({
+        animation  : 'pulse',
+        duration   : '2s',
+        onComplete : function() {
+            //    alert('done');
+
+        }
+    }).transition('set looping');
+</script>
+
+<div class="tableBox" >
+    <table class="layui-table table-bordered" lay-size="sm">
+        <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+            <td>ID</td>
+            <td>图片</td>
+            <td>{:zlang('操作')}</td>
+        </tr>
+        {foreach $lists as $item}
+        <?php
+        $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
+        ?>
+        <tr>
+            <td>{$item.id}</td>
+            <td>
+                <div><img src="{:url('attachment/service/image')}?attach={$item['url']}" class="image tiny"></div>
+            </td>
+            <td>
+                <?php
+                $mapping = $item;
+                ?>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
+                {/eq}
+                {/volist}
+            </td>
+        </tr>
+        {/foreach}
+    </table>
+</div>
+<div id="test">
+    {:$lists->render()}
+</div>
+{/block}

@@ -1,0 +1,54 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table" >
+            <tr>
+                <td class="w50">ID</td>
+                <td>用户名</td>
+                <td>数量</td>
+                <td>类型</td>
+                <td>创建时间</td>
+                <td>备注</td>
+                <td>操作</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <?php
+            $tmp_user = \app\common\model\Users::get($var['user_id']);
+            ?>
+            <tr >
+                <td>{$var.log_id}</td>
+                <td>{$tmp_user.user_name}</td>
+                <td>{$var.amount}</td>
+                <td>{$var.unit_type_text}</td>
+                <td>{$var.create_time}</td>
+                <td>{$var.note}</td>
+                <td>
+                    <?php
+                ?>
+                    {neq name="var.user_id" value="1"}
+                    <?php
+                    $params = array("user_id"=>$var['user_id']);
+                    ?>
+                    {volist name="sub_menu" id="menu"}
+                    {eq name="menu.user_menu_display" value="0"}
+                    <?php
+
+                    $mapping['user_id'] = $var['user_id'];
+                    $mini = $menu['user_menu_mini'];
+                    $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
+
+                ?>
+                    {:build_back_a($menu['id'],$params,zlang($menu['user_menu_name']),$mini,$menu['class'],'90%','80%',$mapping)}
+                    {/eq}
+                    {/volist}
+                    {/neq}
+                </td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$list->render()}
+    </div>
+</form>
+{/block}

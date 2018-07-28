@@ -1,0 +1,94 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}{/block}
+{block name="content_header"}
+{/block}
+{block name="main"}
+
+<div class="ui card" style="width: 100%">
+    <div class="content">
+        <div class="header">客户信息</div>
+    </div>
+    <div class="content">
+        <div class="ui small feed">
+            <div class="event">
+                <div class="content">
+                    <div class="summary">
+                        <a>客户姓名</a> ： <a>{$detail.real_name}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="event">
+                <div class="content">
+                    <div class="summary">
+                        <a>客户手机</a> ： <a href="tel:{$detail.mobile}">{$detail.mobile}</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event">
+                <div class="content">
+                    <div class="summary">
+                        <a>状态</a> ： <a >{$detail.status}</a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="extra content" >
+        <a href="{:url('add_log' , ['id' => $detail.id])}" class="ui button blue">上传进度</a>
+
+        <a mini="confirm" href="{:url('set_status' , ['id' => $detail.id , 'status' => 5 ])}" class="ui button orange">设为认购</a>
+
+        <a mini="confirm" href="{:url('set_status' , ['id' => $detail.id , 'status' => 6])}" class="ui button green">设为成交</a>
+    </div>
+</div>
+
+{foreach $logs as $log}
+<div class="ui teal card" style="width: 100%">
+    <div class="content">
+        <div class="header">日志</div>
+        <div class="meta">
+            <span>{$log.create_at}</span>
+            <a></a>
+        </div>
+        <p></p>
+    </div>
+    <div class="content">
+        <div class="ui small feed">
+            <div class="event">
+                <div class="content">
+                    <div class="summary">
+                        <a>内容</a> ： <a>{$log.content}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="event">
+                <div class="content">
+                    {if $log.audio}
+                    <div class="summary">
+                        <a>语音</a> ：
+                    </div>
+                    {/if}
+                </div>
+            </div>
+            {if $log.video}
+            <div class="event">
+                <div class="content">
+                    <div class="summary">
+                        <a>视频</a> ：
+                    </div>
+                </div>
+            </div>
+            {/if}
+        </div>
+    </div>
+    <div class="extra content"  style="display: none">
+        <a   class="ui button blue">上传进度</a>
+    </div>
+</div>
+{/foreach}
+{/block}

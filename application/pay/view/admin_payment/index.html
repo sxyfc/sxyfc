@@ -1,0 +1,43 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<div class="tableBox">
+    <table class="layui-table" style="">
+        <tr bgcolor="#F5F6FA">
+            <td>ID</td>
+            <td>{:zlang('name')}</td>
+            <td>{:zlang('标志')}</td>
+            <td>{:zlang('状态')}</td>
+            <td>{:zlang('排序')}</td>
+            <td>{:zlang('operation')}</td>
+        </tr>
+        {foreach $lists as $item}
+        <?php
+        //test($areas['data'][$item['linkage_id']]);
+        ?>
+        <tr>
+            <td>{$item.id}</td>
+            <td>{$item.name}</td>
+            <td>{$item.code}</td>
+            <td>{$item.status}</td>
+            <td>
+                <input type="text" style="width: 55px" pk="id" pk_value="{$item.id}" class="layui-input" field="listorder" model="payment" mini='blur' id="{$item.id}" value="{$item.listorder}" />
+            </td>
+            <td>
+                <?php
+                $mapping['id'] = $item['id'];
+                ?>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                <?php
+                $mini = $menu['user_menu_mini'];
+                $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
+                $btn_class.=" btn-sm ";
+                ?>
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$mini,$menu['class'],'90%','80%' , $mapping)}
+                {/eq}
+                {/volist}
+            </td>
+        </tr>
+
+        {/foreach}
+        {/block}

@@ -1,0 +1,162 @@
+{extend name="$front_base_layout" /}
+
+{block name="layui_js"}{/block}
+{block name="layui_css"}{/block}
+{block name="semantic_css"}{/block}
+{block name="baidu_map"}{/block}
+
+{block name="mhcms_module_js"}{/block}
+{block name="content_header"}{/block}
+{block name="vue_js"}{/block}
+{block name="main"}
+
+<div id="app_mhcms">
+    <div class="l_c_left mhcms-panel">
+        <h3 class="mhcms-panel-header">请您填写基础信息</h3>
+        <dl class="loan_dl mhcms-panel-body" style="padding: 10px 15px">
+            <dt class="dt_mt">还款方式：</dt>
+            <dd>
+                <select name="" class="txt w240" id="repayMode">
+                    <option value="1" selected>等额本息</option>
+                    <option value="2">等额本金</option>
+                </select>
+            </dd>
+            <dt class="dt_mt">贷款类别：</dt>
+            <dd>
+                <select name="" class="txt w240" id="loanType">
+                    <option value="1" selected>商业贷款</option>
+                    <option value="2">公积金贷款</option>
+                    <option value="3">组合式贷款</option>
+                </select>
+                <span id = "hideDiv">
+			  <i class="clear"></i>
+				<span class="home_01 p0 mt15"><b class="loan_b">商业贷款</b><input name="" type="text" class="w90" id="cLoan" maxLength="8"/><em>万元</em></span>
+			  <i class="clear"></i>
+				<span class="home_01 p0 mt15"><b class="loan_b">公积金贷款</b><input name="" type="text" class="w90" id="fLoan" maxLength="8"/><em>万元</em></span>
+			</span>
+            </dd>
+            <span id="switchDiv">
+				<dt class="dt_mt">计算方式：</dt>
+				<dd>
+				  <select name="" class="txt w240" id="computeMode">
+					<option value="1" selected>按房屋总价计算</option>
+					<option value="2">按贷款总额计算</option>
+				  </select>
+				</dd>
+				<span id="switchDiv_hP">
+					<dt class="dt_mt">房屋总价：</dt>
+					<dd>
+						<span class="home_01"><input name="" type="text" class="w70" id="housePrice" maxLength="8"/><em>万元</em></span>
+					  <select name="" class="txt w120" id="mP">
+						<option value="1">1 成</option>
+						<option value="2">2 成</option>
+						<option value="3">3 成</option>
+						<option value="4">4 成</option>
+						<option value="5">5 成</option>
+						<option value="6">6 成</option>
+						<option value="7" selected>7 成</option>
+						<option value="8">8 成</option>
+						<option value="9">9 成</option>
+					  </select>
+					</dd>
+				</span><!-- switchDiv_hP end -->
+				<span id="switchDiv_tL">
+					<dt class="dt_mt">贷款总额：</dt>
+					<dd>
+						<i class="clear"></i>
+						<span class="home_01 p0"><input name="" type="text" class="w178" id="totalLoanA" maxLength="8"/><em>万元</em></span>
+					</dd>
+
+				</span><!-- switchDiv_tL end -->
+			</span><!-- switchDiv end -->
+            <dt class="dt_mt">按揭年限：</dt>
+            <dd>
+                <select name="" class="txt w240" id="mY">
+                    <option value="0.5">0.5年（6期）</option>
+                    <option value="1">1年（12期）</option>
+                    <option value="2">2年（24期）</option>
+                    <option value="3">3年（36期）</option>
+                    <option value="4">4年（48期）</option>
+                    <option value="5">5年（60期）</option>
+                    <option value="6">6年（72期）</option>
+                    <option value="7">7年（84期）</option>
+                    <option value="8">8年（96期）</option>
+                    <option value="9">9年（108期）</option>
+                    <option value="10">10年（120期）</option>
+                    <option value="11">11年（132期）</option>
+                    <option value="12">12年（144期）</option>
+                    <option value="13">13年（156期）</option>
+                    <option value="14">14年（168期）</option>
+                    <option value="15">15年（180期）</option>
+                    <option value="16">16年（192期）</option>
+                    <option value="17">17年（204期）</option>
+                    <option value="18">18年（216期）</option>
+                    <option value="19">19年（228期）</option>
+                    <option value="20" selected>20年（240期）</option>
+                    <option value="21">21年（252期）</option>
+                    <option value="22">22年（264期）</option>
+                    <option value="23">23年（276期）</option>
+                    <option value="24">24年（288期）</option>
+                    <option value="25">25年（300期）</option>
+                    <option value="26">26年（312期）</option>
+                    <option value="27">27年（324期）</option>
+                    <option value="28">28年（336期）</option>
+                    <option value="29">29年（348期）</option>
+                    <option value="30">30年（360期）</option>
+                </select>
+            </dd>
+        </dl>
+        <div class="cal_list">
+
+            <a href="#" class=" cal_a button is-info" id="cal_button">开始计算</a>
+
+
+            <a href="javascript:void(0)" class="cal_reset button is-wait" id="cal_reset_b">清空重填</a>
+
+        </div>
+        <div class="is-clearfix"></div>
+    </div>
+    <div class="bk10"></div>
+    <div class="l_c_right mhcms-panel" id="rs_show">
+        <h3 class="mhcms-panel-header">还款信息</h3>
+        <div class="loan_sheet mhcms-panel-body">
+            <div class="columns is-mobile">
+                <ul class="column is-paddingless is-narrow sheet_ul1">
+                    <li>房屋总价：</li>
+                    <li>评估价格：</li>
+                    <li>贷款总额：</li>
+                    <li>首付额度：</li>
+                    <li>还款总额：</li>
+                    <li>利息总额：</li>
+                    <li>贷款月数：</li>
+                    <li class="monthlyRepay">月均还款额：</li>
+                    <li class="monthlyRepayDetails">每月还款明细：</li>
+                    <li>贷款利率：</li>
+                </ul>
+                <ul class="column is-paddingless sheet_ul2">
+                    <li><span id="housingPrice"></span>万元</li>
+                    <li><span id="appraisalPrice"></span>万元</li>
+                    <li><span id="totalLoan"></span>万元</li>
+                    <li><span id="initialPayment"></span>万元</li>
+                    <li><span id="totalRepayment"></span>万元</li>
+                    <li><span id="totalInterest"></span>万元</li>
+                    <li><span id="loanMonths"></span>月</li>
+                    <li class="monthlyRepay"><span id="monthlyRepayment"></span>元</li>
+                    <li class="li_s_sel monthlyRepayDetails" >
+                        <select name="" class="s_sel" size="1" id="monthlyRepaymentDetails">
+                        </select>
+                    </li>
+                    <li><span id="cRate">商业贷款：<em id="loanInterestRate"></em></span> <span id="fRate">公积金：<em id="fundInterestRate"></em></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/tpl/themes/{$_W['theme']}/mobile/{:ROUTE_M}/static/js/jquery.nicescroll.js"></script>
+<script src="/tpl/themes/{$_W['theme']}/mobile/{:ROUTE_M}/static/js/jquery.cs.calculator1.5.beta.js"></script>
+<script src="/tpl/themes/{$_W['theme']}/mobile/{:ROUTE_M}/static/js/jquery.cs.js"></script>
+<script src="/tpl/themes/{$_W['theme']}/mobile/{:ROUTE_M}/static/js/jquery.cs.loancalc.js"></script>
+{/block}
+
+{block name="footer"}
+{/block}

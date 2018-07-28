@@ -1,0 +1,35 @@
+{extend name="$front_base_layout" /}
+{block name="content_header"}{/block}
+{block name="main"}
+<img src="{$code}" class="ui image small" style="margin: auto;">
+
+<script>
+
+    var mhcms_wx_login = "{$mhcms_wx_login_api}";
+    var uuid = "{$uuid}";
+
+    check_login();
+
+
+    function check_login() {
+        $.post(mhcms_wx_login, {}, function (data) {
+
+            if (data.status == 'wait') {
+                setTimeout(function () {
+                    check_login();
+                }, 2000)
+            }
+
+            if (data.status == 'expired') {
+                console.log("expired");
+            }
+
+            if (data.status == "success") {
+                console.log("登录成功");
+                window.location.href="{$forward}";
+            }
+        });
+    }
+
+</script>
+{/block}

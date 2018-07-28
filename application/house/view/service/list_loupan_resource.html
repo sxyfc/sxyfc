@@ -1,0 +1,33 @@
+{foreach $data.data as $item}
+
+<a  href="/house/loupan/detail?id={$item.id}" class="weui-media-box weui-media-box_appmsg">
+    <div class="weui-media-box__hd is-clipped" style="width: 120px;height: 90px;">
+        <img src="{$item.thumb.0.url}" alt="" class="weui-media-box__thumb">
+    </div>
+    <div class="weui-media-box__bd" style="    align-self: flex-start;"><h4 class="weui-media-box__title"><!----> {$item.loupan_name}
+
+
+        </h4>
+        <p class="weui-media-box__desc" style="  font-size: 12px">{$item.address} </p>
+        <p class="weui-media-box__desc" style="padding-top: 5px">
+        <div class="mtags">
+            <?php
+            $tags = explode(',' , $item['tags']);
+            ?>
+            {foreach $tags as $k=>$tag}
+            {if $tag}
+            <span class="mtag tag_{$k}">{$tag}</span>
+            {/if}
+            {/foreach}
+
+        </div>
+        </p>
+
+        <p class="weui-media-box__desc has-text-right">
+            <span class="price has-text-danger">{$item.price} 元/平方</span>
+        </p>
+
+    </div>
+</a>
+
+{/foreach}

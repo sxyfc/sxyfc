@@ -1,0 +1,32 @@
+<div class="layui-container">
+    <div class="layui-row">
+        <form class="layui-form form-inline" target="zbn_cms" method="post"
+              action="{:\think\\Request::instance()->url()}">
+            <br>
+            {volist name="list" id="item"}
+            {if $item['form_str']}
+            <div class="layui-form-item">
+                <label class="layui-form-label"> {if $item.node_field_must_fill} <span class="ui red">*</span> {/if} {$item['slug']}</label>
+                <div class="layui-input-block">
+                    {$item['form_str']}
+                </div>
+            </div>
+            {/if}
+            {/volist}
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['form'] , function () {
+        var form = layui.form;
+        form.render();
+    });
+</script>

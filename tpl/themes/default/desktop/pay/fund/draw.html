@@ -1,0 +1,48 @@
+{extend name="$front_base_layout" /}
+
+{block name="main"}
+{/block}
+
+{extend name="$front_member_layout" /}
+
+{block name="main"}
+<div class="larry-fluid larry-wrapper">
+    <div class="layui-row lay-col-space20">
+        <div class="layui-cos-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
+            <section class="larry-body animated fadeInRightBig">
+                <div class="larry-body-header">
+                    <span class="tit">余额提现</span>
+                </div>
+                <div class="larry-body-content clearfix">
+
+                            <form class="layui-form" action="" method="post" target="zbn_cms">
+                                <div class="weui-cell"></div>
+                                <div class="weui-cell">
+                                    <div class="weui-cell__hd"><label class="weui-label">提款金额</label></div>
+                                    <div class="weui-cell__bd">
+                                        <input class="weui-input" type="number"  name="data[amount]"  required  lay-verify="required" pattern="[0-9]*" placeholder="请输入提款金额">
+                                    </div>
+                                </div>
+
+                                <div class="weui-cell">
+                                    <div class="weui-cell__hd"><label class="weui-label">真实姓名</label></div>
+
+                                    <div class="weui-cell__bd">
+                                        <input type="text" value=""  class="weui-input"  lay-verify="required" placeholder="请输入您的微信银行卡绑定姓名" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="weui-cell"></div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button class="layui-btn" lay-submit lay-filter="formSubmit">立即提交</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+{/block}

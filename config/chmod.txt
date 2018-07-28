@@ -1,0 +1,4 @@
+config/*
+upload_file/*
+statics/*
+application/*

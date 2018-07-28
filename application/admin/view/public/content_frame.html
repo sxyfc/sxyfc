@@ -1,0 +1,55 @@
+﻿{include file='admin@public/header' /}
+
+
+{block name="require_js"}
+<script type="text/javascript" src="/statics/js/require.js"></script>
+<script type="text/javascript" src="/statics/js/config.js?v={if $_W['debug']}{:time()}{else}{$system.module_version}{/if}"></script>
+{/block}
+</head>
+<body>
+<iframe name="zbn_cms" id="zbn_cms" class="hidden" style="display: none"></iframe>
+
+{// 模板导航 }
+
+
+    <div class="larry-fluid larry-wrapper" id="mhcms_app">
+        <div class="layui-row lay-col-space20">
+            <div class="layui-cos-xs12 layui-col-sm12 layui-col-md12 layui-col-lg12">
+                <section class="larry-body animated fadeInRightBig">
+                    <div class="larry-body-header">
+                        <div class="tit">
+                            {block name="mhcms-header"}
+                            {include file='admin@public/sub_menu' /}
+                            {/block}
+                            {block name="breadcrumb"}
+                            <nav class="breadcrumb has-arrow-separator is-pulled-right" aria-label="breadcrumbs" style="font-size: 12px">
+                            <ul   >{:get_admin_menu_path($admin_menu['id'])} </ul>
+                            </nav>
+                            {/block}
+                        </div>
+                    </div>
+                    <div class="larry-body-content clearfix">
+
+
+                {block name="sub-menu-top"}
+                <div class="sub-menu-top" >
+                    {block name="table_form"}{/block}
+                    <div class="clearfix"></div>
+                </div>
+                {/block}
+
+                {block name="tips"}
+                <div class="text-info">
+
+                </div>
+                {/block}
+                {block name="main"}{/block}
+
+                    </div>
+            </section>
+            </div>
+        </div>
+    </div>
+
+{block name="vue_mine_js"}{/block}
+{include file='admin@public/footer' /}

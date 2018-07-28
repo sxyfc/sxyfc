@@ -1,0 +1,39 @@
+<form class="layui-form form-inline" target="zbn_cms" method="post" action="{:\think\\Request::instance()->url()}"><div class="layui-container">
+    <div class="layui-row">
+
+            <br>
+            {volist name="field_list" id="item"}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$item['slug']}</label>
+                <div class="layui-input-block">
+                    {$item['form_str']}
+                </div>
+            </div>
+            {/volist}
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">请选择模板</label>
+                <div class="layui-input-block">
+                    {foreach $miniapp_lists as $k=>$app}
+                    <input type="radio" name="data[mdoule_sign]"  {if $detail.mdoule_sign==$k}checked {/if} value="{$k}" title="{$app.app_name}">
+
+                    {/foreach}
+                </div>
+            </div>
+
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button type="submit"  class="layui-btn" lay-submit lay-filter="*">立即提交</button>
+        </div>
+    </div>
+
+</div>
+<script>
+    layui.use(['form'] , function () {
+        var form = layui.form;
+        form.render();
+    });
+</script>
+</form>
