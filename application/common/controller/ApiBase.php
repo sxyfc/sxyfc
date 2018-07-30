@@ -18,32 +18,33 @@ class ApiBase extends App
         $_W['siteroot'] = $this->request->domain() . "/";
         $url = $_W['siteroot'] . substr($this->request->url(), 1);
 
-        $url = str_replace("&_pjax=.app_container" , '' , $url);
-        $_W['current_url'] = str_replace("?_pjax=.app_container" , '' , $url);
+        $url = str_replace("&_pjax=.app_container", '', $url);
+        $_W['current_url'] = str_replace("?_pjax=.app_container", '', $url);
 
         /*
          * 按照小程序定位
          */
-        if(isset($_GPC['app_id']) && $_GPC['app_id']){
+        if (isset($_GPC['app_id']) && $_GPC['app_id']) {
             $this->small_app = $_W['small_app'] = $small_app = set_model("sites_smallapp")->where(['app_id' => $_GPC['app_id']])->find();
 
-            $this->site_id =  $_W['site_id'] = (int)$small_app['site_id'];
+            $this->site_id = $_W['site_id'] = (int)$small_app['site_id'];
             $this->site = $_W['site'] = Sites::get(['id' => $this->site_id]);
             if (!$this->small_app) {
                 die("small_app not found");
             }
             //todo fetch fans
-        }else{
-             $this->site_id =  $_W['site_id'] = (int)$_GPC['site_id'];
-             $this->site = $_W['site'] = Sites::get(['id' => $this->site_id]);
+        } else {
+            $this->site_id = $_W['site_id'] = (int)$_GPC['site_id'];
+            $this->site = $_W['site'] = Sites::get(['id' => $this->site_id]);
         }
         if (!$this->site) {
             $ret = [
-                'code' => 2 ,
+                'code' => 2,
                 'msg' => 'site not found'
             ];
 
-            echo json_encode($ret);die();
+            echo json_encode($ret);
+            die();
         }
 
         //todo load root
@@ -58,7 +59,6 @@ class ApiBase extends App
 
 
         $this->module_config = $_W['module_config'] = MhcmsModules::get_module_setting($this->module['module']);
-
 
 
         $_W['site_wechat'] = $site_wechat = SitesWechat::get(['site_id' => $this->site_id]);
@@ -81,7 +81,7 @@ class ApiBase extends App
         $this->current_domain = $this->request->domain();
         $this->request_host = $this->request->host();
         $domain_data = explode(".", $this->request_host);
-        if (count($domain_data) != 3) {
+        if (count($domain_data) != 3 && !config('app_debug')) {
             Log::write("error domain");
             die();
         }
@@ -117,9 +117,9 @@ class ApiBase extends App
 
         }
         if ($this->in_app_mode) {
-            $this->site_id = (int) $_GPC['site_id'];
+            $this->site_id = (int)$_GPC['site_id'];
             if ($_GPC['app_id']) {
-                $_W['smallapp'] =  $app = set_model("sites_smallapp")->where(['app_id' => $_GPC['app_id']])->find();
+                $_W['smallapp'] = $app = set_model("sites_smallapp")->where(['app_id' => $_GPC['app_id']])->find();
                 $this->site_id = $app['site_id'];
             }
             if ($this->site_id) {
