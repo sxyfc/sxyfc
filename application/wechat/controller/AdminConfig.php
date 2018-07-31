@@ -104,6 +104,11 @@ class AdminConfig extends AdminBase
                 //自动获取data分组数据
                 $data = input('post.data/a');//get the base info
             }
+            $data['account_type']       = !empty($base['account_type']) ? $base['account_type'] : 1;
+            $data['org_id']             = !empty($base['org_id']) ? $base['org_id'] : '';
+            $data['config']             = !empty($base['config']) ? $base['config'] : '';
+            $data['auth_refresh_token'] = !empty($base['auth_refresh_token']) ? $base['auth_refresh_token'] : '';
+            $data['isconnect']          = !empty($base['isconnect']) ? $base['isconnect'] : 0;
             if ($detail) {
                 $res = $model_info->edit_content($data, $where);
             } else {
