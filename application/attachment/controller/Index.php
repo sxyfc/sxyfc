@@ -152,7 +152,12 @@ class Index extends Base
                 $data_ret['user_id'] = $this->user_id;
                 $data_ret['filemime'] = input('param.type');
                 $data_ret['filesize'] = input('param.size') / 1024;
-                $data_ret['created'] = date("Y-m-d H:i:s",time());
+                $data_ret['created'] = date('Y-m-d H:i:s', time());
+                $data_ret['site_id'] = $this->site_id;
+                $data_ret['root_id'] = 0;
+                $data_ret['file_type'] = '';
+                $data_ret['convert'] = '';
+                $data_ret['play_url'] = '';
             }
         } else {
             // Get a file name
@@ -170,7 +175,13 @@ class Index extends Base
             $data_ret['url'] = str_replace(DIRECTORY_SEPARATOR , '/' ,  $target_dir. $file_name);
             $data_ret['filemime'] = $uploaded->getMime();
             $data_ret['filesize'] = $uploaded->getSize();
-            $data_ret['created'] = date("Y-m-d H:i:s",time());
+            $data_ret['created'] = date('Y-m-d H:i:s', time());
+            $data_ret['alt'] = '';
+            $data_ret['site_id'] = $this->site_id;
+            $data_ret['root_id'] = 0;
+            $data_ret['file_type'] = '';
+            $data_ret['convert'] = '';
+            $data_ret['play_url'] = '';
             //$data_ret['save_path'] = $this->save_path;
             $php_md5 = $uploaded->hash('md5');
             $data_ret['md5'] = $php_md5;//
