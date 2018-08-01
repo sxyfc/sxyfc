@@ -14,6 +14,7 @@ use app\attachment\storges\StorgeFactory;
 use app\common\controller\Base;
 use app\common\model\File;
 use app\wechat\util\WechatUtility;
+use think\Log;
 
 class Index extends Base
 {
@@ -98,7 +99,6 @@ class Index extends Base
         $extend_name = "." . fileext($fileName);
         //final name
         $file_name = ($this->md5_key ? $this->md5_key : random(32)) . $extend_name;
-
         $target_dir = "upload_file" .DIRECTORY_SEPARATOR . $this->user_id .DIRECTORY_SEPARATOR .  date('Ymd') . DIRECTORY_SEPARATOR;
 
 
@@ -152,10 +152,9 @@ class Index extends Base
                 $data_ret['user_id'] = $this->user_id;
                 $data_ret['filemime'] = input('param.type');
                 $data_ret['filesize'] = input('param.size') / 1024;
-                $data_ret['created'] = time();
+                $data_ret['created'] = date("Y-m-d H:i:s",time());
             }
-        } //不是分片上传 直接移动到要保存的目录
-        else {
+        } else {
             // Get a file name
             $uploaded = $file->move($this->save_dir, $file_name);
 
@@ -168,16 +167,15 @@ class Index extends Base
 
             $data_ret['user_id'] = $this->user_id;
             $data_ret['filename'] = $file_name;
-            $data_ret['url'] = str_replace(DIRECTORY_SEPARATOR , '/' ,  $target_dir. $file_name);//$uploaded->getSaveName();
+            $data_ret['url'] = str_replace(DIRECTORY_SEPARATOR , '/' ,  $target_dir. $file_name);
             $data_ret['filemime'] = $uploaded->getMime();
             $data_ret['filesize'] = $uploaded->getSize();
-            $data_ret['created'] = time();
+            $data_ret['created'] = date("Y-m-d H:i:s",time());
             //$data_ret['save_path'] = $this->save_path;
             $php_md5 = $uploaded->hash('md5');
             $data_ret['md5'] = $php_md5;//
 
             //todo upload $this->save_path to cloud storge
-
         }
         // 等待Md5测试稳定再进行Md5调试 目前不检测
         if (isset($data_ret)) {
@@ -190,25 +188,7 @@ class Index extends Base
             $storge = new StorgeFactory();
             $storge->upload($this->file  , $this->save_path);
 
-
             echo json_encode($data_ret);
-            /**
-             *
-            $where = [];
-            $where['md5'] = $php_md5;
-            $file = File::where($where)->find();
-
-            if(!$file){
-            $this->file->save($data_ret);
-            $data_ret['php_md5'] = $php_md5;
-            $data_ret['file_id'] = $this->file->file_id;
-
-            echo json_encode($data_ret);
-            }else{
-            @unlink($this->save_path);
-            echo json_encode($file);
-            }
-             */
         }
     }
 
