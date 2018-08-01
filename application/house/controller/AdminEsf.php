@@ -12,6 +12,8 @@ namespace app\house\controller;
 
 use app\common\controller\AdminBase;
 use app\common\model\Models;
+use app\common\model\Users;
+use app\common\util\forms\select;
 use app\common\util\Tree2;
 use think\Db;
 
@@ -22,11 +24,47 @@ class AdminEsf extends AdminBase
     public function index()
     {
         global $_W;
+        $this->view->filter_info = Models::gen_admin_filter($this->house_esf, $this->menu_id);
+        $where = $this->view->filter_info['where'];
+
+        $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
+//        $area = trim(input('param.area', '', 'htmlspecialchars'));
+        $update_time = trim(input('param.update_time', '', 'htmlspecialchars'));
+        $create_time = trim(input('param.create_time', '', 'htmlspecialchars'));
+//        $esf_name = trim(input('param.esf_name', '', 'htmlspecialchars'));
+
+
+        if ($update_time) {
+            $where['update_at'] = array('LIKE', '%' . $update_time . '%');
+
+        }
+
+        if ($create_time) {
+            $where['create_at'] = array('LIKE', '%' . $create_time . '%');
+        }
+
+//        if ($esf_name) {
+//            $where['title'] = array('LIKE', '%' . $esf_name . '%');
+//        }
+
+        if ($user_name) {
+            $user_model = set_model('users');
+            $where_user['user_name'] = array('LIKE', '%' . $user_name . '%');
+            $where['user_id'] = $user_model->where($where_user)->id;
+        }
+//        if ($area) {
+//            $area_model = set_model('area');
+//            $where1['area_name'] = array('LIKE', '%' . $area . '%');
+//            $area_model->where($where1);
+//            $where = [];
+//            $where['area_id'] = $area_model->id;
+//        }
+
         $content_model_id = $this->house_esf;
         $model = set_model($content_model_id);
         /** @var Models $model_info */
         $model_info = $model->model_info;
-        $where = [];
+//        $where = [];
         $where['site_id'] = $_W['site']['id'];
 
         $this->view->lists = $model->where($where)->order("id desc")->paginate();
