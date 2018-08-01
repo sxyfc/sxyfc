@@ -1,0 +1,123 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if (!isset($keyword)) {
+    $keyword = "";
+}
+?>
+<form class="layui-form form-inline" method="post" action="{:\think\\Request::instance()->url()}">
+    <table class="layui-table -group">
+        <tr>
+
+            <td class="input-group">
+
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            姓名
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="user_name" value="{$user_name}" type="text"
+                               placeholder="姓名">
+                    </p>
+
+                </div>
+
+
+            </td>
+
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            手机号
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="phone_num" value="{$phone_num}" type="text"
+                               placeholder="手机号">
+                    </p>
+
+                </div>
+            </td>
+
+            {foreach $filter_info.fields as $k=>$field}
+            <td class="input-group">
+                <div class="layui-inline"> {$field.slug} :
+                    <select name="{$field.field_name}" class="layui-select" lay-ignore="">
+                        <option value="">{$field.slug}</option>
+                        {foreach $field.options as $option}
+                        <option value="{$option.id}" {if $field.selected==$option.id} selected {
+                        /if} href="{$option.href}"> {$option.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </td>
+            {/foreach}
+
+
+            <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+            </td></tr>
+    </table>
+</form>
+{/block}
+
+
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table">
+            <tr>
+                <td class="w50">ID</td>
+                {foreach $field_list as $field}
+                <td>{$field['slug']}</td>
+                {/foreach}
+                <td>姓名</td>
+                <td>身份证</td>
+                <td>手机号</td>
+                <td>所属区域</td>
+
+                <td>操作</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <?php
+            $role = \app\common\model\UserRoles::get(['id'=>$var['user_role_id']]);
+            ?>
+            <tr class="{neq name=" var.status" value="99"}disabled_1 {/neq}">
+
+            <td>{$var.id}</td>
+            {foreach $field_list as $field}
+            <td>
+                <pre>{$var[$field['field_name']]}</pre>
+            </td>
+            {/foreach}
+            <td>{$var.nickname}</td>
+            <td>{$role.role_name}</td>
+            <td>{$var.mobile}</td>
+            <td>{$var.area}</td>
+            <td>
+                <?php
+                ?>
+                {neq name="var.id" value="1"}
+                <?php
+                $params = array("user_id" => $var['id']);
+                ?>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                {:build_back_a($menu['id'],
+                $menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],"",'90%','80%',$var)}
+                {/eq}
+                {/volist}
+                {/neq}
+
+            </td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$page}
+    </div>
+</form>
+{/block}
