@@ -48,9 +48,9 @@ class AdminEsf extends AdminBase
 //        }
 
         if ($user_name) {
-            $user_model = set_model('users');
-            $where_user['user_name'] = array('LIKE', '%' . $user_name . '%');
-            $where['user_id'] = $user_model->where($where_user)->id;
+            $where_user['user_name'] = $user_name;
+            $user_model = Users::get($where_user);
+            $where['user_id'] = $user_model['id'];
         }
 //        if ($area) {
 //            $area_model = set_model('area');
