@@ -14,6 +14,7 @@ use app\common\controller\AdminBase;
 use app\common\model\Modules;
 use app\common\model\UserMenu;
 use think\Db;
+use think\Log;
 use think\Session;
 
 class Service extends AdminBase
@@ -149,9 +150,18 @@ class Service extends AdminBase
         $where['id'] = ["NOT IN" , '0,' .$_W['site']['config']['hide_menus']];
         if (!$this->super_power) {
             $where['user_menu.module'] = ['IN', $in_modules];
+
+            // 先获取个人菜单，不存在的话获取角色菜单
             $menuList = Db::view('user_menu', '*')
-                ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $this->admin_info['role_id'] . ' and user_menu.id=user_menu_access.user_menu_id and user_menu.is_admin = 1  and user_menu.user_menu_display = 1  ')
+                ->view('user_menu_allot', 'user_id,user_menu_id', "user_menu_allot.user_id=" . $this->user['id'] . ' and user_menu.id=user_menu_allot.user_menu_id and user_menu.is_admin = 1  and user_menu.user_menu_display = 1 ')
                 ->where($where)->select();
+            $result = $menuList->toArray();
+
+            if(empty($result)){
+                $menuList = Db::view('user_menu', '*')
+                    ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $this->admin_info['role_id'] . ' and user_menu.id=user_menu_access.user_menu_id and user_menu.is_admin = 1  and user_menu.user_menu_display = 1  ')
+                    ->where($where)->select();
+            }
         } else {
             //超级管理员分组
 
@@ -196,9 +206,18 @@ class Service extends AdminBase
 
         if (!$this->super_power) {
             $where['user_menu.module'] = ['IN', $in_modules];
+
+            // 先获取个人菜单，不存在的话获取角色菜单
             $menuList = Db::view('user_menu', '*')
-                ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $this->current_admin_role['role_id'] . ' and user_menu.id=user_menu_access.user_menu_id and user_menu.is_admin = 1  ')
+                ->view('user_menu_allot', 'user_id,user_menu_id', "user_menu_allot.user_id=" . $this->user['id'] . ' and user_menu.id=user_menu_allot.user_menu_id and user_menu.is_admin = 1  and user_menu.user_menu_display = 1 ')
                 ->where($where)->select();
+            $result = $menuList->toArray();
+
+            if(empty($result)){
+                $menuList = Db::view('user_menu', '*')
+                    ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $this->admin_info['role_id'] . ' and user_menu.id=user_menu_access.user_menu_id and user_menu.is_admin = 1  and user_menu.user_menu_display = 1  ')
+                    ->where($where)->select();
+            }
         } else {
             //超级管理员分组
 
@@ -241,9 +260,18 @@ class Service extends AdminBase
         if (!$_W['super_power']) {
             $where['user_menu.module'] = ['IN', $in_modules];
             $where['user_menu.is_admin'] = ['IN', 0];
+
+            // 先获取个人菜单，不存在的话获取角色菜单
             $menuList = Db::view('user_menu', '*')
-                ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $_W['user_role_id'] . ' and user_menu.id=user_menu_access.user_menu_id  ')
+                ->view('user_menu_allot', 'user_id,user_menu_id', "user_menu_allot.user_id=" . $this->user['id'] . ' and user_menu.id=user_menu_allot.user_menu_id and user_menu.is_admin = 1  and user_menu.user_menu_display = 1 ')
                 ->where($where)->select();
+            $result = $menuList->toArray();
+
+            if(empty($result)){
+                $menuList = Db::view('user_menu', '*')
+                    ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $this->admin_info['role_id'] . ' and user_menu.id=user_menu_access.user_menu_id and user_menu.is_admin = 1  and user_menu.user_menu_display = 1  ')
+                    ->where($where)->select();
+            }
         } else {
             //超级管理员分组
             $where = ['is_admin' => 0];

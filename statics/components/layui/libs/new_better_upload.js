@@ -44,8 +44,6 @@ layui.define(['element', 'upload', 'layer', 'jquery'], function (exports) {
             //执行实例
             accept = accept ||  'images';
             ext  = ext || "jpg|png|gif|bmp|jpeg";
-
-            console.log(accept , ext);
             var uploadInst = upload.render({
                 elem: '.layui_single_upload_' + field_name //绑定元素
                 , url: upload_url  //上传接口
@@ -54,7 +52,6 @@ layui.define(['element', 'upload', 'layer', 'jquery'], function (exports) {
                 , before: function (obj) {
                     layer.msg("上传中，请稍后");
                     //todo check md5
-                    console.log(obj);
                     if(accept === "images"){
                         obj.preview(function (index, file, result) {
                             $('#' + field_name).html('<div id="' + field_name + '_' + index + '_file" class="layui-upload-img  weui-uploader__file"><img src=\"' + result + '\" alt=\"' + file.name + '\" class=\"layui-upload-img\"></div>')
@@ -62,12 +59,7 @@ layui.define(['element', 'upload', 'layer', 'jquery'], function (exports) {
                     }else{
 
                         obj.preview(function (index, file, result) {
-                            console.log(index); //得到文件索引
-                            console.log(file.type); //得到文件对象
-
                             var type = file.type.split("/")[0];
-                            console.log(type); //得到文件对象
-                            console.log(result); //得到文件base64编码，比如图片
                             $('#' + field_name).html('<div id="' + field_name + '_' + index + '_file" class="layui-upload-img weui-uploader__file mhcms-upload-file-'+ type + '">' + file.name  + '</div>');
                         });
                     }
@@ -78,10 +70,10 @@ layui.define(['element', 'upload', 'layer', 'jquery'], function (exports) {
                     var item = this.item; // 当前元素
                     var $real_form_name = item.attr('name');
                     $("#" + field_name + '_' + index + '_file').append('<input type="hidden" value="' + res.file_id + '" name="' + $real_form_name + '">');
-                    console.log(index);
                 }
-                , error: function () {
+                , error: function (e) {
                     //请求异常回调
+                    console.log(e);
                 }
             });
         },
