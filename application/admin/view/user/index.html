@@ -41,6 +41,17 @@ if (!isset($keyword)) {
                 </div>
             </td>
 
+            <td class="input-group">
+                <div class="layui-inline"> 角色 :
+                    <select name="role_id"  class="layui-select" lay-ignore="">
+                        <option value="">全部</option>
+                        {foreach $roles as $role}
+                            <option value="{$role['id']}" {if $roleId==$role.id} selected {/if}>{$role['role_name']}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </td>
+
             {foreach $filter_info.fields as $k=>$field}
                 <td class="input-group"><div class="layui-inline">    {$field.slug} :
                 <select name="{$field.field_name}"  class="layui-select" lay-ignore="">

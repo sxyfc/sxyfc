@@ -16,6 +16,8 @@ use app\common\model\Node;
 use app\common\model\NodeTypes;
 use app\common\model\UserRoles;
 use app\common\model\Users;
+use think\Db;
+use think\Log;
 
 class User extends AdminBase
 {
@@ -37,6 +39,7 @@ class User extends AdminBase
         $role_id = (int)$role_id;
         $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
         $nickname = trim(input('param.nickname', ' ', 'htmlspecialchars'));
+        $roleId = trim(input('param.role_id', ' ', 'htmlspecialchars'));
         if ($user_name) {
             $where['user_name'] = array('LIKE', '%' . $user_name . '%');
         }
@@ -46,14 +49,25 @@ class User extends AdminBase
         if ($role_id) {
             $where['user_role_id'] = (int)$role_id;
         }
-        $where['is_admin'] = 0;
+
+        if ($roleId) {
+            $this->view->assign('roleId', $roleId);
+            $where['user_role_id'] = $roleId;
+        }
+
         $where = $this->map_fenzhan($where);
         $list = Users::where($where)->order('id desc')->paginate(config('list_rows'));
+
         $pages = $list->render();
         foreach ($list as $k => $val) {
             $val['create_ip_area'] = IpToArea($val['create_ip']);
             $val['last_ip_area'] = IpToArea($val['last_login_ip']);
         }
+
+        $where_role['id'] = array('>', 1);
+        $roles = Db::table('mhcms_user_roles')->where($where_role)->select()->toArray();
+
+        $this->view->assign('roles', $roles);
         $this->view->assign('page', $pages);
         $this->view->assign('list', $list);
         $this->view->assign('nickname', $nickname);
@@ -148,7 +162,6 @@ class User extends AdminBase
             $this->assign('roles', UserRoles::all());
             if ($model_info) {
                 //todo check if user have auth to create
-
                 $this->view->field_list = $model_info->get_admin_publish_fields([], [], [], $ext_form_group);
                 $this->view->model_info = $model_info; //('node_type_info', $model_info);
             }
@@ -206,6 +219,20 @@ class User extends AdminBase
             } else {
                 unset($data['pass']);
             }
+
+            // 处理空数据
+            if(empty($data['nickname'])){
+                unset($data['nickname']);
+            }
+
+            if(empty($data['parent_id'])){
+                unset($data['parent_id']);
+            }
+
+            if(empty($data['status'])){
+                unset($data['status']);
+            }
+
             //Edit start process
             if (isset($model_info) && $model_info) {
                 $base_info = input("post.$ext_form_group/a");
@@ -251,6 +278,11 @@ class User extends AdminBase
                 $this->view->model_info = $model_info;
                 $this->view->field_list = $model_info->get_admin_publish_fields($ext_node, [], [], $ext_form_group);
             }
+
+            $model = set_model('users');
+            $model_infos = $model->model_info;
+            $this->view->list = $model_infos->get_admin_publish_fields();
+
             $this->assign('roles', D('user_roles')->where(['site_id' => ['IN', [0, $this->site_id]]])->select());
             $this->assign('detail', $detail);
             return $this->view->fetch();

@@ -12,6 +12,7 @@
 use app\common\model\Models;
 use app\common\model\Sites;
 use app\common\model\UserMenuAccess;
+use app\common\model\UserMenuAllot;
 use app\common\model\Users;
 use app\common\util\PHPMailer\PHPMailer;
 use app\common\util\QRcode;
@@ -787,17 +788,26 @@ function build_layer_link($admin_menu_id, $title = "", $trigger = "onclick", $fu
 function build_back_a($admin_menu_id, $vars, $title = '', $mini = "", $class = "", $width = '', $height = '', $mapping = [])
 {
     global $_W;
-    static $access , $menus;
+    static $access ,$allot, $menus;
     if (!isset($_W['super_power']) || $_W['super_power'] != 1) {
-        $where['user_role_id'] = $_W['admin_info']['role_id'];
-        $where['user_menu_id'] = $admin_menu_id;
-        if(isset($access[$admin_menu_id]) and $access[$admin_menu_id]==false){
-
+        // 先获取用户菜单，不存在的话获取角色菜单
+        $where_allot['user_id'] = $_W['admin_info']['user_id'];
+        $where_allot['user_menu_id'] = $admin_menu_id;
+        if(isset($allot[$admin_menu_id]) and $allot[$admin_menu_id]==false){
             return " - ";
         }else{
-            $access[$admin_menu_id]= UserMenuAccess::get($where);
-            if (!$access[$admin_menu_id]) {
-                return " - ";
+            $allot[$admin_menu_id]= UserMenuAllot::get($where_allot);
+            if (!$allot[$admin_menu_id]) {
+                $where['user_role_id'] = $_W['admin_info']['role_id'];
+                $where['user_menu_id'] = $admin_menu_id;
+                if(isset($access[$admin_menu_id]) and $access[$admin_menu_id]==false){
+                    return " - ";
+                }else{
+                    $access[$admin_menu_id]= UserMenuAccess::get($where);
+                    if (!$access[$admin_menu_id]) {
+                        return " - ";
+                    }
+                }
             }
         }
     }
