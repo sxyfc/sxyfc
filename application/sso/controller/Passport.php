@@ -290,7 +290,7 @@ class Passport extends ModuleBase
                         // send data to
                         MhcmsDistribution::make_down_line($user['id'] , $from_uid);
                     }
-                    $foreword_url = url('house/house/index');
+                    $foreword_url = url('house/index/index');
                 } else {
                     $code = 2;
                     $msg = $res;
