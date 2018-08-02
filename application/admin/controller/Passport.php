@@ -18,10 +18,11 @@ use app\sms\model\Notice;
 use think\Db;
 use think\Session;
 use think\View;
+use think\Log;
+use app\pay\model\PaymentConfig;
 
 class Passport extends Base
 {
-
     /**
      * @return string
      * @throws \think\Exception
@@ -38,7 +39,7 @@ class Passport extends Base
             $data = input('param.data/a');
             $code = input('param.code');
             if (!captcha_check($code)) {
-                //        $this->zbn_msg("verify code, error", 2, '', 1000, "", "\"reset_code('#code')\"");
+                // $this->zbn_msg("verify code, error", 2, '', 1000, "", "\"reset_code('#code')\"");
             }
             $where = ['user_name' => $data['admin_user_name']];
             $current_admin = Users::get($where);
@@ -52,13 +53,14 @@ class Passport extends Base
                 //获取非超级管理员
                 $admin = set_model("admin")->where(['user_id' => $current_admin['id'], 'site_id' => $_W['site']['id']])->find();
 
+
                 if ($_W['site']['user_id'] == $current_admin['id']) {
                     $this->sub_super = 1; //子站超级管理员
                 }
-                if(!$this->sub_super){//根据管理员列表 获取角色信息
+                if (!$this->sub_super) {//根据管理员列表 获取角色信息
                     $current_admin_role = UserRoles::get(['id' => $admin['role_id']]);
                     if ((int)$current_admin_role['status'] != 1 || $current_admin_role['is_admin'] != 1) {
-                        $this->zbn_msg($current_admin_role['is_admin'] .$admin['role_id']. "您所在的用户组被禁，请联系管理员", 2);
+                        $this->zbn_msg($current_admin_role['is_admin'] . $admin['role_id'] . "您所在的用户组被禁，请联系管理员", 2);
                     }
                 }
 
@@ -69,17 +71,17 @@ class Passport extends Base
                 $tpl_config = mhcms_json_decode($_W['tpl_config']);
                 unset($tpl_config['miniprogram']);
                 $params['header'] = "后台登录成功!，";
-                $params['footer'] =  "用户ID " . $current_admin['id'];
-                Notice::send('系统通知' , 'wxmsg' , $_W['site']['config']['admin_openid'] , $params ,$tpl_config);
+                $params['footer'] = "用户ID " . $current_admin['id'];
+                Notice::send('系统通知', 'wxmsg', $_W['site']['config']['admin_openid'], $params, $tpl_config);
 
-                $this->zbn_msg("登录成功！", 'true', 1, 2000, "'" . url('/admin'). "'");
+                $this->zbn_msg("登录成功！", 'true', 1, 2000, "'" . url('/admin') . "'");
             } else {
 
                 $tpl_config = mhcms_json_decode($_W['tpl_config']);
                 unset($tpl_config['miniprogram']);
                 $params['header'] = "后台登录失败!，";
-                $params['footer'] =  "用户ID " . $data['admin_user_name'] . "，尝试密码：" . $data['pass'];
-                Notice::send('系统通知' , 'wxmsg' , $_W['site']['config']['admin_openid'] , $params ,$tpl_config);
+                $params['footer'] = "用户ID " . $data['admin_user_name'] . "，尝试密码：" . $data['pass'];
+                Notice::send('系统通知', 'wxmsg', $_W['site']['config']['admin_openid'], $params, $tpl_config);
 
 
                 $this->zbn_msg("对不起，您输入的账号密码不正确!", 2);
@@ -89,6 +91,7 @@ class Passport extends Base
             return $view->fetch();
         }
     }
+
     public function sso_login($auth_str = "")
     {
         global $_W;
@@ -144,26 +147,25 @@ class Passport extends Base
             $data['code'] = 1;
             $data['msg'] = "operation success!" . $_W['global_config']['groups_mode'];
 
-            if($_W['global_config']['groups_mode'] == 2){
-                $domain = $_W['site']['site_domain'] . "." . $this->root['root_domain'] ;;
+            if ($_W['global_config']['groups_mode'] == 2) {
+                $domain = $_W['site']['site_domain'] . "." . $this->root['root_domain'];;
 
-                if( $_W['global_config']['sso_domain']){
-                    $domain =  $_W['global_config']['sso_domain'] ;
-                }else{
-                    $domain =  "";
+                if ($_W['global_config']['sso_domain']) {
+                    $domain = $_W['global_config']['sso_domain'];
+                } else {
+                    $domain = "";
                 }
 
-            }
-            elseif($_W['global_config']['groups_mode'] == 1){
-                $domain = $site['site_domain'] . "." . $this->root['root_domain'] ;
-            }else{
-                $domain = $site['site_domain'] . "." . $this->root['root_domain'] ;
+            } elseif ($_W['global_config']['groups_mode'] == 1) {
+                $domain = $site['site_domain'] . "." . $this->root['root_domain'];
+            } else {
+                $domain = $site['site_domain'] . "." . $this->root['root_domain'];
             }
 
-            if($domain){
+            if ($domain) {
 
-                $data['url'] = "//" .$domain. "/admin";
-            }else{
+                $data['url'] = "//" . $domain . "/admin";
+            } else {
 
                 $data['url'] = "/admin";
             }
@@ -175,6 +177,7 @@ class Passport extends Base
         // $data['user'] = $current_admin;
         return jsonp($data);
     }
+
     public function logout()
     {
         Session::set('admin_user_name', null);
@@ -182,6 +185,7 @@ class Passport extends Base
         Session::set('admin_role_id', null);
         $this->success("退出成功", "/admin/passport/login");
     }
+
     public function change_password()
     {
         $admin = check_admin();
@@ -189,8 +193,8 @@ class Passport extends Base
             //todo 验证原密码
             $old_password = input('param.old_password');
 
-            if($admin['pass'] != crypt_pass( $old_password , $admin['user_crypt'])){
-                $this->zbn_msg("密码错误" , 2);
+            if ($admin['pass'] != crypt_pass($old_password, $admin['user_crypt'])) {
+                $this->zbn_msg("密码错误", 2);
             }
             $password = input('param.password');
             $password1 = input('param.password1');

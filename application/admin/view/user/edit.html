@@ -13,6 +13,10 @@
                         <td class="rgTdBt">{$detail.user_name|default=''}</td>
                     </tr>
                     <tr>
+                        <td class="lfTdBt">昵称：</td>
+                        <td class="rgTdBt">{$detail.nickname|default=''}</td>
+                    </tr>
+                    <tr>
                         <td class="lfTdBt">密码：</td>
                         <td class="rgTdBt"><input type="password" name="data[pass]" value="" class="layui-input w150"/>
                         </td>
@@ -23,8 +27,7 @@
                         <td class="rgTdBt">
                             <select   name="data[user_role_id]" class="layui-input w150" >
                                 {foreach name="roles" item="var"}
-                                <option value="{$var.id}" {eq name="var.id" value="$detail.user_role_id" }selected="selected" {/eq} >
-                                    {$var.role_name}</option>
+                                <option value="{$var.id}" {if $var.id==$detail.user_role_id} selected {/if} >{$var.role_name}</option>
                                 {/foreach}
                             </select>
                             <code>必须选择正确的角色</code>
@@ -40,6 +43,18 @@
                     </tr>
                 </table>
                 </fieldset>
+
+                {volist name="list" id="item"}
+                {if $item['field_name'] != 'user_name' && $item['field_name'] != 'nickname'}
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{$item['slug']}</label>
+                    <div class="layui-input-block">
+                        {$item['form_str']}
+                    </div>
+                </div>
+                {/if}
+                {/volist}
+
                 {if isset($field_list)}
                 <fieldset class="layui-elem-field layui-field-title">
                     <legend>扩展信息</legend>

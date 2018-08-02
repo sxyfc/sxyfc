@@ -67,9 +67,16 @@ class Menu extends SsoBase
          * special menus for current user
          */
         $menuList = Db::view('user_menu','*')
-            ->view('user_menu_access','user_role_id,user_menu_id','user_menu.id=user_menu_access.user_menu_id')
-            ->where('user_role_id','=',$this->user['user_role_id'])
+            ->view('user_menu_allot','user_id,user_menu_id','user_menu.id=user_menu_allot.user_menu_id')
+            ->where('user_id','=',$this->user['id'])
             ->select()->toArray();
+        if(empty($menuList)){
+            $menuList = Db::view('user_menu','*')
+                ->view('user_menu_access','user_role_id,user_menu_id','user_menu.id=user_menu_access.user_menu_id')
+                ->where('user_role_id','=',$this->user['user_role_id'])
+                ->select()->toArray();
+        }
+        
         $user_menus = array_merge($globals_menus , $menuList);
         $this->view->user_menus = $user_menus;
         $data = $this->view->fetch();

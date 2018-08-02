@@ -110,10 +110,16 @@ class AdminBase extends Base
             if (ROUTE_C != "admin_service" && ROUTE_C != "service" && ROUTE_C != "index" && strpos(ROUTE_A, "public_") !== 0) {
                 $map = [];
                 $map['user_menu_id'] = $this->current_menu['id'];
-                $map['user_role_id'] = $_W['admin_info']['role_id'];
-                $user_menu_access = Db::name('user_menu_access')->where($map)->find();
-                if (!$user_menu_access) {
-                    $this->error("未授权的访问 3");
+                $map['user_id'] = $this->user['id'];
+                $user_menu_allot = Db::name('user_menu_allot')->where($map)->find();
+                if (!$user_menu_allot) {
+                    $map_role = [];
+                    $map_role['user_menu_id'] = $this->current_menu['id'];
+                    $map_role['user_role_id'] = $_W['admin_info']['role_id'];
+                    $user_menu_allot = Db::name('user_menu_access')->where($map_role)->find();
+                    if(!$user_menu_allot){
+                        $this->error("未授权的访问 3");
+                    }
                 }
             }
         }

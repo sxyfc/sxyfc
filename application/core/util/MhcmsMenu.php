@@ -144,9 +144,16 @@ class MhcmsMenu
         if (!isset($_W['super_power'])) {
             $where['user_menu.module'] = ['IN', $in_modules];
             $where['user_menu.is_admin'] = ['IN', 0];
-            $menuList = Db::view('user_menu', '*')
-                ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $_W['user_role_id'] . ' and user_menu.id=user_menu_access.user_menu_id  ')
-                ->where($where)->select();
+            $menuList = Db::view('user_menu','*')
+                ->view('user_menu_allot','user_id,user_menu_id','user_menu.id=user_menu_allot.user_menu_id')
+                ->where('user_id','=',$_W['id'])->select();
+
+            $result = $menuList->toArray();
+            if(empty($result)){
+                $menuList = Db::view('user_menu', '*')
+                    ->view('user_menu_access', 'user_role_id,user_menu_id', "user_menu_access.user_role_id=" . $_W['user_role_id'] . ' and user_menu.id=user_menu_access.user_menu_id  ')
+                    ->where($where)->select();
+            }
         } else {
             //超级管理员分组
             $where = ['is_admin' => 0];

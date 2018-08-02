@@ -972,21 +972,27 @@ class Models extends Common
             $base['update_at'] = !empty($base['update_at']) ? $base['update_at'] : date("Y-m-d H:i:s", SYS_TIME);
         }
 
-        if ($item_id = $base_model->insert($base, false, true)) {
-            $base['id'] = $item_id;
-            $ret['code'] = 1;
-            $ret['msg'] = "操作完成! ";
-            $ret['item'] = $base;
-            $ret['data'] = $base;
+        try {
+            if ($item_id = $base_model->insert($base, false, true)) {
+                $base['id'] = $item_id;
+                $ret['code'] = 1;
+                $ret['msg'] = "操作完成! ";
+                $ret['item'] = $base;
+                $ret['data'] = $base;
 
-            if ($this->is_index) {
-                MhcmsIndex::create($ret['item']['id'], $this->id);
+                if ($this->is_index) {
+                    MhcmsIndex::create($ret['item']['id'], $this->id);
+                }
+
+                return $ret;
+            } else {
+                $info['code'] = 0;
+                $info['msg'] = "O! BASE BIG FAILES !";
+                return $info;
             }
-
-            return $ret;
-        } else {
+        } catch (\Exception $e) {
             $info['code'] = 0;
-            $info['msg'] = "O! BASE BIG FAILES !";
+            $info['msg'] = $e->getMessage();
             return $info;
         }
     }

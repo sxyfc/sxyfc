@@ -15,6 +15,7 @@ use app\common\model\Models;
 use app\common\model\UserRoles;
 use app\common\model\Users;
 use think\Db;
+use think\Log;
 
 class Admin extends AdminBase
 {
@@ -55,6 +56,11 @@ class Admin extends AdminBase
         $model = set_model($this->admin);
         /** @var Models $model_info */
         $model_info = $model->model_info;
+
+        if (!$this->super_power) {
+            return $this->zbn_msg('无权操作！', 2);
+        }
+
         //手动处理类型的模型
         if ($this->isPost() && $model_info) {
             if (isset($_GPC['_form_manual'])) {
@@ -63,6 +69,18 @@ class Admin extends AdminBase
             } else {
                 //自动获取data分组数据
                 $base_info = input('post.data/a');//get the base info
+            }
+
+            // 查询用户信息
+            if(!$user_info = Db::name('users')->where(['id'=>$base_info['user_id']])->find()){
+                return $this->zbn_msg('用户不存在', 2);
+            }
+            $base_info['site_id'] = $user_info['site_id'];
+            $base_info['user_name'] = $user_info['user_name'];
+
+            // 修改用户is_admin状态
+            if(!$result = Db::name('users')->where(['id'=>$base_info['user_id']])->update(['is_admin'=>1])){
+                return $this->zbn_msg('网络出错，请稍后再试！', 2);
             }
 
             /** @var Models $model_info */

@@ -175,8 +175,13 @@ class Base extends App
                 $map['user_role_id'] = $_W['user_role_id'];
 
                 if (!strpos(ROUTE_A, 'api') && !strpos(ROUTE_A, 'service')) {
-                    if (!Db::name('user_menu_access')->where($map)->find()) {
-                        $this->error("you don't have a key for this door!");
+                    $match['user_menu_id'] = $user_menu_id;
+                    $match['user_id'] = $_W['id'];
+
+                    if (!Db::name('user_menu_allot')->where($match)->find()) {
+                        if (!Db::name('user_menu_access')->where($map)->find()) {
+                            $this->error("you don't have a key for this door!");
+                        }
                     }
                 }
                 //user verify load menu info
