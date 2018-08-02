@@ -12,15 +12,20 @@ namespace app\admin\controller;
 
 use app\common\controller\AdminBase;
 use app\common\model\Models;
+use app\common\model\Users;
 use app\common\model\UserMenu;
 use app\common\model\UserMenuAccess;
+use app\common\model\UserMenuAllot;
 use app\common\model\UserRoles;
 use think\Db;
+use think\Log;
 
 class AdminRole extends AdminBase
 {
     public $user_roles = "user_roles";
+    public $users = "users";
     public $user_access_model;
+    public $user_allot_model;
 
     /**
      * @throws \think\db\exception\DataNotFoundException
@@ -32,6 +37,7 @@ class AdminRole extends AdminBase
         parent::_initialize();
         $this->model = new UserRoles();
         $this->user_access_model = new UserMenuAccess();
+        $this->user_allot_model = new UserMenuAllot();
     }
 
     /**
@@ -73,6 +79,37 @@ class AdminRole extends AdminBase
         $this->view->model_info = $model_info;
         //+--------------------------------以下为系统--------------------------
         //模板替换变量
+        $this->mapping['module'] = $module;
+        $this->view->mapping = $this->mapping;
+        return $this->view->fetch();
+    }
+
+    /**
+     *  用户授权列表
+     * @param string $module
+     * @return string
+     * @throws \Exception
+     */
+    public function user_auth($module = "")
+    {
+        $where = [];
+        //获取模型信息
+        $model = set_model($this->users);
+        $model_info = $model->model_info;
+        $this->view->field_list = $model_info->get_admin_publish_fields();
+
+        //列表数据
+        if (!$this->super_power) {
+            $where['parent_id'] = ['EQ', $this->user['id']];
+            $lists = $model->where($where)->order("id desc")->paginate();
+        }else{
+            $where['user_role_id'] = ['EQ', '22'];
+            $lists = $model->where($where)->order("id desc")->paginate();
+        }
+
+        $this->view->lists = $lists;
+        $this->view->model_info = $model_info;
+
         $this->mapping['module'] = $module;
         $this->view->mapping = $this->mapping;
         return $this->view->fetch();
@@ -230,6 +267,148 @@ class AdminRole extends AdminBase
         }
     }
 
+
+    public function user_authorize_stage($user_id, $is_admin)
+    {
+        global $_W;
+        $is_admin = (int)$is_admin;
+        $this->user_allot_model = new UserMenuAllot();
+        $user_id = (int)$user_id;
+        $detail = Users::get(['id' => $user_id]);
+
+//        if ($is_admin && $detail['is_admin'] != 1) {
+//            $this->message("后台授权只能是后台角色");
+//        }
+
+        if ($detail['user_role_id'] == 1) {
+            $this->message("不能执行该操作");
+        }
+
+        $tpl = $is_admin ? "auth_admin_ztree" : "auth_user_ztree";
+        $map['is_admin'] = $is_admin;
+
+        //当前菜单访问权限
+        $formatted_admin_allot = [];
+        if (!$this->super_power) {
+            $where_manage = [];
+            $where_manage['user_id'] = $this->user['id'];
+            $current_admin_allot = UserMenuAllot::all($where_manage);
+            $result_manage = $current_admin_allot->toArray();
+
+            if(empty($result_manage)){
+                $where_access['user_role_id'] = $_W['admin_info']['role_id'];
+                $current_admin_allot = UserMenuAccess::all($where_access);
+            }
+
+            if($current_admin_allot){
+                $formatted_admin_allot = [];
+                foreach ($current_admin_allot as $allot) {
+                    $formatted_admin_allot[$allot['user_menu_id']] = $allot;
+                }
+            }
+        }
+
+        //当前拥有的权限
+        $is_user = 1;
+        $where_allot = [];
+        $where_allot['user_id'] = $user_id;
+        $current_target_allot = UserMenuAllot::all($where_allot);
+        $result_allot =  $current_target_allot->toArray();
+        if(empty($result_allot)){
+            $where_manage['user_id'] = $user_id;
+            $current_target_allot = UserMenuAllot::all($where_manage);
+            $result_manage =  $current_target_allot->toArray();
+
+            if(empty($result_manage)){
+                $is_user = 0;
+                $where_access['user_role_id'] = $_W['admin_info']['role_id'];
+                $current_target_allot = UserMenuAccess::all($where_access);
+            }
+        }
+
+        $formatted_target_allot = [];
+        foreach ($current_target_allot as $allot) {
+            $formatted_target_allot[$allot['user_menu_id']] = $allot;
+        }
+
+
+        if ($user_id && $detail) {
+            $data = [];
+            if ($this->isPost()) {
+                $menu_ids = input('param.menu_ids');
+                $menu_ids = explode(",", $menu_ids);
+
+                //destroy old access we should separate the user  and admin menus
+                //foreach the old access ,and delete the old access with the $is_admin group
+                foreach ($formatted_target_allot as $k => $v) {
+                    $menu = UserMenu::get(['id' => $k]);
+                    if ($menu['is_admin'] == $is_admin) {
+                        //delete the same group : user or admin
+                        if($is_user == 1){
+                            UserMenuAllot::where($v->toArray())->delete();
+                        }
+                    }
+                }
+
+                foreach ($menu_ids as $val) {
+                    if (!empty($val)) {
+                        $_item = array(
+                            'user_id' => $user_id,
+                            'user_menu_id' => (int)$val,
+                        );
+
+                        if (!$this->super_power && !$formatted_admin_allot[$val]) {
+                            continue;
+                        }
+                        $data[] = $_item;
+                    }
+                }
+
+                if ($this->user_allot_model->saveAll($data)) {
+                    $this->zbn_msg('operate success !', 1);
+                } else {
+                    $this->zbn_msg('operate success,但是您可能没有选择任何菜单 !', 1);
+                }
+            } else {
+                $menu_ids = [];
+
+                //超级管理员列出所有
+                if ($this->super_power) {
+                    $menus = UserMenu::all($map);
+                } else {
+                    //可能拥有的菜单权限列出来
+                    foreach ($current_admin_allot as $allot) {
+                        $menu_ids[] = $allot['user_menu_id'];
+                    }
+                    $map['id'] = ['IN', $menu_ids];
+                    $menus = UserMenu::all($map);
+                }
+
+                $new_menus = [];
+                foreach ($menus as $item) {
+                    $new_menus[$item['id']] = $item;
+                }
+
+                //自动选取当前已经有的权限
+                //format menu
+
+                $newMenuIds = [];
+                foreach ($formatted_target_allot as $a) {
+                    $newMenuIds[] = $a['user_menu_id'];
+                    if (isset($new_menus[$a['user_menu_id']])) {
+                        $new_menus[$a['user_menu_id']]['checked'] = true;
+                    }
+                }
+                $formated_menus = self::getAllChild(0, 0, $new_menus);
+                $this->assign('menuIds', $newMenuIds);
+                $this->assign('user_id', $user_id);
+                $this->assign('detail', $detail);
+                $this->assign('menus', $formated_menus);
+                return $this->view->fetch($tpl);
+            }
+        }
+
+    }
     /**
      * @param $role_id
      * @return string
