@@ -35,12 +35,20 @@ class MessageService extends Base {
         //fuck platform in
         if(!empty($_GPC['appid'])) {
             $appid = ltrim($_GPC['appid'], '/');
-            if ($appid == 'wx570bc396a51b8ff8') {
+            // if ($appid == 'wx570bc396a51b8ff8') {
+            //     $_W['account'] = array(
+            //         'type' => '3',
+            //         'app_id' => 'wx570bc396a51b8ff8',
+            //         'level' => 4,
+            //         'token' => 'platformtestaccount'
+            //     );
+            // }
+            if ($appid == 'wxd914b1ad1ed4b324') {
                 $_W['account'] = array(
                     'type' => '3',
-                    'app_id' => 'wx570bc396a51b8ff8',
+                    'app_id' => $appid,
                     'level' => 4,
-                    'token' => 'platformtestaccount'
+                    'token' => 'platformtestaccounty'
                 );
             }
         }

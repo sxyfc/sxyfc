@@ -55,6 +55,14 @@ class Query
     private static $event = [];
     // 读取主库
     private static $readMaster = [];
+    // 默认数字类型赋值
+    public static $default_int_val = 0; 
+    // 默认字符类型赋值
+    public static  $default_string_val = ''; 
+    // 默认日期类型赋值
+    public static  $default_date_val = '';
+    // 默认时间类型赋值
+    public static  $default_datetime_val = ''; 
 
     /**
      * 构造函数
@@ -69,6 +77,8 @@ class Query
         $this->model      = $model;
         // 设置当前连接的Builder对象
         $this->setBuilder();
+        self::$default_date_val = date('Y-m-d', time());
+        self::$default_datetime_val = date('Y-m-d H:i:s', time());
     }
 
     /**
@@ -2977,6 +2987,34 @@ class Query
     public static function event($event, $callback)
     {
         self::$event[$event] = $callback;
+    }
+
+
+    /**
+     * 设置默认值
+     * not null有毒啊
+     * @access public
+     * @param array   $data             字段数组
+     * @param array   $ignore_fields    忽略字段
+     * @return array
+     */
+    public function setDefaultValueByFields($data, $ignore_fields = [])
+    {
+        $fields = $this->getTableFields();
+        $types  = $this->getFieldsType();
+        $diff   = array_diff($fields, array_keys($data), $ignore_fields);
+        foreach ($diff as $field) {
+            if (strpos($types[$field], 'int') !== false || in_array($types[$field], array('float','double'))) {
+                $data[$field] = self::$default_int_val;
+            } else if ($types[$field] == 'date') {
+                $data[$field] = self::$default_date_val;
+            } else if ($types[$field] == 'datetime') {
+                $data[$field] = self::$default_datetime_val;
+            } else {
+                $data[$field] = self::$default_string_val;
+            }
+        }
+        return $data;
     }
 
     /**
