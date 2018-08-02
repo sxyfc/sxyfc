@@ -103,7 +103,7 @@ class AdminRole extends AdminBase
             $where['parent_id'] = ['EQ', $this->user['id']];
             $lists = $model->where($where)->order("id desc")->paginate();
         }else{
-            $where['user_role_id'] = ['EQ', '22'];
+            $where['user_role_id'] = ['GT', 1];
             $lists = $model->where($where)->order("id desc")->paginate();
         }
 
