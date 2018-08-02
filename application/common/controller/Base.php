@@ -82,11 +82,11 @@ class Base extends App
             $_W['global_config']['sso_domain'] = $this->request->host();
         }
 
-        $bad_ips = explode("#" , $_W['global_config']['secure']['bad_ip']);
+        $bad_ips = explode("#", $_W['global_config']['secure']['bad_ip']);
 
-        if(count($bad_ips)){
-            foreach($bad_ips as $bad_ip){
-                if(Request::instance()->ip()==$bad_ip){
+        if (count($bad_ips)) {
+            foreach ($bad_ips as $bad_ip) {
+                if (Request::instance()->ip() == $bad_ip) {
                     exit();
                 }
             }
@@ -255,7 +255,7 @@ class Base extends App
                 //todo load default site_wechat
                 $default_site = Sites::get(['id' => $_W['root']['site_id']]);
 
-                if($default_site){
+                if ($default_site) {
                     $default_site->get_config();
                     $site_wechat = SitesWechat::get(['site_id' => $default_site['id']]);
                     $this->is_borrow_wx = $_W['is_borrow_wx'] = true;
@@ -308,8 +308,7 @@ class Base extends App
         $request = Request::instance();
         $request_host = $request->host();
         $domain_data = explode(".", $request_host);
-
-        if (count($domain_data) != 3) {
+        if (count($domain_data) != 3 && !config('app_debug')) {
             Log::write("error domain");
             die();
         }
@@ -326,7 +325,7 @@ class Base extends App
         $this->current_domain = $this->request->domain();
         $this->request_host = $this->request->host();
         $domain_data = explode(".", $this->request_host);
-        if (count($domain_data) != 3) {
+        if (count($domain_data) != 3 && !config('app_debug')) {
             Log::write("error domain");
             die();
         }
