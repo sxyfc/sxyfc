@@ -137,6 +137,24 @@ class Passport extends ModuleBase
         Session::set('user_name', null);
         Cookie::set('user_id', null);
         $site = Sites::get($site_id);
+
+        if (empty($_W['global_config']['sso_domain'])) {
+            $sso_domain = $_SERVER['HTTP_HOST'];
+        } else {
+            $sso_domain = $_W['global_config']['sso_domain'];
+        }
+        if($sso_domain=="www.zxw.bz"){
+        //    $sso_domain = $_SERVER['HTTP_HOST'];
+        }
+        $for = SITE_PROTOCOL . $sso_domain . "/house/index/index";
+        if (is_weixin() && $_W['site']['config']['force_wechat']) {
+            $url = SITE_PROTOCOL . $sso_domain . "/sso/passport/wx_login?to_site_id=" . $this->site['id'] . "&forward=" . $for;
+        } else {
+
+            $url = SITE_PROTOCOL . $sso_domain . "/sso/passport/login?to_site_id=" . $this->site['id'] . "&forward=" . $for;
+        }
+
+        header("location:$url");die();
         if (!$self_call) {
             $this->view->forward = $url = nb_url(['r' => '/'], $site['site_id']);
         //    $this->success("注销成功！", $url);
@@ -255,12 +273,14 @@ class Passport extends ModuleBase
             $user_data['status'] = $user_data['user_status'] = 99;
             $user_data['user_role_id'] = 2;
             $user_data['created'] = date("Y-m-d H:i:s");
+            $user_data['sex'] = '保密';
 
 
             $result = $validate->check($user_data);
             if (!$result) {
                 $msg = $validate->getError();
             } else {
+                $user_data = $user->setDefaultValueByFields($user_data, array('email_verify', 'parent_id', 'creator_id', 'last_update', 'is_verify', 'is_vip', 'is_mobile_verify', 'is_admin'));
                 if ($res = $user->allowField(true)->validate(true)->save($user_data)) {
                     $user->log_user_in();
                     $code = 1;
@@ -270,6 +290,7 @@ class Passport extends ModuleBase
                         // send data to
                         MhcmsDistribution::make_down_line($user['id'] , $from_uid);
                     }
+                    $foreword_url = url('house/index/index');
                 } else {
                     $code = 2;
                     $msg = $res;
@@ -318,7 +339,7 @@ class Passport extends ModuleBase
             if ($current_user && $current_user['pass'] == crypt_pass($data['password'], $current_user['user_crypt'])) {
                 $current_user->log_user_in();
                 if (empty($forward)) {
-                    $url = nb_url(['r' => '/'], $to_site_id);
+                    $url = nb_url(['r' => '/house/index/index'], $to_site_id);
                 } else {
                     $url = $forward;
                 }
@@ -348,6 +369,7 @@ class Passport extends ModuleBase
                 header("location:$mhcms_wechat");die();
             }else{
                 if($this->user){
+                    $foreword_url = url('house/index/index');
                     $target = parse_url($foreword_url);
                     $url = url('sso/passport/jump',['forward' =>urlencode($foreword_url) ] ,'html',$target['host']);
 

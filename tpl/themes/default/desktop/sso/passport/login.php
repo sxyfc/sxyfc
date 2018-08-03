@@ -33,10 +33,7 @@
                     </div>
                 </div>
                 <div class="ten wide column">
-                    <div style="float: right"  class="red ui animated fade button submit register" tabindex="0">
-                        <div class="visible content">创建一个账号</div>
-                        <div class="hidden content">使用当前信息创建</div>
-                    </div>
+                    <a  href="{:new_better_furl(['r'=>'sso.passport.register'])}" class="green ui  button " href="javascript:" id="showTooltips">注册</a>
                 </div>
 
 
