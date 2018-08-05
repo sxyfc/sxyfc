@@ -97,6 +97,11 @@ class User extends AdminBase
         if ($role_id == 1) {
             return $this->zbn_msg("对不起，暂时不支持此操作，请不要增加另外的超级管理员！", 2);
         }
+
+        if(!$role_id){
+            return $this->zbn_msg("对不起，缺少用户分组信息！", 2);
+        }
+
         $role_id = (int)$role_id;
         $role = UserRoles::get(['id' => $role_id]);
         $model_id = $role['model_id'];
@@ -221,15 +226,15 @@ class User extends AdminBase
             }
 
             // 处理空数据
-            if(empty($data['nickname'])){
+            if (empty($data['nickname'])) {
                 unset($data['nickname']);
             }
 
-            if(empty($data['parent_id'])){
+            if (empty($data['parent_id'])) {
                 unset($data['parent_id']);
             }
 
-            if(empty($data['status'])){
+            if (empty($data['status'])) {
                 unset($data['status']);
             }
 
@@ -318,7 +323,7 @@ class User extends AdminBase
             //doto delete admin
             set_model('admin')->where(['user_id' => $admin_id])->delete();
             //delete model
-            if($user_role['model_id'] && Models::field_exits('user_id' , $user_role['model_id'])){
+            if ($user_role['model_id'] && Models::field_exits('user_id', $user_role['model_id'])) {
                 set_model($user_role['model_id'])->where(['user_id' => $admin_id])->delete();;
             }
         }
