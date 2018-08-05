@@ -13,7 +13,7 @@ return [
     // 应用命名空间
     'app_namespace' => 'app',
     // 应用调试模式
-    'app_debug' => false,
+    'app_debug' => true,
     // 应用Trace
     'app_trace' => false,
     // 应用模式状态
@@ -260,5 +260,12 @@ return [
         //404 => APP_PATH . '../tpl/public/errorpages/404.html',
         // 还可以定义其它的HTTP status
         //401 => APP_PATH . '401.html',
-    ]
+    ],
+
+    // +----------------------------------------------------------------------
+    // |  支付配置
+    // +----------------------------------------------------------------------
+    'pay' => [
+        'recharge_ratio' => 10
+    ],
 ];

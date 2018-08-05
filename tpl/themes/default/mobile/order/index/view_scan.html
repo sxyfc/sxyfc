@@ -1,0 +1,50 @@
+{extend name="$front_base_layout" /}
+{block name="breadcrumb"}{/block}
+{block name="sub_menu"}{/block}
+{block name="table_form"}
+<div class="col-xs-12 hidden">发布{$node_type.node_type_name}信息</div>
+{/block}
+
+{block name="main"}
+<img class="img-responsive" style="width: 200px;margin:30px auto" src="{:url('service/api/str_to_qr' , ['str'=>urlencode($result['code_url'])])}">
+
+
+<div class="text-info text-center" style="width: 80%;margin: auto;line-height: 35px">
+您好，缴费金额 {$order.total_fee}
+</div>
+<div class="text-info text-center" style="width: 80%;margin: auto;line-height: 35px">
+拿起手机打开微信扫一扫开始支付！
+
+</div>
+
+<script>
+    function check_order_if_payed (order_id) {
+        var url = "{:nb_url(['r'=>'order.index.get'])}";
+        $.ajax({
+            url: url,
+            type: 'post',
+            data: {
+                sign : order_id ,
+                model : "orders"
+            },
+            dataType: "json",
+            success: function (data) {
+                if(data.status != '已支付'){
+                    setTimeout(function () {
+                        check_order_if_payed(order_id);
+                    } , 3000);
+                }else{
+                    layer.msg(data.status ,function () {
+                        window.location.href= "{$to_url}";
+                    });
+                }
+            }, 
+            error: function (xhr, errorType, error) {
+                console.log(error);
+                layer.msg(error);
+            }
+        });
+    }
+    check_order_if_payed("{$order.order_id}");
+</script>
+{/block}

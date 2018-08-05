@@ -1,0 +1,47 @@
+ <form id="cate_action" class="form-inline layui-form" method="post" action="{:\think\\Request::instance()->url()}">
+
+     <div class="weui-cell">
+         <div  class="weui-cell__hd">商品价格</div>
+         <div  class="weui-cell__hd">
+             <input type="text" class="form-control weui-input" lay-verify="required" placeholder="请输入价格,必须是数字" name="price">
+         </div>
+     </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formBuy">确认改价</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    layui.use(['layer', 'form'], function(){
+        var layer = layui.layer ,form = layui.form();
+        //各种基于事件的操作，下面会有进一步介绍
+
+        //监听提交
+        form.on('submit(formBuy)', function(data){
+            //TODO 创建订单
+            var api_url = "{:\think\\Request::instance()->url()}";
+            //TODO 跳转到浏览订单页面
+            var cancle_data = JSON.stringify(data.field);
+            $.post(api_url , {
+                'data' :  cancle_data
+            } , function (ret) {
+
+                layer.msg(ret.msg , function () {
+                    if(ret.code == 0){
+                        layer.closeAll();
+                    }else{
+
+                    }
+
+                });
+
+            });
+            return false;
+        });
+    });
+
+
+</script>

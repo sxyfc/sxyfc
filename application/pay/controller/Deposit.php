@@ -32,11 +32,11 @@ class Deposit extends ModuleUserBase
             $order_insert['id'] = $order_insert['trade_sn'] = create_sn();
             $order_insert['out_trade_no'] = $order_insert['id'] . "@" . time();
             $order_insert['buyer_user_id'] = $this->user['id'];
-
+            $order_insert['user_id'] = $this->user['id'];
             //
             $order_insert['gateway'] = $gateway = $data['gateway'];
             //计算费用
-            $order_insert['total_fee'] = $data['amount'];
+            $order_insert['total_fee'] = $data['amount'] * config('pay.recharge_ratio');
             $order_insert['express_fee'] = 0;
             $order_insert['delivery'] = "";
             //common info
@@ -53,7 +53,10 @@ class Deposit extends ModuleUserBase
             $order_insert['status'] = '待支付';
             //支付模式公众号模式
             $order_insert['pay_mode'] = 'WX_GZH';
+            $order_insert['unit_type'] = 1;
+            $order_insert['is_online'] = 1;
 
+            $order_insert = set_model('orders')->setDefaultValueByFields($order_insert, array('unit_type', ''));
             $order = Orders::create($order_insert);
             if ($order) {
                 //todo goto pay page

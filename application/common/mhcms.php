@@ -1422,6 +1422,7 @@ function load_seo()
     }
     $where['site_id'] = $_W['site']['id'];
     if (!$seo = Db::name("seo")->where($where)->find()) {
+        $where = Db::name("seo")->setDefaultValueByFields($where);
         Db::name("seo")->insert($where);
         return $sel_tpl;
     }

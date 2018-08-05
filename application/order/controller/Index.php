@@ -16,6 +16,9 @@ use app\order\model\Orders;
 use app\order\model\OrdersProduct;
 use think\Request;
 
+use app\common\util\Money;
+use app\common\model\Users;
+
 class Index extends ModuleBase {
 
 
@@ -32,8 +35,41 @@ class Index extends ModuleBase {
         return $this->view->fetch();
     }
 
-    public function view_scan($id){
+    public function get($sign, $model)
+    {
+        $pk = set_model($model)->getPk();
+        $where = array();
+        $where[$pk] = $sign;
+        $result = set_model($model)->where($where)->find();
+        if (config('app_debug')) {
+            switch ($model) {
+                case 'orders':
+                    $this->order = Orders::get($where);
+                    $this->call_back();
+                    break;
+                
+                default:
+                    # code...
+                    break;
+            }
+        }
+        echo json_encode($result);
+    }
 
+    //演示专用技能
+    public function call_back()
+    {
+        $buyer = Users::get(['id' => $this->order['buyer_user_id']]); // deposit
+        $this->order->status = '已支付';
+        if($this->order->save()){
+            if($this->order['buyer_user_id']){
+                Money::deposit($buyer, $this->order['total_fee'], 2 , $this->order['note'], ['order_id' => $this->order['id']]);
+            }
+
+        }
+    }
+
+    public function view_scan($id){
         global $_W;
         new WxPayDataBase();
 
@@ -47,7 +83,7 @@ class Index extends ModuleBase {
             $this->error("您好，订单已经支付完成了，无需重复支付！" , "/");
         }
 
-        $this->view->to_url = url("member/index/main");
+        $this->view->to_url = url("member/wallet/index");
 
 
 
@@ -67,7 +103,6 @@ class Index extends ModuleBase {
             $Trade_type = "JSAPI";
         }
 
-
         $test = $this->Queryorder('' ,$order['trade_sn']);
         if($test['trade_state'] == 'SUCCESS'){
             $this->error("您好，订单已经支付完成了，无需重复支付！" , "/");
@@ -82,7 +117,7 @@ class Index extends ModuleBase {
             $order->save();
         }
 
-
+/*
         //②、统一下单
         $input = new WxPayUnifiedOrder();
 
@@ -106,6 +141,10 @@ class Index extends ModuleBase {
         // 过滤post数组中的非数据表字段数据
         $input->SetAttach($id);//原样返还
         $result = $tools->GetPayUrl($input);
+
+*/
+        $result['return_code'] = 'SUCCESS';
+        $result['result_code'] = 'SUCCESS';
         if($result['return_code'] !="SUCCESS" || $result['result_code'] !="SUCCESS"){
             $order->trade_sn = create_sn();
             $order->save();
@@ -114,7 +153,7 @@ class Index extends ModuleBase {
         if(Request::instance()->isAjax()){
             return $result;
         }else{
-
+            $order['order_id'] = $order['id'];
             $this->view->result = $result;
             $this->view->order = $order;
             return $this->view->fetch();

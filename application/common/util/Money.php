@@ -91,6 +91,9 @@ class Money
         if (!empty($extra)) {
             $insert = array_merge($insert, $extra);
         }
+        if (!isset($insert['order_id'])) {
+            $insert['order_id'] = 0;
+        }
 
         $payment_logs->isUpdate(false)->save($insert);
     }
