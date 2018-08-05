@@ -44,8 +44,8 @@ class MhcmsView extends View
             $this->engine->$method($template, $vars, $config);
         } catch (\Exception $e) {
             ob_end_clean();
+            WechatUtility::logging('error', $e->getMessage());
             if ($_W['debug']) {
-                 WechatUtility::logging($e->getMessage());
 
                  throw $e;
             } else {

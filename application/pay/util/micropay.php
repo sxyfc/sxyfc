@@ -77,7 +77,7 @@ class micropay extends WxPayNotify
             $this->order->status = '已支付';
             if($this->order->save()){
                 if($this->order['buyer_user_id']){
-                    Money::deposit($buyer, $this->data['total_fee'] / 100, 2 , $this->order['note'], ['order_id' => $this->order['id']]);
+                    Money::deposit($buyer, $this->order['total_fee'], 2 , $this->order['note'], ['order_id' => $this->order['id']]);
                 }
 
             }
@@ -118,7 +118,7 @@ class micropay extends WxPayNotify
             $_W['site'] = Sites::get(['id'=> $this->order['site_id']]);
             $_W['pay_mode'] = $this->order['pay_mode'];
             //预处理完成
-            $this->Handle(false);
+            $this->Handle(false, $data, $msg);
         }else{
             Log::write("No out_trade_no");
         }

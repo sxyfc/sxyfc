@@ -139,6 +139,10 @@ class App
             $data = self::exec($dispatch, $config);
         } catch (HttpResponseException $exception) {
             $data = $exception->getResponse();
+        } catch (HttpException $exception) {
+            if (!config('app_debug')) {
+                Log::write($exception->getMessage() . ' ' .$exception->getStatusCode());
+            }
         }
 
         // 清空类的实例化
@@ -444,39 +448,43 @@ class App
      */
     protected static function exec($dispatch, $config)
     {
-        switch ($dispatch['type']) {
-            case 'redirect': // 重定向跳转
-                $data = Response::create($dispatch['url'], 'redirect')
-                    ->code($dispatch['status']);
-                break;
-            case 'module': // 模块/控制器/操作
-                $data = self::module(
-                    $dispatch['module'],
-                    $config,
-                    isset($dispatch['convert']) ? $dispatch['convert'] : null
-                );
-                break;
-            case 'controller': // 执行控制器操作
-                $vars = array_merge(Request::instance()->param(), $dispatch['var']);
-                $data = Loader::action(
-                    $dispatch['controller'],
-                    $vars,
-                    $config['url_controller_layer'],
-                    $config['controller_suffix']
-                );
-                break;
-            case 'method': // 回调方法
-                $vars = array_merge(Request::instance()->param(), $dispatch['var']);
-                $data = self::invokeMethod($dispatch['method'], $vars);
-                break;
-            case 'function': // 闭包
-                $data = self::invokeFunction($dispatch['function']);
-                break;
-            case 'response': // Response 实例
-                $data = $dispatch['response'];
-                break;
-            default:
-                throw new \InvalidArgumentException('dispatch type not support');
+        try {
+            switch ($dispatch['type']) {
+                case 'redirect': // 重定向跳转
+                    $data = Response::create($dispatch['url'], 'redirect')
+                        ->code($dispatch['status']);
+                    break;
+                case 'module': // 模块/控制器/操作
+                    $data = self::module(
+                        $dispatch['module'],
+                        $config,
+                        isset($dispatch['convert']) ? $dispatch['convert'] : null
+                    );
+                    break;
+                case 'controller': // 执行控制器操作
+                    $vars = array_merge(Request::instance()->param(), $dispatch['var']);
+                    $data = Loader::action(
+                        $dispatch['controller'],
+                        $vars,
+                        $config['url_controller_layer'],
+                        $config['controller_suffix']
+                    );
+                    break;
+                case 'method': // 回调方法
+                    $vars = array_merge(Request::instance()->param(), $dispatch['var']);
+                    $data = self::invokeMethod($dispatch['method'], $vars);
+                    break;
+                case 'function': // 闭包
+                    $data = self::invokeFunction($dispatch['function']);
+                    break;
+                case 'response': // Response 实例
+                    $data = $dispatch['response'];
+                    break;
+                default:
+                    throw new \InvalidArgumentException('dispatch type not support');
+            }
+        } catch (HttpException $e) {
+            throw $e;
         }
 
         return $data;
