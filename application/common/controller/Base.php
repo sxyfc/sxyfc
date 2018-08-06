@@ -28,6 +28,7 @@ use think\Route;
 use think\Lang;
 use think\Db;
 use app\common\model\Roots;
+use think\Exception;
 
 /**
  * Class Base
@@ -482,5 +483,18 @@ class Base extends App
         $insert['controller'] = ROUTE_C;
         $insert['action'] = ROUTE_A;
         Db::name('access_logs')->insert($insert);
+    }
+
+    public function renderJson($data, $contet_type = null)
+    {
+        if ($data instanceof Exception) {
+            $data = array(
+                'result'   => 0 == $data->getCode() ? -1 : $data->getCode(),
+                'reason'   => $data->getMessage(),
+            );
+        }
+        header('Content-Type:' . (is_null($contet_type) ? 'application/json' : $contet_type) . '; charset=utf-8');
+        ob_get_clean();
+        die(json_encode($data));
     }
 }

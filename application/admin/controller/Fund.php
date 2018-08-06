@@ -17,6 +17,7 @@ use app\common\model\Users;
 use app\common\util\forms\Forms;
 use app\common\util\Money;
 use app\common\util\Point;
+use think\Exception;
 
 class Fund extends AdminBase
 {
@@ -28,6 +29,50 @@ class Fund extends AdminBase
     {
         return $this->view->fetch();
     }
+    public function amount_chg()
+    {
+        $result = config('WEB_SUCCESS_RT');
+        $data = array();
+        $data['user_id'] = trim(input('param.user_id', '', 'htmlspecialchars'));
+        $data['amount'] = trim(input('param.amount', 0, 'htmlspecialchars'));
+        $data['unit_type'] = input('param.unit_type', 1);//1 金钱;2 积分
+        $data['pay_type'] = (int)input('param.pay_type');//1 取款;2 存款;3 佣金
+        $data['note'] = input('param.note', '', 'htmlspecialchars');
+
+        try {
+            $this->chg($data);
+        } catch (Exception $e) {
+            $result = $e;
+        }
+        $this->renderJson($result);
+    }
+
+    public function chg($data)
+    {
+        switch ($data['pay_type']) {
+            case 1:
+                $data['operate'] = 1;//1 减少;2 增加
+                break;
+            default:
+                $data['operate'] = 2;
+                break;
+        }
+        $user = Users::get(['id' => $data['user_id']]);
+        if (!$user) {
+            throw new Exception("用户不存在", 1);
+        }
+
+        //1 消费;2 充值
+        if ($data['operate'] == 1) {
+            if (!Money::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
+                throw new Exception("余额不足", 1);
+            }
+        } else if ($data['operate'] == 2) {
+            Money::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
+        }
+        return true;
+    }
+
     public function change($user_id = 0)
     {
         $data = input('param.data/a');
