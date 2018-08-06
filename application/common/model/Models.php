@@ -1159,6 +1159,12 @@ class Models extends Common
                 }
             }
         }
+
+        //记录操作人
+        if (isset($this->node_fields['update_id'])&&$this->node_fields['update_id']){
+            $base['update_id'] = $base['user_id'];
+        }
+
         if (isset($this->node_fields['create_at']) && $this->node_fields['create_at']) {
             $base['create_at'] = $create_time = !empty($base['create_at']) ? $base['create_at'] : date("Y-m-d H:i:s", SYS_TIME);
         }

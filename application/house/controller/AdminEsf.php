@@ -28,10 +28,9 @@ class AdminEsf extends AdminBase
         $where = $this->view->filter_info['where'];
 
         $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
-//        $area = trim(input('param.area', '', 'htmlspecialchars'));
         $update_time = trim(input('param.update_time', '', 'htmlspecialchars'));
         $create_time = trim(input('param.create_time', '', 'htmlspecialchars'));
-//        $esf_name = trim(input('param.esf_name', '', 'htmlspecialchars'));
+        $esf_name = trim(input('param.esf_name', '', 'htmlspecialchars'));
 
 
         if ($update_time) {
@@ -43,29 +42,20 @@ class AdminEsf extends AdminBase
             $where['create_at'] = array('LIKE', '%' . $create_time . '%');
         }
 
-//        if ($esf_name) {
-//            $where['title'] = array('LIKE', '%' . $esf_name . '%');
-//        }
-        //
+        if ($esf_name) {
+            $where['title'] = array('LIKE', '%' . $esf_name . '%');
+        }
 
         if ($user_name) {
             $where_user['user_name'] = $user_name;
             $user_model = Users::get($where_user);
             $where['user_id'] = $user_model['id'];
         }
-//        if ($area) {
-//            $area_model = set_model('area');
-//            $where1['area_name'] = array('LIKE', '%' . $area . '%');
-//            $area_model->where($where1);
-//            $where = [];
-//            $where['area_id'] = $area_model->id;
-//        }
 
         $content_model_id = $this->house_esf;
         $model = set_model($content_model_id);
         /** @var Models $model_info */
         $model_info = $model->model_info;
-//        $where = [];
         $where['site_id'] = $_W['site']['id'];
 
         $this->view->lists = $model->where($where)->order("id desc")->paginate();
