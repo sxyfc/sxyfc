@@ -52,7 +52,6 @@ class Esf extends HouseBase
 
         //设置可见权限：支付查看信息
         $user_role_id = $this->user['user_role_id'];
-        $show_power = false;
         if ($user_role_id == 2 || $user_role_id == 4 || $user_role_id == 5) {
             $show_power = false;
         } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 33) {
