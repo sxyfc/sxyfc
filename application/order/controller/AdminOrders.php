@@ -8,31 +8,44 @@ use app\common\model\NodeTypes;
 use app\common\model\Sites;
 use app\order\model\Orders;
 use app\order\model\OrdersLogs;
+use app\common\model\Models;
 use think\Db;
 
 class AdminOrders extends AdminBase
 {
 
-    public function index($module = "", $status = "")
+    public function index()
     {
-
+        $this->view->filter_info = Models::gen_admin_filter("orders", $this->menu_id);
         $where = [];
 
-        if (is_numeric($status)) {
+        $buyer_name = trim(input('param.buyer_name', ' ', 'htmlspecialchars'));
+        $trade_sn = trim(input('param.trade_sn', ' ', 'htmlspecialchars'));
+        $status = input('param.status');
+        if ($status) {
             $where['status'] = $status;
         }
 
-        if ($module) {
-        //    $where['module'] = $module;
+        if ($buyer_name) {
+            $buyers = set_model('users')->where(['nickname' => ['LIKE', '%'.$buyer_name.'%']])->whereor(['user_name' => ['LIKE', '%'.$buyer_name.'%', 'OR']])->select()->column('id');
+            if (count($buyers) < 1) {
+                $where['buyer_user_id'] = '';
+            } else if (count($buyers) == 1) {
+                $where['buyer_user_id'] = $buyers[0];
+            } else {
+                $where['buyer_user_id'] = ['IN', $buyers];
+            }
         }
-        $keyword = input("param.keyword");
 
-        if($keyword){
-            $where['order_id'] = $keyword;
+        if($trade_sn){
+            $where['trade_sn'] = $trade_sn;
         }
 
-        $order_model = new Orders();
-        $this->view->lists = $order_model->where($where)->paginate();
+        $this->view->lists = set_model('orders')->where($where)->order('id desc')->paginate();
+        $this->view->assign('buyer_name', $buyer_name);
+        $this->view->assign('trade_sn', $trade_sn);
+
+        $this->view->field_list = set_model('orders')->model_info->get_admin_column_fields();
         return $this->view->fetch();
     }
 

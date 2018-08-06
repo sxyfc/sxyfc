@@ -1454,6 +1454,7 @@ class Query
 
             $bind    = $this->bind;
             $total   = $this->count();
+            $page = ($page > 1 && $total < ($page - 1) * $listRows) ? 1 : $page;
             $results = $this->options($options)->bind($bind)->page($page, $listRows)->select();
         } elseif ($simple) {
             $results = $this->limit(($page - 1) * $listRows, $listRows + 1)->select();
