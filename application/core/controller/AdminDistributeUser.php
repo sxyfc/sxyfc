@@ -41,7 +41,6 @@ class AdminDistributeUser extends AdminBase
             $where['user_id'] = ['EQ' , $t_user['id']];
             $this->view->s_user_name = htmlspecialchars($_GPC['user_name']);
         }
-
         $this->view->lists = $model->where($where)->order("id desc")->paginate();
         $this->view->field_list = $model_info->get_admin_column_fields();
         $this->view->content_model_id = $content_model_id;
@@ -63,6 +62,7 @@ class AdminDistributeUser extends AdminBase
                 //自动获取data分组数据
                 $base_info = input('post.data/a');//get the base info
             }
+            $base_info = $model->setDefaultValueByFields($base_info);
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");

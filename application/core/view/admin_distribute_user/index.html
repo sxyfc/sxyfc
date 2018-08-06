@@ -70,7 +70,9 @@ if (!isset($keyword)) {
         </tr>
         {foreach $lists as $item}
         <?php
-        $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
+            $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
+            $user = \app\common\model\Users::get(['id'=>$_item['user_id']]);
+            $_item['user_id'] = $user ? $user['user_name'] : $_item['user_id'];
         ?>
         <tr>
             <td>{$item.id}</td>
