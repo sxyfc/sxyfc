@@ -265,7 +265,7 @@ function nb_url($querys, $domain = "", $options = [])
                 $sites[$domain] = Sites::get(['site_domain' => $domain]);
             }
         }
-        $domain = $sites[$domain]['site_domain'] . "." . $_W['root']['root_domain'];
+        $domain = $sites[$domain]['site_domain'] . $_W['root']['root_domain'];
 
     }
 

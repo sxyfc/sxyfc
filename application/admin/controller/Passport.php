@@ -148,7 +148,7 @@ class Passport extends Base
             $data['msg'] = "operation success!" . $_W['global_config']['groups_mode'];
 
             if ($_W['global_config']['groups_mode'] == 2) {
-                $domain = $_W['site']['site_domain'] . "." . $this->root['root_domain'];;
+                $domain = $_W['site']['site_domain']  . $this->root['root_domain'];;
 
                 if ($_W['global_config']['sso_domain']) {
                     $domain = $_W['global_config']['sso_domain'];
@@ -157,9 +157,9 @@ class Passport extends Base
                 }
 
             } elseif ($_W['global_config']['groups_mode'] == 1) {
-                $domain = $site['site_domain'] . "." . $this->root['root_domain'];
+                $domain = $site['site_domain'] .  $this->root['root_domain'];
             } else {
-                $domain = $site['site_domain'] . "." . $this->root['root_domain'];
+                $domain = $site['site_domain'] .  $this->root['root_domain'];
             }
 
             if ($domain) {

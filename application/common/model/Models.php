@@ -199,12 +199,11 @@ class Models extends Common
 
         // delete hits
 
-        if(Models::field_exits('views' , $model_id)){
+        if (Models::field_exits('views', $model_id)) {
             set_model("hits")->where(['item_id' => (int)$id, 'model_id' => $model->model_info['id']])->delete();
         }
 
         //todo delete files
-
 
 
         return true;
@@ -538,7 +537,7 @@ class Models extends Common
                         $filter_fields[] = $field;
                         break;
                 }
-                if (isset($_GPC[$field['field_name']]) && $_GPC[$field['field_name']]!=="") {
+                if (isset($_GPC[$field['field_name']]) && $_GPC[$field['field_name']] !== "") {
                     $query_params[$field['field_name']] = $_GPC[$field['field_name']];
                     $_where[$field['field_name']] = $query_params[$field['field_name']];
                 }
@@ -622,7 +621,7 @@ class Models extends Common
                         $where['model_id'] = $filter_model_info['id'];
 
                         if (Models::field_exits('site_id', $field['node_field_data_source_config'])) {
-                            $where['site_id'] =["IN" , [$_W['root']['site_id'] ,  $_W['site']['id']]];
+                            $where['site_id'] = ["IN", [$_W['root']['site_id'], $_W['site']['id']]];
                         }
 
                         $options = $model->where($where)->select();
@@ -649,7 +648,7 @@ class Models extends Common
                         $_model_info = $_model->model_info;
                         $where = [];
                         if (self::field_exits("site_id", $field['node_field_data_source_config'])) {
-                            $where['site_id'] =["IN" , [$_W['root']['site_id'] ,  $_W['site']['id']]];
+                            $where['site_id'] = ["IN", [$_W['root']['site_id'], $_W['site']['id']]];
                         }
                         $options = $_model->where($where)->select();
                         if ($_model_info['id_key']) {
@@ -952,6 +951,13 @@ class Models extends Common
             }
         }
 
+        //临时解决views not default value 问题
+        if ((!isset($base['views']) || empty($base['views'])) && self::field_exits('views', $this->table_name)) {
+            $base['views'] = 0;
+        } else {
+            $base['views'] = 0;
+        }
+
         if ((!isset($base['site_id']) || empty($base['site_id'])) && self::field_exits('site_id', $this->table_name)) {
             $base['site_id'] = (int)$_W['site']['id'];
         }
@@ -1113,7 +1119,7 @@ class Models extends Common
         foreach ($base as $k => $v) {
 
             if (isset($this->node_fields[$k])) {
-                if($this->node_fields[$k]['node_field_asform'] && !$this->node_fields[$k]['disabled']){
+                if ($this->node_fields[$k]['node_field_asform'] && !$this->node_fields[$k]['disabled']) {
                     $base[$k] = $this->form_factory->process_model_input($this->node_fields[$k], $v, $base); //
                 }
             } else {
@@ -1161,7 +1167,7 @@ class Models extends Common
         }
 
         //记录操作人
-        if (isset($this->node_fields['update_id'])&&$this->node_fields['update_id']){
+        if (isset($this->node_fields['update_id']) && $this->node_fields['update_id']) {
             $base['update_id'] = $base['user_id'];
         }
 
