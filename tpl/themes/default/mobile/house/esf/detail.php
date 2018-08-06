@@ -229,11 +229,11 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
         </a>
 
         <!-- 这里改为 支付查看信息，支付后展示 一键导入和查看房东电话-->
-        {if $show_power}
+        {if $show_power && !$pay_result}
         <a class="weui-navbar__item" href="/">
             支付查看信息
         </a>
-            {if $pay_result}
+        {else}
             <a class="weui-navbar__item" href="tel:{$agent['mobile']}">
                 一键拨号
             </a>
@@ -241,7 +241,6 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
             <a class="weui-navbar__item" href="/">
                 一键导入
             </a>
-            {/if}
 
         {/if}
     </div>

@@ -68,7 +68,7 @@ class Rent extends HouseBase
         } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 33) {
             $show_power = true;
         }else{
-            $show_power = false;
+            $show_power = true;
         }
         $this->assign("show_power", $show_power);
 
