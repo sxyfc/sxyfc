@@ -16,7 +16,7 @@ class PaymentLogs extends Common
     public function getUnitTypeTextAttr($value,$data)
     {
         $value = $this->unit_type;
-        $status = [1=>'金币',2=>'积分'];
+        $status = [1=>'房宝',2=>'金币'];
         return $status[$value];
     }
 

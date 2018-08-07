@@ -56,7 +56,7 @@ class Esf extends HouseBase
             $show_power = false;
         } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 33) {
             $show_power = true;
-        }else{
+        } else {
             $show_power = false;
         }
         $this->assign("show_power", $show_power);
@@ -65,5 +65,30 @@ class Esf extends HouseBase
         $pay_result = false;
         $this->assign("pay_result", $pay_result);
         return $this->view->fetch();
+    }
+
+    /**
+     * 二手房一键导入
+     * @param $id
+     * @return void
+     * @throws \think\Exception
+     * @throws \think\exception\DbException
+     */
+    public function autoAdd($id)
+    {
+        global $_W;
+        $user_id = $this->user['id'];
+        $esf_id = $id;
+
+        $model_info = set_model('user_esf');
+        $base_info['user_id'] = $user_id;
+        $base_info['esf_id'] = $esf_id;
+
+        $res = $model_info->add_content($base_info);
+        if ($res['code'] == 1) {
+            return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''");
+        } else {
+            return $this->zbn_msg($res['msg'], 2);
+        }
     }
 }

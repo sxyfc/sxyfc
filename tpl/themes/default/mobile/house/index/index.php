@@ -356,8 +356,8 @@ $rec_loupan = \app\core\util\ContentTag::position_data("推荐楼盘");
     </div>
 {/if}
 
-<!--    {if $_W.module_config.show_agent}-->
-<!--    <div class="bk10"></div>-->
+    {if $_W.module_config.show_agent}
+    <div class="bk10"></div>
 <!--    <div class="ui mhcms-panel">-->
 <!--        <div class="ui  mhcms-panel-header" >-->
 <!--            最新入驻经纪人-->
@@ -386,10 +386,10 @@ $rec_loupan = \app\core\util\ContentTag::position_data("推荐楼盘");
 <!--            </div>-->
 <!--        </div>-->
 <!--    </div>-->
-<!--    {/if}-->
-<!---->
-<!---->
-<!--    {if $_W.module_config.show_news}-->
+    {/if}
+
+
+    {if $_W.module_config.show_news}
     <div class="bk10"></div>
 
     <div class="ui mhcms-panel">
