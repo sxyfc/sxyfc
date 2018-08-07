@@ -29,7 +29,24 @@ class AdminRent extends AdminBase
         $where = [];
         $where['site_id'] = $_W['site']['id'];
 
-        $this->view->lists = $model->where($where)->order("id desc")->paginate();
+        $loupan_name = trim(input('param.loupan_name'));
+        if($loupan_name){
+            $ids = array();
+            $where_loupan['loupan_name'] = array('LIKE', '%' . $loupan_name . '%');
+            if($loupan_name_info = Db::name('house_loupan')->where($where_loupan)->field('id')->select()->toArray()){
+                foreach($loupan_name_info as $key=>$value){
+                    $ids[$key] = $value['id'];
+                }
+
+                $where['loupan_id'] = array('IN',$ids);
+                $this->view->lists = $model->where($where)->order("id desc")->paginate();
+            }else{
+                $this->view->lists = '';
+            }
+
+            $this->view->assign('loupan_name', $loupan_name);
+        }
+
         $this->view->field_list = $model_info->get_admin_column_fields();
         $this->view->content_model_id = $content_model_id;
         $this->view->mapping = $this->mapping;
