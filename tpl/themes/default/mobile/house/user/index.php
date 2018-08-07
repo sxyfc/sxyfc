@@ -41,14 +41,14 @@
             <div class="column">
                 <a>
                     <i class="iconfont icon-jifen3"></i>
-                    <span>{$_W['site']['config']['trade']['point_text']|default='积分'}: {$user.point}</span>
+                    <span>金币: {$user.point}</span>
                 </a>
             </div>
 
             <div class="column">
                 <a>
                     <i class="iconfont icon-daikuan"></i>
-                    <span>{$_W['site']['config']['trade']['balance_text']|default='余额'}: {$user.balance}</span>
+                    <span>房宝: {$user.balance}</span>
                 </a>
             </div>
         </div>
@@ -84,15 +84,6 @@
             </div>
 
 
-            <div class="  column is-3">
-                <a data-mha  href="/house/weituo/index">
-                    <div class="weui-cell__bd weui-cell_primary">
-                        <i class="iconfont icon-zhaoshangjiameng"  ></i>
-                        <p>我的委托</p>
-                    </div>
-                </a>
-            </div>
-
 
             <div class="  column">
                 <a  href="/house/user/kanfang_log">
@@ -103,11 +94,20 @@
                 </a>
             </div>
 
-            <div class="  column"  onclick="parent.show_message('暂未开放')">
-                <a data-mha>
+            <div class="  column is-3">
+                <a data-mha  href="/house/user/myadd_esf">
+                    <div class="weui-cell__bd weui-cell_primary">
+                        <i class="iconfont icon-zhaoshangjiameng"  ></i>
+                        <p>收藏房源</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="  column"  >
+                <a data-mha href="/house/user/myadd_rent">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="icon-kefu iconfont"  ></i>
-                        <p>在线客服</p>
+                        <p>收藏租房</p>
                     </div>
                 </a>
             </div>

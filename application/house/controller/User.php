@@ -10,7 +10,7 @@
 // +----------------------------------------------------------------------
 namespace app\house\controller;
 
-use app\common\controller\HomeBase;
+use app\common\model\Models;
 use app\core\util\ContentTag;
 use app\core\util\MhcmsMenu;
 
@@ -38,8 +38,8 @@ class User extends HouseUserBase
         }
 
         //find appointment
-        $mobile = is_phone($this->user['mobile']) ? $this->user['mobile'] :  $this->user['user_name'];
-        $where['mobile'] =$mobile;
+        $mobile = is_phone($this->user['mobile']) ? $this->user['mobile'] : $this->user['user_name'];
+        $where['mobile'] = $mobile;
         $where['site_id'] = $_W['site']['id'];
         $appointment = set_model('house_appointment')->where($where)->find();
 
@@ -50,4 +50,98 @@ class User extends HouseUserBase
 
         return $this->view->fetch();
     }
+
+
+    /**
+     * 一键导入的二手房
+     */
+    public function myadd_esf()
+    {
+        $user_esf = "user_esf";
+        $user_id = $this->user['id'];
+        $where['user_id'] = $user_id;
+        $esf_list_model = set_model($user_esf)->where($where)->select();
+
+
+        global $_W;
+//        //渲染筛选条件-地区
+        $this->view->areas = ContentTag::model_tree_tow('area', '', 'area_name', 'id', $user_esf);
+
+        $this->view->loupan_type_options = ContentTag::load_options_two("house_esf", 'loupan_type', $esf_list_model, "erf_id");
+        //$this->view->price_options = ContentTag::load_options("house_esf", 'price_qujian');
+        $this->view->tags_options = ContentTag::load_options_two("house_esf", 'tags', $esf_list_model, "erf_id");
+        $this->view->zhuangxiu_options = ContentTag::load_options_two("house_esf", 'zhuangxiu', $esf_list_model, "erf_id");
+
+        return $this->view->fetch();
+    }
+
+    public function detail_esf($id)
+    {
+        $house_esf = "house_esf";
+        global $_W;
+        $content_model_id = $house_esf;
+        $model = set_model($content_model_id);
+        /** @var Models $model_info */
+        $model_info = $model->model_info;
+
+        $detail = Models::get_item($id, $content_model_id);        //		$detail['mobile'] = '*********';//		$is_phone = Db::table('buy_phone')->where('user_id' , )->find();
+        $this->view->detail = $detail;
+        $this->view->page_title = $detail['title'];
+        Hits::hit($id, $this->house_esf);
+        $this->mapping = array_merge($this->mapping, $detail);
+        $this->view->seo = $this->seo($this->mapping);
+        $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
+
+        return $this->view->fetch();
+    }
+
+    /**
+     * 一键导入的租房
+     */
+    public function myadd_rent()
+    {
+        $user_rent = "user_rent";
+
+        global $_W;
+        $content_model_id = "house_rent";
+        $filter_info = Models::gen_user_filter($content_model_id, null);
+
+        $model = set_model($content_model_id);
+        /** @var Models $model_info */
+        $model_info = $model->model_info;
+        $where = $filter_info['where'];
+        $where['site_id'] = $_W['site']['id'];
+
+        $simple_page = is_mobile() ? true : false;
+
+        $this->view->lists = $lists = $model->where($where)->order("id desc")->paginate(null, $simple_page, ['query' => $filter_info['query']]);
+
+        $this->view->filter = $filter_info;
+        $this->view->content_model_id = $content_model_id;
+
+        return $this->view->fetch();
+
+    }
+
+    public function detail_rent($id)
+    {
+        $house_rent = "house_rent";
+        global $_W;
+        $content_model_id = $house_rent;
+        $model = set_model($content_model_id);
+        /** @var Models $model_info */
+        $model_info = $model->model_info;
+
+        $detail = Models::get_item($id, $content_model_id);
+        $this->view->detail = $detail;
+        $this->view->page_title = $detail['title'];
+        $this->mapping = array_merge($this->mapping, $detail);
+        $this->view->seo = $this->seo($this->mapping);
+
+        Hits::hit($id, $this->house_esf);
+        $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
+
+        return $this->view->fetch();
+    }
+
 }
