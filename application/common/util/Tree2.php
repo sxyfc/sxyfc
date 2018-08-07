@@ -183,7 +183,7 @@ class Tree2
                 }
 
                 $spacer = $prefix ? $prefix . $j : '';
-                $selected = $id == $selected_id ? 'selected' : '';
+                $select = $id == $selected_id ? 'selected' : '';
 
                 @extract($child);
                 if ($parent_id == 0 && $str_group) {

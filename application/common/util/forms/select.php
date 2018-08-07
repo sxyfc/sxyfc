@@ -50,7 +50,7 @@ class select extends Form
 
             }
 
-            $str = "<option value='\$id' \$selected>\$spacer \$name</option>";
+            $str = "<option value='\$id' \$select>\$spacer \$name</option>";
             $tree = new Tree2();
             $tree->init($tree_str);
             $tree->icon = array('   │ ', '   ├─ ', '   └─ ');
