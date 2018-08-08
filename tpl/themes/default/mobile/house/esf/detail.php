@@ -98,12 +98,12 @@ $is_a = \app\house\controller\Check::check_admin();
             </div>
 
 
-            <div class="column is-half">
-                <div class="columns option is-mobile is-marginless">
-                    <div class="column is-narrow">电话 :</div>
-                    <div class="column">{$detail['mobile']}</div>
-                </div>
-            </div>
+<!--            <div class="column is-half">-->
+<!--                <div class="columns option is-mobile is-marginless">-->
+<!--                    <div class="column is-narrow">电话 :</div>-->
+<!--                    <div class="column">{$detail['mobile']}</div>-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="column is-full">
                 <div class="columns option is-mobile is-marginless">
                     <div class="column is-narrow">特色 :</div>
@@ -139,24 +139,24 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
 ?>
 {if $agent && $agent_user}
 
-<div class="ui top attached mhcms-panel">
-    <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
-        <a class="weui-cell weui-cell_access" href="{:url('house/agent/detail' , ['user_id'=>$detail['user_id']])}">
-            <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">
-                <img class=" is-rounded" src="{$agent['avatar'][0]['url']}" style="width: 50px;height:50px;display: block;border-radius: 50%">
-            </div>
-            <div class="weui-cell__bd">
-                <p>{$agent.person_name}
-
-                    {if $user_verify.personal_verify==99}<i class="has-text-success iconfont icon-renzheng"></i>{/if}
-
-                    {if $user_verify.company_verify==99}<i class="has-text-success iconfont icon-renzhengpeizhi"></i>{/if}
-                </p>
-                <p style="font-size: 13px;color: #888888;">{$agent.mobile}</p>
-            </div><div class="weui-cell__ft"></div>
-        </a>
-    </div>
-</div>
+<!--<div class="ui top attached mhcms-panel">-->
+<!--    <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">-->
+<!--        <a class="weui-cell weui-cell_access" href="{:url('house/agent/detail' , ['user_id'=>$detail['user_id']])}">-->
+<!--            <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">-->
+<!--                <img class=" is-rounded" src="{$agent['avatar'][0]['url']}" style="width: 50px;height:50px;display: block;border-radius: 50%">-->
+<!--            </div>-->
+<!--            <div class="weui-cell__bd">-->
+<!--                <p>{$agent.person_name}-->
+<!---->
+<!--                    {if $user_verify.personal_verify==99}<i class="has-text-success iconfont icon-renzheng"></i>{/if}-->
+<!---->
+<!--                    {if $user_verify.company_verify==99}<i class="has-text-success iconfont icon-renzhengpeizhi"></i>{/if}-->
+<!--                </p>-->
+<!--                <p style="font-size: 13px;color: #888888;">{$agent.mobile}</p>-->
+<!--            </div><div class="weui-cell__ft"></div>-->
+<!--        </a>-->
+<!--    </div>-->
+<!--</div>-->
 
 {/if}
 
@@ -228,19 +228,24 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
             <i class="icon home"></i> <span>首页</span>
         </a>
 
-        {if $agent}
-        <a class="weui-navbar__item" href="tel:{$agent['mobile']}">
-             一键拨号
-        </a>
-        {else}
-        <a class="weui-navbar__item" href="tel:{$detail['mobile']}">
-            一键拨号
-        </a>
-        {/if}
+        <!-- 这里改为 支付查看信息，支付后展示 一键导入和查看房东电话-->
+        {if $show_power}
 
-        <a class="weui-navbar__item" href="/house/appointment/self_create">
-             预约看房
-        </a>
+         {if $pay_result}
+                <a class="weui-navbar__item" href="tel:{$agent['mobile']}">
+                    一键拨号
+                </a>
+
+                <a class="weui-navbar__item" href="/house/esf/autoAdd">
+                    一键导入
+                </a>
+
+            {else}
+                <a class="weui-navbar__item" href="/">
+                    支付查看信息
+                </a>
+            {/if}
+        {/if}
     </div>
 
 {else}

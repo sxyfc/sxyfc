@@ -47,7 +47,7 @@ class AdminFund extends AdminBase
             }
             if ($data['unit_type'] == 1) {
                 if (empty($data['pay_type'])) {
-                    $this->zbn_msg("您操作的是金币 ， 请选择交易类型！");
+                    $this->zbn_msg("您操作的是房宝 ， 请选择交易类型！");
                 }
                 //1 消费
                 if ($data['operate'] == 1) {

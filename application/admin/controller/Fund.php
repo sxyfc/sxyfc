@@ -35,7 +35,7 @@ class Fund extends AdminBase
         $data = array();
         $data['user_id'] = trim(input('param.user_id', '', 'htmlspecialchars'));
         $data['amount'] = trim(input('param.amount', 0, 'htmlspecialchars'));
-        $data['unit_type'] = input('param.unit_type', 1);//1 金钱;2 积分
+        $data['unit_type'] = input('param.unit_type', 1);//1 房宝;2 金币
         $data['pay_type'] = (int)input('param.pay_type');//1 取款;2 存款;3 佣金
         $data['note'] = input('param.note', '', 'htmlspecialchars');
 
@@ -89,7 +89,7 @@ class Fund extends AdminBase
             }
             if ($data['unit_type'] == 1) {
                 if (empty($data['pay_type'])) {
-                    $this->zbn_msg("您操作的是金币 ， 请选择交易类型！");
+                    $this->zbn_msg("您操作的是房宝 ， 请选择交易类型！");
                 }
                 //1 消费
                 if ($data['operate'] == 1) {

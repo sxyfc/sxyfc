@@ -49,7 +49,7 @@ class WeixinMsgtpl extends Common
         }
         if($tpl_config){
             $message['template_id'] = $tpl_config["wxtpl_id"];
-            $message['url'] = nb_url($tpl_config["tp_url"] , $site['site_domain'] . "." . $GLOBALS['root_domain']) ;
+            $message['url'] = nb_url($tpl_config["tp_url"] , $site['site_domain'] .  $GLOBALS['root_domain']) ;
             $message['data'] = $msg_data;
             $message['touser'] = $open_id;
             $rea = ihttp_post($send_api, json_encode($message));

@@ -22,18 +22,14 @@ class UserOrders extends HouseUserBase
 
     public function index($status = 0)
     {
+
         $where = [];
-        $where['agent_id'] = $this->agent['id'];
-        if ($status) {
-            $where['status'] = $status;
-        }
 
+        $user_id = $this->user_id;
+        $where['user_id'] = $user_id;
 
-        $this->view->status_options = ContentTag::load_options("house_appointment", 'status');
+        $this->view->lists = set_model('orders')->where($where)->order('create_time desc')->paginate();
 
-        $this->view->appointments = set_model($this->house_appointment)->where($where)->paginate();
-
-        $this->view->status = $status;
         return $this->view->fetch();
     }
 
@@ -63,6 +59,69 @@ class UserOrders extends HouseUserBase
             return $this->view->fetch();
         }
 
+
+    }
+
+    /**
+     * 消费房宝查看
+     * @param $id 房源id
+     * @param $type 类型  1-租房 2-二手房
+     */
+    public function pay_for_see($id, $type)
+    {
+        /**
+         * 1.检查房宝余额
+         * 2.余额不足，提示余额不足
+         * 3.余额充足，则消费对应余额
+         * 4.写入对应查看权限记录
+         */
+        //检查房宝余额
+        $balance = $this->user['balance'];
+        $fb_value = config("pay.fangbao_ratio");
+
+        $left_value = $balance - $fb_value;
+        if ($balance <= 0.00 || $left_value < 0.00) {
+            $this->zbn_msg("余额不足，请先去充值");
+            return false;
+        }
+
+        //房宝消费订单号获取
+        $fb_order_id = "";
+
+        $model_name = "";
+        $base_info['user_id'] = $this->user_id;
+        if ($type == 1) {//租房
+            $model_name = 'house_rent_order';
+            $model_user = set_model("user_rent");
+            $model = set_model($model_name);
+            $base_info['rent_id'] = $id;
+        } else if ($type == 2) {//二手房
+            $model_name = "house_esf_order";
+            $model = set_model($model_name);
+            $model_user = set_model("user_esf");
+            $base_info['esf_id'] = $id;
+        }
+        $res_user = $model_user->add_content($base_info);
+        if ($res_user['code'] != 1) {
+            $this->zbn_msg($res_user['msg'], 2);
+            return false;
+        }
+
+        $base_info['order_id'] = $fb_order_id;
+        $res = $model->add_content($base_info);
+        if ($res['code'] != 1) {
+            $this->zbn_msg($res['msg'], 2);
+            return false;
+        }
+        // 消费订单记录和分润处理
+    }
+
+    /**
+     * 房宝退款
+     * @param $order_id 消费订单id
+     */
+    public function refund_fangbao($order_id)
+    {
 
     }
 

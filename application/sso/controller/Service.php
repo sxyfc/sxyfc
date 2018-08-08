@@ -24,7 +24,7 @@ class Service extends ApiBase
         if ($current_user) {
             //获取角色信息
             $current_user_role = UserRoles::get($current_user['user_role_id']);
-            if ((int)$current_user_role['status'] == 0 || $current_user_role['is_admin']) {
+            if ((int)$current_user_role['status'] == 0) {
                 $this->zbn_msg("对不起，您所在的用户组已经被管理员禁用！ ", 2, "false", 4000);
             }
         }

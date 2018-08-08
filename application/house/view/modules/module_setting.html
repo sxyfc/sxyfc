@@ -53,14 +53,14 @@
 
                 <select :name="'data[top_esf_set]['+key+'][unit_type]'" required   v-model="item.unit_type" lay-ignore class="layui-select layui-select-inline" style="width: 80px;display: inline-block">
                     <option value="point">
-                        积分
+                        金币
                     </option>
                     <option value="balance">
                         余额
                     </option>
                 </select>
                 <input type="button"  value="删除" @click="delete_set(key)" class="layui-btn layui-btn-danger  layui-btn-inline">
-                <p> 金额 请填写数字 , 积分请写整数 ， 金币支持两位小数</p>
+                <p> 金额 请填写数字 , 金币请写整数 ， 房宝支持两位小数</p>
             </div>
 
         </div>
@@ -134,14 +134,14 @@
 
                 <select :name="'data[top_rent_set]['+key+'][unit_type]'" required   v-model="item.unit_type" lay-ignore class="layui-select layui-select-inline" style="width: 80px;display: inline-block">
                     <option value="point">
-                        积分
+                        金币
                     </option>
                     <option value="balance">
                         余额
                     </option>
                 </select>
                 <input type="button"  value="删除" @click="delete_set(key)" class="layui-btn layui-btn-danger  layui-btn-inline">
-                <p> 金额 请填写数字 , 积分请写整数 ， 金币支持两位小数</p>
+                <p> 金额 请填写数字 , 金币请写整数 ， 房宝支持两位小数</p>
             </div>
 
         </div>
@@ -234,14 +234,14 @@
 
                 <select :name="'data[agent_reg_set]['+key+'][unit_type]'" required   v-model="item.unit_type" lay-ignore class="layui-select layui-select-inline" style="width: 80px;display: inline-block">
                     <option value="point">
-                        积分
+                        金币
                     </option>
                     <option value="balance">
                         余额
                     </option>
                 </select>
                 <input type="button"  value="删除" @click="delete_set(key)" class="layui-btn layui-btn-danger  layui-btn-inline">
-                <p> 金额 请填写数字 , 积分请写整数 ， 金币支持两位小数 , 0代表免费试用 仅第一个0生效</p>
+                <p> 金额 请填写数字 , 金币分请写整数 ， 房宝支持两位小数 </p>
             </div>
 
         </div>
@@ -369,8 +369,8 @@
         <div class="layui-form-item" title="仅开启收费才生效">
             <label class="layui-form-label">信息收费类型</label>
             <div class="layui-input-block">
-                <input type="radio" name="data[charge_unit_type]" value="0" title="金币" {if !isset($config.charge_unit_type) || $config.charge_unit_type=="0"} checked {/if}>
-                <input type="radio" name="data[charge_unit_type]" value="1" title="积分" {if isset($config.charge_unit_type) && $config.charge_unit_type=="1"} checked {/if}>
+                <input type="radio" name="data[charge_unit_type]" value="0" title="房宝" {if !isset($config.charge_unit_type) || $config.charge_unit_type=="0"} checked {/if}>
+                <input type="radio" name="data[charge_unit_type]" value="1" title="金币" {if isset($config.charge_unit_type) && $config.charge_unit_type=="1"} checked {/if}>
             </div>
         </div>
 
@@ -378,7 +378,7 @@
             <label class="layui-form-label">发布信息收费金额</label>
             <div class="layui-input-block">
                 <input type="text" name="data[charge_amount]" value="{$config.charge_amount|default="0"}" placeholder="发布信息收费金额" autocomplete="off" class="layui-input">
-                <p>发布信息收费金额 请填写数字 , 积分请写整数 ， 金币支持两位小数</p>
+                <p>发布信息收费金额 请填写数字 , 金币请写整数 ， 房宝支持两位小数</p>
             </div>
         </div>
 

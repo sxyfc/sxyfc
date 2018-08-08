@@ -15,6 +15,7 @@ use app\common\util\forms\FormFactory;
 use app\core\util\mhcms_index\MhcmsIndex;
 use app\sms\model\Notice;
 use think\Db;
+use think\Log;
 use think\Request;
 use think\Validate;
 
@@ -199,12 +200,11 @@ class Models extends Common
 
         // delete hits
 
-        if(Models::field_exits('views' , $model_id)){
+        if (Models::field_exits('views', $model_id)) {
             set_model("hits")->where(['item_id' => (int)$id, 'model_id' => $model->model_info['id']])->delete();
         }
 
         //todo delete files
-
 
 
         return true;
@@ -538,7 +538,7 @@ class Models extends Common
                         $filter_fields[] = $field;
                         break;
                 }
-                if (isset($_GPC[$field['field_name']]) && $_GPC[$field['field_name']]!=="") {
+                if (isset($_GPC[$field['field_name']]) && $_GPC[$field['field_name']] !== "") {
                     $query_params[$field['field_name']] = $_GPC[$field['field_name']];
                     $_where[$field['field_name']] = $query_params[$field['field_name']];
                 }
@@ -622,7 +622,7 @@ class Models extends Common
                         $where['model_id'] = $filter_model_info['id'];
 
                         if (Models::field_exits('site_id', $field['node_field_data_source_config'])) {
-                            $where['site_id'] =["IN" , [$_W['root']['site_id'] ,  $_W['site']['id']]];
+                            $where['site_id'] = ["IN", [$_W['root']['site_id'], $_W['site']['id']]];
                         }
 
                         $options = $model->where($where)->select();
@@ -649,7 +649,7 @@ class Models extends Common
                         $_model_info = $_model->model_info;
                         $where = [];
                         if (self::field_exits("site_id", $field['node_field_data_source_config'])) {
-                            $where['site_id'] =["IN" , [$_W['root']['site_id'] ,  $_W['site']['id']]];
+                            $where['site_id'] = ["IN", [$_W['root']['site_id'], $_W['site']['id']]];
                         }
                         $options = $_model->where($where)->select();
                         if ($_model_info['id_key']) {
@@ -807,8 +807,245 @@ class Models extends Common
         return $ret;
     }
 
+    /**
+     * 仅能用于User.php的条件查询生产 html
+     * @param $model_id
+     * @param $user_menu_id
+     * @param string $route
+     * @param $model_2
+     * @param $check_field
+     * @return array
+     * @throws \think\Exception
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function gen_user_filter_two($model_id, $user_menu_id, $route = "", $model_2, $check_field)
+    {
+        global $_GPC, $_W;
+        $_where = $filter_fields = $query_params = $_query = [];
+        $title = "";
+        $model = set_model($model_id);
 
-    public function add_content($base)
+        $filter_model_info = $model->model_info;
+        $fields = $filter_model_info['setting']['fields'];
+        if (!$route) {
+            $route = [
+                ROUTE_M, Request::instance()->controller(), ROUTE_A
+            ];
+            $route = join("/", $route);
+        }
+
+        foreach ($fields as $k => $field) {
+            if (isset($field['disabled']) && $field['disabled']) {
+                continue;
+            }
+            /**
+             * 先获取筛选字段
+             * 并获取其选项值
+             */
+            if (isset($field['node_field_is_filter']) && $field['node_field_is_filter']) {
+
+                if (!isset($field['node_field_data_source_type'])) {
+                    die("模型 $model_id 中无法筛选的字段，请取消字段的筛选：" . $field['field_name']);
+                }
+                switch ($field['node_field_data_source_type']) {
+                    case "mhcms_options" :
+                        $model = set_model($field['node_field_data_source_config']);
+                        $model_info = $model->model_info;
+                        $where = [];
+                        $where['field_name'] = $field['field_name'];
+                        $where['model_id'] = $filter_model_info['id'];
+
+                        if (Models::field_exits('site_id', $field['node_field_data_source_config'])) {
+                            $where['site_id'] = ["IN", [$_W['root']['site_id'], $_W['site']['id']]];
+                        }
+
+                        $options = $model->where($where)->select();
+                        $new_options = [];
+                        foreach ($options as $k => $option) {
+                            $option['name'] = $option[$model_info['name_key']];
+                            $option['id'] = $option[$model_info['id_key']];
+                            $new_options[$option['id']] = $option;
+                        }
+
+                        if (!$field['node_field_pk_key']) {
+                            $field['node_field_pk_key'] = $model_info['id_key'];
+                        }
+
+
+                        //options
+                        $field['options'] = $new_options;
+
+                        $filter_fields[] = $field;
+                        break;
+                    case "model" :
+                        //todo 判断是否为地区
+                        $_model = set_model($field['node_field_data_source_config']);
+                        $_model_info = $_model->model_info;
+                        $where = [];
+                        if (self::field_exits("site_id", $field['node_field_data_source_config'])) {
+                            $where['site_id'] = ["IN", [$_W['root']['site_id'], $_W['site']['id']]];
+                        }
+                        $options = $_model->where($where)->select();
+                        if ($_model_info['id_key']) {
+                            $id_key = $_model_info['id_key'];
+                        } else {
+                            $id_key = $field['node_field_pk_key'];
+                        }
+                        if ($_model_info['name_key']) {
+                            $name_key = $_model_info['name_key'];
+                        } else {
+                            $name_key = $field['node_field_name_key'];
+                        }
+                        if (!$name_key || !$id_key) {
+                            var_dump($id_key);
+                            test($name_key);
+                        }
+                        $new_options = [];
+                        foreach ($options as $k => $option) {
+                            $option['id'] = $option[$id_key];
+                            $option['name'] = $option[$name_key];
+                            $new_options[$option[$id_key]] = $option;
+                        }
+                        //options
+                        $field['options'] = $new_options;
+                        //selected value equal
+                        if (isset($_GPC[$field['field_name']])) {
+                            $field['selected'] = $_GPC[$field['field_name']];
+                        }
+                        $field['node_field_pk_key'] = $id_key;
+                        $field['node_field_name_key'] = $name_key;
+                        $filter_fields[] = $field;
+                        break;
+                    case "category":
+                        $where = [];
+                        $model->set_table("cate");
+                        $where['type_id'] = $model_id;
+                        $options = $model->select($where);
+                        $new_options = [];
+                        foreach ($options as $k => $option) {
+                            $new_options[$option['id']] = $option;
+                        }
+                        //options
+                        $field['options'] = $new_options;
+                        if (isset($_GPC[$field['field_name']])) {
+                            $field['selected'] = $_GPC[$field['field_name']];
+                        }
+                        $filter_fields[] = $field;
+                        break;
+                    case "diy_arr":
+
+
+                        $options = "";
+                        //todo diy arr filter
+                        $name_key = "name";
+                        $id_key = "id";
+
+                        if (!$name_key || !$id_key) {
+                            var_dump($id_key);
+                            test($name_key);
+                        }
+
+                        $rows = explode("\r\n", $field['node_field_data_source_config']);
+                        $new_options = [];
+                        foreach ($rows as $row) {
+                            $row_data = explode("|", $row);
+                            $option = [];
+                            $option[$id_key] = $row_data[0];
+                            $option[$name_key] = $row_data[1];
+                            $new_options[$option[$id_key]] = $option;
+                        }
+                        //options
+                        $field['options'] = $new_options;
+                        //selected value equal
+                        if ($_GPC[$field['field_name']]) {
+                            $field['selected'] = $_GPC[$field['field_name']];
+                        }
+
+                        $field['node_field_pk_key'] = $id_key;
+                        $field['node_field_name_key'] = $name_key;
+                        $filter_fields[] = $field;
+                        break;
+                }
+                if (isset($_GPC[$field['field_name']])) {
+                    $query_params[$field['field_name']] = $_GPC[$field['field_name']];
+
+
+                    $field_obj = new Field($field);
+                    switch ($field_obj->node_field_mode) {
+
+                        case "layui_checkbox":
+                            $is_multi = 1;
+                            break;
+                        default :
+                            $is_multi = 0;
+                    }
+                    $_query[$field['field_name']] = $query_params[$field['field_name']];
+                    if ($is_multi) {
+                        $_where[$field['field_name']] = ['like', '%,' . $query_params[$field['field_name']] . ',%'];
+                    } else {
+                        $_where[$field['field_name']] = $query_params[$field['field_name']];
+                    }
+                }
+            } else {
+                unset($fields[$k]);
+            }
+        }
+        ksort($query_params);
+        foreach ($filter_fields as $k => &$field) {
+            //get_current val
+            foreach ($field['options'] as $kk => $opt) {
+                //设置全部连接
+                if (!isset($field['href'])) {
+                    $copy_params = $query_params;
+                    $copy_params['user_menu_id'] = $user_menu_id;
+                    //如果参数未被设置 则全部选项选中
+                    if (isset($copy_params[$field['field_name']])) {
+                    } else {
+                        $field['class'] = "selected";
+                    }
+                    unset($copy_params[$field['field_name']]);
+                    $field['href'] = url($route, $copy_params);
+                }
+
+
+                //设置选项链接 generate the a tag
+                $copy_params = $query_params;
+                $copy_params['user_menu_id'] = $user_menu_id;
+                /**
+                 * 如果当前传值
+                 */
+                if (isset($copy_params[$field['field_name']]) && $copy_params[$field['field_name']] == $opt[$field['node_field_pk_key']]) {
+                    //selected
+                    $field['options'][$kk]['href'] = "JavaScript:void(0)";
+                    $field['options'][$kk]['class'] = "selected";
+                    if (!isset($opt[$field['field_name']])) {
+                        $opt[$field['field_name']] = $opt[$field['node_field_name_key']];
+                    }
+                    $title .= $opt[$field['field_name']] . "、";
+                } else {
+                    //not selected items 生成的URL参数  增加条件
+
+                    $copy_params[$field['field_name']] = $opt['id'];
+                    $field['options'][$kk]['href'] = url($route, $copy_params);
+                }
+            }
+        }
+
+// test($filter_fields);
+        $ret = [
+            'where' => $_where,
+            'title' => $title,
+            'fields' => $filter_fields,
+            'query' => $_query
+        ];
+        return $ret;
+    }
+
+
+    public
+    function add_content($base)
     {
         global $_W;
         //$this->table_name 对应数据库字段table_name//Db::name($this->table_name);
@@ -817,6 +1054,8 @@ class Models extends Common
         $model_info = $base_model->model_info;
         $this->node_fields = $this->setting['fields'];
         $info['code'] = 1;
+
+        Log::error("TING_1");
         /*
          * TODO：if the content need check
          * */
@@ -887,6 +1126,7 @@ class Models extends Common
 
             //检测安全过滤
             if ($bad_words) {
+                Log::error("TING_2");
                 foreach ($bad_words as $bad_word) {
 
                     if ($base[$k] && strpos($base[$k], $bad_word) !== false) {
@@ -952,6 +1192,13 @@ class Models extends Common
             }
         }
 
+        //临时解决views not default value 问题
+        if ((!isset($base['views']) || empty($base['views'])) && self::field_exits('views', $this->table_name)) {
+            $base['views'] = 0;
+        } else {
+            $base['views'] = 0;
+        }
+
         if ((!isset($base['site_id']) || empty($base['site_id'])) && self::field_exits('site_id', $this->table_name)) {
             $base['site_id'] = (int)$_W['site']['id'];
         }
@@ -991,6 +1238,7 @@ class Models extends Common
                 return $info;
             }
         } catch (\Exception $e) {
+            Log::error("TING_EXE");
             $info['code'] = 0;
             $info['msg'] = $e->getMessage();
             return $info;
@@ -1007,7 +1255,8 @@ class Models extends Common
      * @return bool
      * @throws \think\exception\DbException
      */
-    public static function field_exits($field_name, $model_id, $debug = 0)
+    public
+    static function field_exits($field_name, $model_id, $debug = 0)
     {
         static $table_fields;
         $model = set_model($model_id);
@@ -1045,7 +1294,8 @@ class Models extends Common
      * @throws \think\exception\DbException
      * @throws \think\exception\PDOException
      */
-    public function edit_content($base, $where)
+    public
+    function edit_content($base, $where)
     {
         $base_model = set_model($this->table_name);// Db::name($this->table_name);
         //todo get the auth fields that current user can modify
@@ -1113,7 +1363,7 @@ class Models extends Common
         foreach ($base as $k => $v) {
 
             if (isset($this->node_fields[$k])) {
-                if($this->node_fields[$k]['node_field_asform'] && !$this->node_fields[$k]['disabled']){
+                if ($this->node_fields[$k]['node_field_asform'] && !$this->node_fields[$k]['disabled']) {
                     $base[$k] = $this->form_factory->process_model_input($this->node_fields[$k], $v, $base); //
                 }
             } else {
@@ -1159,6 +1409,12 @@ class Models extends Common
                 }
             }
         }
+
+        //记录操作人
+        if (isset($this->node_fields['update_id']) && $this->node_fields['update_id']) {
+            $base['update_id'] = $base['user_id'];
+        }
+
         if (isset($this->node_fields['create_at']) && $this->node_fields['create_at']) {
             $base['create_at'] = $create_time = !empty($base['create_at']) ? $base['create_at'] : date("Y-m-d H:i:s", SYS_TIME);
         }
@@ -1194,13 +1450,15 @@ class Models extends Common
      * @throws \think\exception\PDOException
      * @internal param $model_id
      */
-    public function update_item($data, $where)
+    public
+    function update_item($data, $where)
     {
         $item = Db::name($this->table_name)->where($where)->update($data);
         return $item;
     }
 
-    public function get_admin_column_fields($detail = [], $hide_fields = [])
+    public
+    function get_admin_column_fields($detail = [], $hide_fields = [])
     {
         global $_W;
         if (!$hide_fields) {
@@ -1226,7 +1484,8 @@ class Models extends Common
         return $new_field_list;
     }
 
-    public function get_user_publish_fields($detail = [], $hide_fields = [], $show_fields = [], $render_form = true)
+    public
+    function get_user_publish_fields($detail = [], $hide_fields = [], $show_fields = [], $render_form = true)
     {
         global $_W, $_GPC;
         $new_field_list = [];
@@ -1263,7 +1522,8 @@ class Models extends Common
         return $new_field_list;
     }
 
-    public function get_user_column_fields($detail = [], $hide_fields = [], $render_form = true)
+    public
+    function get_user_column_fields($detail = [], $hide_fields = [], $render_form = true)
     {
         global $_W, $_GPC;
         $new_field_list = [];
@@ -1298,7 +1558,8 @@ class Models extends Common
      * @param $base_info
      * @return array
      */
-    public function filter_auth_fields($base_info)
+    public
+    function filter_auth_fields($base_info)
     {
         return $base_info;
     }
@@ -1311,7 +1572,8 @@ class Models extends Common
      * @return
      * @throws \think\Exception
      */
-    public function get_admin_publish_fields($detail = [], $hide_fields = [], $show_fields = [], $form_group = "data")
+    public
+    function get_admin_publish_fields($detail = [], $hide_fields = [], $show_fields = [], $form_group = "data")
     {
         global $_W, $_GPC;
         $form_factory = new FormFactory($_W['site']['id']);

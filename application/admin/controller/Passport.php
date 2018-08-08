@@ -16,9 +16,9 @@ use app\common\model\UserRoles;
 use app\common\model\Users;
 use app\sms\model\Notice;
 use think\Db;
+use think\Log;
 use think\Session;
 use think\View;
-use think\Log;
 use app\pay\model\PaymentConfig;
 
 class Passport extends Base
@@ -148,7 +148,7 @@ class Passport extends Base
             $data['msg'] = "operation success!" . $_W['global_config']['groups_mode'];
 
             if ($_W['global_config']['groups_mode'] == 2) {
-                $domain = $_W['site']['site_domain'] . "." . $this->root['root_domain'];;
+                $domain = $_W['site']['site_domain']  . $this->root['root_domain'];;
 
                 if ($_W['global_config']['sso_domain']) {
                     $domain = $_W['global_config']['sso_domain'];
@@ -157,9 +157,9 @@ class Passport extends Base
                 }
 
             } elseif ($_W['global_config']['groups_mode'] == 1) {
-                $domain = $site['site_domain'] . "." . $this->root['root_domain'];
+                $domain = $site['site_domain'] .  $this->root['root_domain'];
             } else {
-                $domain = $site['site_domain'] . "." . $this->root['root_domain'];
+                $domain = $site['site_domain'] .  $this->root['root_domain'];
             }
 
             if ($domain) {
@@ -183,6 +183,7 @@ class Passport extends Base
         Session::set('admin_user_name', null);
         Session::set('admin_id', null);
         Session::set('admin_role_id', null);
+        Session::clear();
         $this->success("退出成功", "/admin/passport/login");
     }
 

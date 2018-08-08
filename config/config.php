@@ -1,10 +1,10 @@
 <?php
 //error_reporting(E_ALL ^E_WARNING ^ E_NOTICE);
-error_reporting(E_ERROR  | E_PARSE);
+error_reporting(E_ERROR | E_PARSE);
 //error_reporting(E_ALL ^E_WARNING ^ E_NOTICE);
 return [
     // 后台公共模板
-    'mhcms_crypt' => 'HFYhjbiuidwhijewnkjcxbhk456456assw' ,
+    'mhcms_crypt' => 'HFYhjbiuidwhijewnkjcxbhk456456assw',
     'admin_base_layout' => APP_PATH . 'admin/view/public/content_frame.html',
 
     // +----------------------------------------------------------------------
@@ -28,8 +28,8 @@ return [
     // 扩展函数文件
     'extra_file_list' => [
         APP_PATH . 'common' . DIRECTORY_SEPARATOR . 'helper.php',
-        THINK_PATH . 'helper' . EXT ,
-        APP_PATH   . 'common' . DIRECTORY_SEPARATOR . 'mhcms' . EXT
+        THINK_PATH . 'helper' . EXT,
+        APP_PATH . 'common' . DIRECTORY_SEPARATOR . 'mhcms' . EXT
     ],
     // 默认输出类型
     'default_return_type' => 'html',
@@ -106,37 +106,37 @@ return [
     // +----------------------------------------------------------------------
     // | 模板设置
     // +----------------------------------------------------------------------
-    'template'               => [
+    'template' => [
         // 模板引擎类型 支持 php think 支持扩展
-        'type'         => 'Think',
+        'type' => 'Think',
         // 模板路径
-        'view_path'    => '',
+        'view_path' => '',
         // 模板后缀
-        'view_suffix'  => 'html',
+        'view_suffix' => 'html',
         // 模板文件名分隔符
-        'view_depr'    => DS,
+        'view_depr' => DS,
         // 模板引擎普通标签开始标记
-        'tpl_begin'    => '{',
+        'tpl_begin' => '{',
         // 模板引擎普通标签结束标记
-        'tpl_end'      => '}',
+        'tpl_end' => '}',
         // 标签库标签开始标记
         'taglib_begin' => '{',
         // 标签库标签结束标记
-        'taglib_end'   => '}',
+        'taglib_end' => '}',
         // 模板缓存
-        'tpl_cache'    => true,
+        'tpl_cache' => true,
     ],
     // 视图输出字符串内容替换
     'view_replace_str' => [],
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl' => SYS_PATH . "tpl" . DS . 'public' . DS . 'dispatch_success_tmpl.tpl',
-    'dispatch_error_tmpl' => SYS_PATH  . 'tpl' . DS . 'public' . DS . 'dispatch_jump_error.php',
-    'dispatch_message_tmpl' => SYS_PATH  . 'tpl' . DS . 'public' . DS . 'dispatch_message_tmpl.php',
+    'dispatch_error_tmpl' => SYS_PATH . 'tpl' . DS . 'public' . DS . 'dispatch_jump_error.php',
+    'dispatch_message_tmpl' => SYS_PATH . 'tpl' . DS . 'public' . DS . 'dispatch_message_tmpl.php',
     // +----------------------------------------------------------------------
     // | 异常及错误设置
     // +----------------------------------------------------------------------
     // 异常页面的模板文件
-    'exception_tmpl'         => THINK_PATH . 'tpl' . DS . 'think_exception.tpl',
+    'exception_tmpl' => THINK_PATH . 'tpl' . DS . 'think_exception.tpl',
     // 错误显示信息,非调试模式有效
     'error_message' => '页面错误！请稍后再试～',
     // 显示错误信息
@@ -152,7 +152,7 @@ return [
         // 日志保存目录
         'path' => APP_PATH . "../logs/",
         // 日志记录级别
-        'level' => ['error' , 'notice'],
+        'level' => ['error', 'notice'],
     ],
     // +----------------------------------------------------------------------
     // | Trace设置 开启 app_trace 后 有效
@@ -266,7 +266,8 @@ return [
     // |  支付配置
     // +----------------------------------------------------------------------
     'pay' => [
-        'recharge_ratio' => 10
+        'recharge_ratio' => 10,
+        'fangbao_ratio' => 10 //支付查看功能价格(房宝)
     ],
     // +----------------------------------------------------------------------
     // |  返回结果

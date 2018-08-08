@@ -74,8 +74,8 @@ $logo = $_W['share_img']= $_W['global_config']['data']['logo'] ? render_file_id(
             $views_rent  =set_model('house_rent')->count() + $_W['module_config']['infos'];
             ?>
 
-            网站访问统计
-            <span class="is-pulled-right has-text-danger"> <i class="iconfont icon-iconfontdongtai Rotation" style="display: inline-block"></i> 浏览量：{$views} 房源数量：{$views_esf +$views_rent }</span>
+<!--            网站访问统计-->
+<!--            <span class="is-pulled-right has-text-danger"> <i class="iconfont icon-iconfontdongtai Rotation" style="display: inline-block"></i> 浏览量：{$views} 房源数量：{$views_esf +$views_rent }</span>-->
         </div>
     </div>
 
@@ -129,7 +129,7 @@ $logo = $_W['share_img']= $_W['global_config']['data']['logo'] ? render_file_id(
                             <?php
                             $_icon = render_file_id($nav['image']);
                             ?>
-                            <div class="is-one-fifth  column">
+                            <div class="is-one-fifth  column" style="padding-left: 15px;padding-right: 15px">
                                 <a {$nav.property} class="nav_item" href="{$nav.url}">
                                     {if $nav['image']}
                                     <i  >
@@ -358,34 +358,34 @@ $rec_loupan = \app\core\util\ContentTag::position_data("推荐楼盘");
 
     {if $_W.module_config.show_agent}
     <div class="bk10"></div>
-    <div class="ui mhcms-panel">
-        <div class="ui  mhcms-panel-header" >
-            最新入驻经纪人
-        </div>
-        <div class="ui  mhcms-panel-body">
-            <div class="swiper-container swiper-container-horizontal new-better-swiper-container" id="index_agent" >
-                <div  class="swiper-wrapper">
-                    <?php
-                    $items = \app\core\util\ContentTag::model_data('house_agent');
-                    ?>
-                    {foreach $items as $item}
-                    <?php
-
-                    $url = $_item['avatar']['0']['url'];
-                    $api_imag = url('attachment/image/view_thumb' , ['file_id'=>$item['avatar']['0']['file_id']]);
-                    ?>
-                    <div class="swiper-slide  swiper-slide-prev agent_slider">
-                        <a href="{:url('house/agent/detail' , 'user_id='.$item['user_id'])}" class=" " style="padding: 5px">
-
-                            <img :data-src="'{$api_imag}'">
-                        </a>
-                        <span>{$item.person_name}</span>
-                    </div>
-                    {/foreach}
-                </div>
-            </div>
-        </div>
-    </div>
+<!--    <div class="ui mhcms-panel">-->
+<!--        <div class="ui  mhcms-panel-header" >-->
+<!--            最新入驻经纪人-->
+<!--        </div>-->
+<!--        <div class="ui  mhcms-panel-body">-->
+<!--            <div class="swiper-container swiper-container-horizontal new-better-swiper-container" id="index_agent" >-->
+<!--                <div  class="swiper-wrapper">-->
+<!--                    --><?php
+//                    $items = \app\core\util\ContentTag::model_data('house_agent');
+//                    ?>
+<!--                    {foreach $items as $item}-->
+<!--                    --><?php
+//
+//                    $url = $_item['avatar']['0']['url'];
+//                    $api_imag = url('attachment/image/view_thumb' , ['file_id'=>$item['avatar']['0']['file_id']]);
+//                    ?>
+<!--                    <div class="swiper-slide  swiper-slide-prev agent_slider">-->
+<!--                        <a href="{:url('house/agent/detail' , 'user_id='.$item['user_id'])}" class=" " style="padding: 5px">-->
+<!---->
+<!--                            <img :data-src="'{$api_imag}'">-->
+<!--                        </a>-->
+<!--                        <span>{$item.person_name}</span>-->
+<!--                    </div>-->
+<!--                    {/foreach}-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
     {/if}
 
 

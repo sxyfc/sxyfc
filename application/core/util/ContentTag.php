@@ -3,8 +3,11 @@
 namespace app\core\util;
 
 use app\common\model\Models;
+use app\common\util\forms\select;
 use think\Cache;
 use think\Db;
+use think\db\Query;
+use think\Log;
 use think\Model;
 
 class ContentTag
@@ -291,13 +294,30 @@ class ContentTag
         global $_W;
         $model = set_model("$model_id");
 
-        if(Models::field_exits('site_id' ,$model_id)){
+        if (Models::field_exits('site_id', $model_id)) {
             $where['site_id'] = $_W['site']['id'];
         }
 
         $lists = $model->where($where)->order('listorder desc')->select()->toArray();
 
         $cate_tree = ContentTag::get_cate_tree([], 0, 0, $lists, $module, $id_key, $name_key);
+        return $cate_tree;
+    }
+
+    public static function model_tree_tow($model_id, $module = "", $name_key = 'title', $id_key = 'id', $second_model)
+    {
+        global $_W;
+        $model = set_model("$model_id");
+
+        if (Models::field_exits('site_id', $model_id)) {
+            $where['site_id'] = $_W['site']['id'];
+        }
+
+        $lists = $model->where($where)->order('listorder desc')->select()->toArray();
+
+        $cate_tree = ContentTag::get_cate_tree([], 0, 0, $lists, $module, $id_key, $name_key);
+
+
         return $cate_tree;
     }
 
@@ -310,5 +330,23 @@ class ContentTag
         }
         return $new_field[$field_name]['options'];
     }
+
+    /**
+     * 双表条件查询+条件字段+first表主键
+     * @param $first_model  被关联单表名称
+     * @param $field_name  查询关联条件字段
+     * @param $second_model 第二个表的模型
+     */
+    public static function load_options_two($first_model, $field_name, $second_model, $check_field)
+    {
+        $filter_info = Models::gen_user_filter_two($first_model, null, "", $second_model, $check_field);
+
+        $new_field = [];
+        foreach ($filter_info['fields'] as $field) {
+            $new_field[$field['field_name']] = $field;
+        }
+        return $new_field[$field_name]['options'];
+    }
+
 
 }
