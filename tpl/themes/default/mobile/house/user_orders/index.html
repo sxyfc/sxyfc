@@ -12,58 +12,60 @@
 {block name="main"}
 
 <div id="app_mhcms" xmlns="http://www.w3.org/1999/html">
+    <form action="/退款接口">
+        <div class="tableBox" style=" padding: 10px">
+            <table class="table table-bordered" style="align-items: center">
+                <tr bgcolor="#F5F6FA" height="35px;"
+                    style="color:#333; font-size:16px; line-height:35px;">
+                    <!--<td>ID</td>-->
+                    <td>交易流水</td>
+                    <td>{:zlang('买家')}</td>
+                    <td>{:zlang('商品名称')}</td>
+                    <td>{:zlang('创建时间')}</td>
+                    <td>{:zlang('金额')}</td>
+                    <td>{:zlang('状态')}</td>
 
-    <div class="tableBox">
-        <table class="table table-bordered" style="align-items: center">
-            <tr bgcolor="#F5F6FA" height="35px;"
-                style="color:#333; font-size:16px; line-height:35px;">
-                <!--<td>ID</td>-->
-                <td>交易流水</td>
-                <td>{:zlang('买家')}</td>
-                <td>{:zlang('商品名称')}</td>
-                <td>{:zlang('创建时间')}</td>
-                <td>{:zlang('金额')}</td>
-                <td>{:zlang('状态')}</td>
+                    <td>{:zlang('卖家')}</td>
 
-                <td>{:zlang('卖家')}</td>
+                    <td>退款</td>
+                </tr>
 
-                <td>退款</td>
-            </tr>
-
-            {foreach $lists as $item}
-            <?php
+                {foreach $lists as $item}
+                <?php
             $item['order_id'] = $item['id'];
             $product_data['title'] = '充值';
             $buyer = \app\common\model\Users::get(['id'=>$item['buyer_user_id']]);
-            $seller = \app\common\model\Users::get(['id'=>$item['seller_user_id']]);
-            $buyer['name'] = $buyer['nickname'] ? $buyer['user_name']. '('.$buyer['nickname'].')' :
-            $buyer['user_name'];
-            if (!$seller) {
-            $seller['name'] = '';
-            } else {
-            $seller['name'] = $seller['nickname'] ? $seller['user_name'].
-            '('.$seller['nickname'].')' : $seller['user_name'];
-            }
-            ?>
-            <!--<td>{$item.order_id}</td>-->
-            <td>{$item.trade_sn}</td>
-            <td>{$buyer.name}</td>
-            <td>{$product_data.title}
-            </td>
-            <td>{$item.create_time}</td>
+                $seller = \app\common\model\Users::get(['id'=>$item['seller_user_id']]);
+                $buyer['name'] = $buyer['nickname'] ? $buyer['user_name'].
+                '('.$buyer['nickname'].')' :
+                $buyer['user_name'];
+                if (!$seller) {
+                $seller['name'] = '';
+                } else {
+                $seller['name'] = $seller['nickname'] ? $seller['user_name'].
+                '('.$seller['nickname'].')' : $seller['user_name'];
+                }
+                ?>
+                <!--<td>{$item.order_id}</td>-->
+                <td>{$item.trade_sn}</td>
+                <td>{$buyer.name}</td>
+                <td>{$product_data.title}
+                </td>
+                <td>{$item.create_time}</td>
 
-            <td>{$item.total_fee}</td>
-            <td>{$item.status}</td>
+                <td>{$item.total_fee}</td>
+                <td>{$item.status}</td>
 
-            <td>{$seller.name}</td>
-            <td><a style="color: #0d71bb" href="/">申请</a></td>
-            </tr>
+                <td>{$seller.name}</td>
+                <td><a style="color: #0d71bb" href="/">申请</a></td>
+                </tr>
 
-            {/foreach}
+                {/foreach}
 
-        </table>
+            </table>
 
-    </div>
+        </div>
+    </form>
     <div>
         {:$lists->render()}
     </div>

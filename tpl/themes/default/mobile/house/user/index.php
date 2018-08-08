@@ -94,7 +94,7 @@
                 </a>
             </div>
 
-            <div class="  column is-3">
+            <div class="  column ">
                 <a data-mha  href="/house/user/myadd_esf">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="iconfont icon-zhaoshangjiameng"  ></i>
@@ -288,6 +288,14 @@
                     <div class="weui-cell__hd"><i class="iconfont icon-zufang"   style="width:20px;margin-right:5px;display:block"></i></div>
                     <div class="weui-cell__bd weui-cell_primary">
                         <p>求租求购</p>
+                    </div>
+                    <span class="weui-cell__ft"></span>
+                </a>
+
+                <a class="weui-cell weui-cell_access" href="/house/user_orders/index">
+                    <div class="weui-cell__hd"><i class="iconfont icon-zufang"   style="width:20px;margin-right:5px;display:block"></i></div>
+                    <div class="weui-cell__bd weui-cell_primary">
+                        <p>订单记录</p>
                     </div>
                     <span class="weui-cell__ft"></span>
                 </a>

@@ -97,16 +97,16 @@ class Index extends Controller
                     $user_data['id'] = 1;
                     $user_data['user_name'] = $admin_info['user_name'];
                     $user_data['site_id'] = 0;
-                    $user_data['nickname'] = "超级管理员";
-                    $user_data['user_email'] = "";
-                    $user_data['user_crypt'] = random(6);
-                    $user_data['pass'] = crypt_pass($admin_info['password'], $user_data['user_crypt']);
-                    $user_data['user_status'] = 1;
-                    $user_data['user_role_id'] = 1;
-                    $user_data['created'] = date("Y-m-d H:i:s");
-                    $res1 = Db::name('users')->insert($user_data, false, true);
-                    Cache::set('admin_info', null);
-                }
+                $user_data['nickname'] = "超级管理员";
+                $user_data['user_email'] = "";
+                $user_data['user_crypt'] = random(6);
+                $user_data['pass'] = crypt_pass($admin_info['password'], $user_data['user_crypt']);
+                $user_data['user_status'] = 1;
+                $user_data['user_role_id'] = 1;
+                $user_data['created'] = date("Y-m-d H:i:s");
+                $res1 = Db::name('users')->insert($user_data, false, true);
+                Cache::set('admin_info', null);
+        }
 
 
                 //创建root
