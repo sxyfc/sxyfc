@@ -30,22 +30,22 @@ class AdminRent extends AdminBase
         $where['site_id'] = $_W['site']['id'];
 
         $loupan_name = trim(input('param.loupan_name'));
-        if ($loupan_name) {
+        if($loupan_name){
             $ids = array();
             $where_loupan['loupan_name'] = array('LIKE', '%' . $loupan_name . '%');
-            if ($loupan_name_info = Db::name('house_loupan')->where($where_loupan)->field('id')->select()->toArray()) {
-                foreach ($loupan_name_info as $key => $value) {
+            if($loupan_name_info = Db::name('house_loupan')->where($where_loupan)->field('id')->select()->toArray()){
+                foreach($loupan_name_info as $key=>$value){
                     $ids[$key] = $value['id'];
                 }
 
-                $where['loupan_id'] = array('IN', $ids);
+                $where['loupan_id'] = array('IN',$ids);
                 $this->view->lists = $model->where($where)->order("id desc")->paginate();
-            } else {
+            }else{
                 $this->view->lists = '';
             }
 
             $this->view->assign('loupan_name', $loupan_name);
-        } else {
+        }else{
             $this->view->lists = $model->where($where)->order("id desc")->paginate();
         }
 
@@ -83,8 +83,7 @@ class AdminRent extends AdminBase
     }
 
 
-    public function edit($id)
-    {
+    public function edit($id){
         global $_W, $_GPC;
         $model = set_model($this->house_rent);
         /** @var Models $model_info */
@@ -118,8 +117,7 @@ class AdminRent extends AdminBase
         }
     }
 
-    public function delete($id)
-    {
+    public function delete($id){
         global $_W, $_GPC;
         $model = set_model($this->house_rent);
         $model_info = $model->model_info;
@@ -127,10 +125,10 @@ class AdminRent extends AdminBase
         $where['site_id'] = $_W['site']['id'];
         $detail = $model->where($where)->find();
 
-        if ($detail) {
-            $model_info::delete_item($id, $this->house_rent);
+        if($detail){
+            $model_info::delete_item($id ,$this->house_rent );
         }
 
-        return ['code' => 1, 'msg' => 'ok'];
+        return ['code' => 1 , 'msg' => 'ok'];
     }
 }
