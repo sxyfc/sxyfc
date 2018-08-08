@@ -1,0 +1,66 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if (!isset($keyword)) {
+    $keyword = "";
+}
+?>
+<form class="layui-form form-inline" method="post" action="{:\think\\Request::instance()->url()}">
+    <table class="layui-table -group">
+        <tr>
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            用户名
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="user_name" value="{$user_name}" type="text" placeholder="用户名">
+                    </p>
+                </div>
+            </td>
+            <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+        </tr>
+    </table>
+</form>
+{/block}
+
+
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table">
+            <tr>
+                <td class="w50">ID</td>
+                {foreach $field_list as $field}
+                <td>{$field['slug']}</td>
+                {/foreach}
+                <td>昵称</td>
+                <td>角色</td>
+                <td>手机</td>
+                <td>余额</td>
+                <td>积分</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <?php $role = \app\common\model\UserRoles::get(['id'=>$var['user_role_id']]); ?>
+            <tr>
+            <td>{$var.id}</td>
+            {foreach $field_list as $field}
+            <td>
+                <pre>{$var[$field['field_name']]}</pre>
+            </td>
+            {/foreach}
+            <td>{$var.nickname}</td>
+            <td>{$role.role_name}</td>
+            <td>{$var.mobile}</td>
+            <td>{$var.balance}</td>
+            <td>{$var.point}</td>
+            </tr>
+            {/foreach}
+        </table>
+        {$page}
+    </div>
+</form>
+{/block}

@@ -1,5 +1,27 @@
 {extend name="admin@public/content_frame" /}
 
+{block name="table_form"}
+<form class="layui-form form-inline" method="post" action="{:\think\\Request::instance()->url()}">
+    <table class="layui-table -group">
+        <tr>
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            楼盘名称
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="loupan_name" value="{$loupan_name}" type="text" placeholder="楼盘名称">
+                    </p>
+                </div>
+            </td>
+            <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+        </tr>
+    </table>
+</form>
+{/block}
+
 {block name="main"}
 <div class="tableBox">
 
@@ -30,7 +52,6 @@
                 {/if}
                 {/eq}
                 {/volist}
-                <!--left operate menu-->
 
                 <td>ID</td>
                 {foreach $field_list as $field}

@@ -28,9 +28,15 @@ class AdminLoupan extends AdminBase
         $where = [];
         $where['site_id'] = $_W['site']['id'];
         if (!$this->sub_super && !$this->super_power) {
-
             $where['user_id'] = $this->admin_info['user_id'];
         }
+
+        $loupan_name = trim(input('param.loupan_name', ' ', 'htmlspecialchars'));
+        if ($loupan_name) {
+            $where['loupan_name'] = array('LIKE', '%' . $loupan_name . '%');
+            $this->view->assign('loupan_name', $loupan_name);
+        }
+
         $this->view->lists = $model->where($where)->order("id desc")->paginate();
         $this->view->field_list = $model_info->get_admin_column_fields();
         $this->view->content_model_id = $this->house_loupan;
