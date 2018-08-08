@@ -45,6 +45,8 @@ class AdminRent extends AdminBase
             }
 
             $this->view->assign('loupan_name', $loupan_name);
+        }else{
+            $this->view->lists = $model->where($where)->order("id desc")->paginate();
         }
 
         $this->view->field_list = $model_info->get_admin_column_fields();
