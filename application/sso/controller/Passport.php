@@ -5,6 +5,7 @@ namespace app\sso\controller;
 use app\common\controller\Base;
 use app\common\controller\ModuleBase;
 use app\common\model\NodeIndex;
+use app\sms\providers\Aliyun;
 use app\common\model\Sites;
 use app\common\model\SitesWechat;
 use app\common\model\UserRoles;
@@ -15,6 +16,7 @@ use app\common\util\forms\input;
 use app\common\util\wechat\wechat;
 use app\core\util\MhcmsDistribution;
 use app\wechat\util\MhcmsWechatEngine;
+use app\common\model\SmsCode;
 use think\Cache;
 use think\Cookie;
 use think\Db;
@@ -143,8 +145,8 @@ class Passport extends ModuleBase
         } else {
             $sso_domain = $_W['global_config']['sso_domain'];
         }
-        if($sso_domain=="www.zxw.bz"){
-        //    $sso_domain = $_SERVER['HTTP_HOST'];
+        if ($sso_domain == "www.zxw.bz") {
+            //    $sso_domain = $_SERVER['HTTP_HOST'];
         }
         $for = SITE_PROTOCOL . $sso_domain . "/house/index/index";
         if (is_weixin() && $_W['site']['config']['force_wechat']) {
@@ -154,17 +156,19 @@ class Passport extends ModuleBase
             $url = SITE_PROTOCOL . $sso_domain . "/sso/passport/login?to_site_id=" . $this->site['id'] . "&forward=" . $for;
         }
 
-        header("location:$url");die();
+        header("location:$url");
+        die();
         if (!$self_call) {
             $this->view->forward = $url = nb_url(['r' => '/'], $site['site_id']);
-        //    $this->success("注销成功！", $url);
+            //    $this->success("注销成功！", $url);
             return $this->view->fetch();
         }
 
 
     }
 
-    public function sso_logout(){
+    public function sso_logout()
+    {
         Session::set('auth_info', null);
         Session::set('user_id', null);
         Session::set('user_role_id', null);
@@ -172,6 +176,7 @@ class Passport extends ModuleBase
         Cookie::set('user_id', null);
         return jsonp(['random_auth' => '', 'user_id' => 0]);
     }
+
     /**
      * 获取当前用户登录的ID
      */
@@ -199,7 +204,7 @@ class Passport extends ModuleBase
      */
     public function sso_login()
     {
-        global $_W , $_GPC;
+        global $_W, $_GPC;
         //得到加密过后的字符串
         $auth_str = input('param.auth_str');
         $current_user = Users::get((int)$_GPC['user_id']);
@@ -218,6 +223,23 @@ class Passport extends ModuleBase
         }
         $data['msg'] = $msg;
         return $data;
+    }
+
+    public function send_code()
+    {
+        $code = mt_rand(1000, 9999);
+        $params = [
+            'code' => $code
+        ];
+
+        $mobile = $_GET['mobile'];
+        $tpl_id = config('alidayu.template_code');
+        $resp = Aliyun::send($mobile, $params, $tpl_id);
+        if($resp['code'] == 1){
+            session('code', $code);
+            SmsCode::create(['code'=> $code,'mobile'=>$mobile,'time'=>time()]);
+        }
+        echo json_encode($resp);
     }
 
     /**
@@ -239,21 +261,25 @@ class Passport extends ModuleBase
         } else {
             $site = $this->site;
         }
-        $forward =input('param.forward', '');
-        $forward =  $forward ? $forward   : Cookie::get("forward" ) ;
+        $forward = input('param.forward', '');
+        $forward = $forward ? $forward : Cookie::get("forward");
 
-        if(strpos($forward , "login")!==false){
+        if (strpos($forward, "login") !== false) {
             $forward = "/";
         }
-        if(strpos($forward , "register")!==false){
+        if (strpos($forward, "register") !== false) {
             $forward = "/";
         }
-        if(strpos($forward , "logout")!==false){
+        if (strpos($forward, "logout") !== false) {
             $forward = "/";
         }
 
         if ($this->isPost()) {
             $data = input('param.data/a');
+           if($data['code'] != session('code')){
+               $this->zbn_msg('验证码错误');
+           }
+
             $foreword_url = "";
             $code = 2;
             if ($data['password1']) {
@@ -286,9 +312,9 @@ class Passport extends ModuleBase
                     $code = 1;
                     $msg = "注册成功";
                     $from_uid = $_W['refer'];
-                    if($from_uid){
+                    if ($from_uid) {
                         // send data to
-                        MhcmsDistribution::make_down_line($user['id'] , $from_uid);
+                        MhcmsDistribution::make_down_line($user['id'], $from_uid);
                     }
                     $foreword_url = url('house/index/index');
                 } else {
@@ -318,7 +344,7 @@ class Passport extends ModuleBase
         global $_W, $_GPC;
         $foreword_url = input('param.forward', HTTP_REFERER);
         $to_site_id = input('param.to_site_id', $_W['site']['id']);
-        Cookie::set('forward' , $foreword_url);
+        Cookie::set('forward', $foreword_url);
         if ($this->isPost()) {
             $data = input('param.data/a');
             $code = input('param.code');
@@ -356,29 +382,30 @@ class Passport extends ModuleBase
             $this->view->to_site_id = $to_site_id;
             $this->view->forward = $foreword_url;
             //todo
-            if($this->site['config']['member']['force_wechat']){
-                if(is_weixin()){
-                    $mhcms_wechat = url('sso/passport/wx_login' , ['forward'=>urlencode($foreword_url) , 'to_site_id'=> $to_site_id]);
-                }else{
-                    $mhcms_wechat = url('sso/passport/wx_subscribe' , ['forward'=>urlencode($foreword_url) , 'to_site_id'=> $to_site_id]);
-                    if(!$this->site_wechat){
+            if ($this->site['config']['member']['force_wechat']) {
+                if (is_weixin()) {
+                    $mhcms_wechat = url('sso/passport/wx_login', ['forward' => urlencode($foreword_url), 'to_site_id' => $to_site_id]);
+                } else {
+                    $mhcms_wechat = url('sso/passport/wx_subscribe', ['forward' => urlencode($foreword_url), 'to_site_id' => $to_site_id]);
+                    if (!$this->site_wechat) {
                         $this->error("需要集成微信才能使用微信登录");
                     }
                 }
 
-                header("location:$mhcms_wechat");die();
-            }else{
-                if($this->user){
+                header("location:$mhcms_wechat");
+                die();
+            } else {
+                if ($this->user) {
                     $foreword_url = url('house/index/index');
                     $target = parse_url($foreword_url);
-                    $url = url('sso/passport/jump',['forward' =>urlencode($foreword_url) ] ,'html',$target['host']);
-
+                    $url = url('sso/passport/jump', ['forward' => urlencode($foreword_url)], 'html', $target['host']);
 
 
                     //$url = nb_url(['r'=>'sso/passport/jump'] , $to_site_id , ['forward' =>urlencode($foreword_url) ]);
 
-                    header("location:$url");die();
-                }else{
+                    header("location:$url");
+                    die();
+                } else {
                     return $this->view->fetch();
                 }
 
@@ -403,26 +430,26 @@ class Passport extends ModuleBase
                     $user->log_user_in();
                 }
 
-            }elseif ($uuid == $new_uuid){
+            } elseif ($uuid == $new_uuid) {
                 $status = "wait";
-            }else{
+            } else {
                 $status = "expired";
             }
             return [
-                'status' => $status ,
-                'new_uuid' => $new_uuid ,
+                'status' => $status,
+                'new_uuid' => $new_uuid,
                 'uuid' => $uuid
             ];
         } else {
             //微信访问
 
-            if(!is_weixin()){
+            if (!is_weixin()) {
                 $this->error("请使用微信扫描二维码");
             }
             $uuid = Cache::get("mhcms_wechat_login:" . $uuid);
             if ($uuid) {
                 $this->wx_login($uuid);
-                $to_url = url('sso/passport/wx_login' , ['site_id' =>$_GPC['site_id'] ,'forward' =>$_GPC['forward'] , 'uuid' => $_GPC['uuid'] ]);
+                $to_url = url('sso/passport/wx_login', ['site_id' => $_GPC['site_id'], 'forward' => $_GPC['forward'], 'uuid' => $_GPC['uuid']]);
 
                 header("location:$to_url");
 
@@ -439,23 +466,23 @@ class Passport extends ModuleBase
     public function wx_login($uuid = 0)
     {
         global $_W, $_GPC;
-        $forward =input('param.forward', '');
-        $forward =  $forward ? $forward   : Cookie::get("forward" ) ;
+        $forward = input('param.forward', '');
+        $forward = $forward ? $forward : Cookie::get("forward");
 
-        if(strpos($forward , "login")!==false){
+        if (strpos($forward, "login") !== false) {
             $forward = "/";
         }
-        if(strpos($forward , "register")!==false){
+        if (strpos($forward, "register") !== false) {
             $forward = "/";
         }
-        if(strpos($forward , "logout")!==false){
+        if (strpos($forward, "logout") !== false) {
             $forward = "/";
         }
 
         $site_id = $_GPC['site_id'] ? $_GPC['site_id'] : $_W['site']['id'];//input('param.site_id', 0);
 
         if (is_weixin()) {
-            if(!$_W['account']){
+            if (!$_W['account']) {
                 $this->error("站点尚未接入微信，无法使用微信进行登录");
             }
 
@@ -467,8 +494,8 @@ class Passport extends ModuleBase
         } else {
             //32位随机代码
             Cache::set("mhcms_wechat_login:" . $this->uuid, $this->uuid);
-            $login_url = url('sso/passport/mhcms_wx_login', ['site_id' =>$site_id   , 'uuid' => $this->uuid ,'forward' =>urlencode($forward)   ] , true, true);
-            $this->view->code = url('core/common_service/str_to_qr'). "?str=". urlencode($login_url);
+            $login_url = url('sso/passport/mhcms_wx_login', ['site_id' => $site_id, 'uuid' => $this->uuid, 'forward' => urlencode($forward)], true, true);
+            $this->view->code = url('core/common_service/str_to_qr') . "?str=" . urlencode($login_url);
             $this->view->uuid = $this->uuid;
             $this->view->mhcms_wx_login_api = $login_url;
             $this->view->forward = urldecode($forward);
@@ -481,7 +508,7 @@ class Passport extends ModuleBase
 
         $new_fan = [];
         $new_fan['openid'] = $fans_info['openid'];
-        if($fans_info['country']){
+        if ($fans_info['country']) {
             $new_fan['avatar'] = $fans_info['headimgurl'];
             $new_fan['nickname'] = $fans_info['nickname'];
             $new_fan['subscribe'] = (int)$fans_info['subscribe'];
@@ -494,48 +521,48 @@ class Passport extends ModuleBase
 
         //test($new_fan);
         //创建粉丝信息
-        if(empty($new_fan['openid'])){
+        if (empty($new_fan['openid'])) {
             echo "请求失败了 ，请重新扫描！";
             die();
         }
         if (!$_fan) {
-            if($new_fan['openid']){
+            if ($new_fan['openid']) {
                 $_W['wechat_fans_model']->insert($new_fan);
             }
 
             $_fan = $new_fan;
         }
 
-        if($_fan && !$_fan['nickname']){
-            $_W['wechat_fans_model']->where(['openid'=>$_fan['openid']])->update($new_fan);
+        if ($_fan && !$_fan['nickname']) {
+            $_W['wechat_fans_model']->where(['openid' => $_fan['openid']])->update($new_fan);
         }
 
-        if($_fan['user_id']){
+        if ($_fan['user_id']) {
             $user = Users::get(['id' => $_fan['user_id']]);
         }
         //先处理 unionid
         //union 处理失败 处理openid
-        if(!$user){
+        if (!$user) {
             //todo process unionid
-            if($fans_info['unionid']){
+            if ($fans_info['unionid']) {
                 $union_where = [];
                 $union_where['wechat_unionid'] = $fans_info['unionid'];
                 // try to find the union user
-                if( $user = Users::get($union_where)){
+                if ($user = Users::get($union_where)) {
                     $new_fan['user_id'] = $user['id'];
-                    $_W['wechat_fans_model']->where(['openid'=>$_fan['openid']])->update($new_fan);
+                    $_W['wechat_fans_model']->where(['openid' => $_fan['openid']])->update($new_fan);
                 }
             }
         }
         // test($fans_info);
         if ($user) {
-            if($fans_info['unionid'] && !$user['wechat_unionid']){
+            if ($fans_info['unionid'] && !$user['wechat_unionid']) {
                 $user->wechat_unionid = $fans_info['unionid'];
             }
-            if(empty($user->avatar) && $fans_info['headimgurl']){
+            if (empty($user->avatar) && $fans_info['headimgurl']) {
                 $user->avatar = $fans_info['headimgurl'];
             }
-            if(empty($user->nickname) && $fans_info['nickname']){
+            if (empty($user->nickname) && $fans_info['nickname']) {
                 $user->nickname = $fans_info['nickname'];
             }
             $user->save();
@@ -560,7 +587,7 @@ class Passport extends ModuleBase
             //默认用户组
             $user_data['user_role_id'] = 4;
             $user_data['created'] = date("Y-m-d H:i:s");
-            if($fans_info['unionid']){
+            if ($fans_info['unionid']) {
                 $user_data['wechat_unionid'] = $fans_info['unionid'];
             }
             //不存在用户
@@ -570,9 +597,9 @@ class Passport extends ModuleBase
                 $_W['wechat_fans_model']->where(['openid' => $fans_info['openid']])->update($connect);
                 $user->log_user_in();
                 $from_uid = $_W['refer'];
-                if($from_uid){
+                if ($from_uid) {
                     // send data to
-                    MhcmsDistribution::make_down_line($user['id'] , $from_uid);
+                    MhcmsDistribution::make_down_line($user['id'], $from_uid);
                 }
             } else {
                 test("对不起，用户注册失败 。" . $res['msg']);
@@ -580,22 +607,24 @@ class Passport extends ModuleBase
         }
 
         if ($uuid) {
-            Cache::set("mhcms_wechat_login:" . $uuid , $user['id']);
-            $this->message("登录成功" , 1,"/");
+            Cache::set("mhcms_wechat_login:" . $uuid, $user['id']);
+            $this->message("登录成功", 1, "/");
         } else {
-            if($_W['site']['id'] == $site_id){
-                header('location:'.urldecode($forward));die();
+            if ($_W['site']['id'] == $site_id) {
+                header('location:' . urldecode($forward));
+                die();
                 $this->message("登录成功", 1, urldecode($forward));
-            }else{
-                $this->message("登录成功", 1, $forward  );
+            } else {
+                $this->message("登录成功", 1, $forward);
             }
         }
     }
 
-    public function mhcms_wx_subscribe_login(){
+    public function mhcms_wx_subscribe_login()
+    {
         //todo check the user_id and login
 
-        global $_W , $_GPC;
+        global $_W, $_GPC;
         $uuid = $_GPC['uuid'];
         $new_uuid = Cache::get("mhcms_wechat_subscribe_login:" . $uuid);
 
@@ -605,31 +634,33 @@ class Passport extends ModuleBase
                 $status = "success";
                 $user->log_user_in();
             }
-        }elseif ($uuid == $new_uuid){
+        } elseif ($uuid == $new_uuid) {
             $status = "wait";
-        }else{
+        } else {
             $status = "expired";
         }
         return [
             'status' => $status,
-            'new_uuid' => $new_uuid ,
+            'new_uuid' => $new_uuid,
             'uuid' => $uuid
         ];
     }
-    public function wx_subscribe(){
-        global $_W , $_GPC;
 
-        $forward =input('param.forward', '');
-        $forward = $forward ? $forward :  Cookie::get('forward');
+    public function wx_subscribe()
+    {
+        global $_W, $_GPC;
+
+        $forward = input('param.forward', '');
+        $forward = $forward ? $forward : Cookie::get('forward');
 
 
-        if(strpos($forward , "login")!==false){
+        if (strpos($forward, "login") !== false) {
             $forward = "/";
         }
-        if(strpos($forward , "register")!==false){
+        if (strpos($forward, "register") !== false) {
             $forward = "/";
         }
-        if(strpos($forward , "logout")!==false){
+        if (strpos($forward, "logout") !== false) {
             $forward = "/";
         }
 
@@ -638,22 +669,22 @@ class Passport extends ModuleBase
 
         $api = MhcmsWechatEngine::create($_W['account']);
         $refer = "";
-        if(isset($_W['refer']) && $_W['refer']){
-            $refer = "###".$_W['refer'];
+        if (isset($_W['refer']) && $_W['refer']) {
+            $refer = "###" . $_W['refer'];
         }
 
         $barcode['action_info']['scene']['scene_str'] = $this->uuid . $refer;
-        $barcode['action_name']    = "QR_STR_SCENE";
+        $barcode['action_name'] = "QR_STR_SCENE";
         $barcode['expire_seconds'] = 604800;
         $res = $api->barCodeCreateDisposable($barcode);
 
-        $this->view->code =  url('core/common_service/str_to_qr', ['str' => urlencode($res['url'])]);
+        $this->view->code = url('core/common_service/str_to_qr', ['str' => urlencode($res['url'])]);
 
 
         Cache::set("mhcms_wechat_subscribe_login:" . $this->uuid, $this->uuid);
-        $login_url = url('sso/passport/mhcms_wx_subscribe_login', [] , true, true);
+        $login_url = url('sso/passport/mhcms_wx_subscribe_login', [], true, true);
         $this->view->mhcms_wx_login_api = $login_url;
-        $this->view->post_data = ['uuid' => $this->uuid ,'forward' =>urlencode($forward)  , 'to_site_id' =>$to_site_id ];
+        $this->view->post_data = ['uuid' => $this->uuid, 'forward' => urlencode($forward), 'to_site_id' => $to_site_id];
         $this->view->forward = urldecode($forward);
         $this->view->uuid = $this->uuid;
 
@@ -662,7 +693,8 @@ class Passport extends ModuleBase
     }
 
 
-    public function bind_wechat(){
+    public function bind_wechat()
+    {
         global $_W, $_GPC;
         $wechat = MhcmsWechatEngine::create($_W['account']);
 
@@ -688,31 +720,31 @@ class Passport extends ModuleBase
             $_fan = $new_fan;
         }
 
-        if($_fan && !$_fan['nickname']){
-            $_W['wechat_fans_model']->where(['id'=>$_fan['id']])->update($new_fan);
+        if ($_fan && !$_fan['nickname']) {
+            $_W['wechat_fans_model']->where(['id' => $_fan['id']])->update($new_fan);
         }
 
-        if($_fan['user_id']){
+        if ($_fan['user_id']) {
             $user = Users::get(['id' => $_fan['user_id']]);
         }
         //先处理 unionid
         //union 处理失败 处理openid
-        if(!$user){
+        if (!$user) {
             //todo process unionid
-            if($fans_info['unionid']){
+            if ($fans_info['unionid']) {
                 $union_where = [];
                 $union_where['wechat_unionid'] = $fans_info['unionid'];
                 // try to find the union user
-                if( $user = Users::get($union_where)){
+                if ($user = Users::get($union_where)) {
                     $new_fan['user_id'] = $user['id'];
-                    $_W['wechat_fans_model']->where(['id'=>$_fan['id']])->update($new_fan);
+                    $_W['wechat_fans_model']->where(['id' => $_fan['id']])->update($new_fan);
                 }
-            }else{
+            } else {
                 $new_fan['user_id'] = $this->user['id'];
-                $_W['wechat_fans_model']->where(['id'=>$_fan['id']])->update($new_fan);
+                $_W['wechat_fans_model']->where(['id' => $_fan['id']])->update($new_fan);
                 $this->error("绑定成功");
             }
-        }else{
+        } else {
             $this->error("该微信已经绑定其他账号了");
         }
 
