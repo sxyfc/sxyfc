@@ -192,7 +192,7 @@ final class FormFactory
             }
             $config[$k] = $v;
         }
-        $config['model_id'] = $this->model_id;
+//        $config['model_id'] = $this->model_id;
         $field = new Field($config);
         $form = new Form($field);
         $tag_name = $field->field_type_name;
