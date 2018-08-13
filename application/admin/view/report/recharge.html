@@ -1,0 +1,44 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/download_recharge/user_menu_id/7013')}">
+    <table class="layui-table -group">
+        <tr>
+            <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
+        </tr>
+    </table>
+</form>
+{/block}
+
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table">
+            <tr>
+                <td class="w50">订单编号</td>
+                <td>用户名</td>
+                <td>手机号</td>
+                <td>充值备注</td>
+                <td>充值金额（元）</td>
+                <td>充值状态</td>
+                <td>充值时间</td>
+                <td>创建时间</td>
+            </tr>
+            {foreach name="recharges" id="var"}
+            <tr>
+                <td>{$var.id}</td>
+                <td>{$var.user_name}</td>
+                <td>{$var.mobile}</td>
+                <td>{$var.note}</td>
+                <td>{$var.total_fee}</td>
+                <td>{$var.status}</td>
+                <td>{$var.pay_time}</td>
+                <td>{$var.create_time}</td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$page}
+    </div>
+</form>
+{/block}
