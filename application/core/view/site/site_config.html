@@ -88,6 +88,20 @@
                     </div>
                 </div>
 
+                <div class="layui-form-item">
+                    <label class="layui-form-label">人民币兑换{$_W['site']['config']['trade']['balance_text']}比例</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="trade[rmb_balance_ratio]" required value="{$config.trade.rmb_balance_ratio|default="10"}"  placeholder="人民币兑换{$_W['site']['config']['trade']['balance_text']}比例" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{$_W['site']['config']['trade']['balance_text']}兑换{$_W['site']['config']['trade']['point_text']}比例</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="trade[balance_point_ratio]" required value="{$config.trade.balance_point_ratio|default="1"}"  placeholder="{$_W['site']['config']['trade']['balance_text']}兑换{$_W['site']['config']['trade']['point_text']}比例" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">最低充值金额</label>

@@ -36,7 +36,8 @@ class Deposit extends ModuleUserBase
             //
             $order_insert['gateway'] = $gateway = $data['gateway'];
             //计算费用
-            $order_insert['total_fee'] = $data['amount'] * config('pay.recharge_ratio');
+            $order_insert['amount'] = $data['amount'];
+            $order_insert['total_fee'] = $data['amount'] * empty($_W['site']['config']['trade']['rmb_balance_ratio']) ? 1 : $_W['site']['config']['trade']['rmb_balance_ratio'];
             $order_insert['express_fee'] = 0;
             $order_insert['delivery'] = "";
             //common info
@@ -55,10 +56,12 @@ class Deposit extends ModuleUserBase
             $order_insert['pay_mode'] = 'WX_GZH';
             $order_insert['unit_type'] = 1;
             $order_insert['is_online'] = 1;
+            $order_insert['source_type'] = 1;//充值
 
             $order_insert = set_model('orders')->setDefaultValueByFields($order_insert, array('unit_type', ''));
             $order = Orders::create($order_insert);
             if ($order) {
+                Orders::log_add($order['id'], $order_insert['buyer_user_id'], '创建订单');
                 //todo goto pay page
 
                 //create gateway instance

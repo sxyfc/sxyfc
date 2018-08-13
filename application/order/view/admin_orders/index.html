@@ -50,7 +50,7 @@ if (!isset($keyword)) {
                 </select>
             </div></td>
             {/foreach}
-        <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+        <td><input type="submit" value="搜索" class="layui-btn btn-success"/><a href="{:url('order/admin_orders/export')}" class="layui-btn btn-success">导出</a></td>
         </td></tr>
     </table>
 </form>
@@ -60,7 +60,7 @@ if (!isset($keyword)) {
             <td>ID</td>
             <td>交易流水</td>
             <td>{:zlang('买家')}</td>
-            <td>{:zlang('商品名称')}</td>
+            <td>{:zlang('订单类型')}</td>
             <td>{:zlang('创建时间')}</td>
             <td>{:zlang('金额')}</td>
             <td>{:zlang('状态')}</td>
@@ -72,7 +72,7 @@ if (!isset($keyword)) {
         {foreach $lists as $item}
         <?php
             $item['order_id'] = $item['id'];
-            $product_data['title'] = '充值';
+            $item['order_type_name'] = $product_dict[$item['source_type']];
             $buyer = \app\common\model\Users::get(['id'=>$item['buyer_user_id']]);
             $seller = \app\common\model\Users::get(['id'=>$item['seller_user_id']]);
             $buyer['name'] = $buyer['nickname'] ? $buyer['user_name']. '('.$buyer['nickname'].')' : $buyer['user_name'];
@@ -86,7 +86,7 @@ if (!isset($keyword)) {
             <td>{$item.order_id}</td>
             <td>{$item.trade_sn}</td>
             <td>{$buyer.name}</td>
-            <td>{$product_data.title}
+            <td>{$item.order_type_name}
             </td>
             <td>{$item.create_time}</td>
 
@@ -100,11 +100,13 @@ if (!isset($keyword)) {
                 ?>
                 {volist name="sub_menu" id="menu"}
                 {eq name="menu.user_menu_display" value="0"}
+                {neq name="item.source_type" value="1"}
                 <?php
                 $mini = $menu['user_menu_mini'];
                 $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
                 ?>
-                {:build_back_a($menu['user_menu_id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$mini,$btn_class,'90%','80%' , $mapping)}
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$mini,$btn_class,'80%','90%' , $mapping)}
+                {/neq}
                 {/eq}
                 {/volist}
             </td>

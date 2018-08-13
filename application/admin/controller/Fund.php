@@ -14,9 +14,12 @@ use app\common\controller\AdminBase;
 use app\common\model\Draw;
 use app\common\model\PaymentLogs;
 use app\common\model\Users;
+use app\common\model\UserRoles;
+use app\common\model\DistributionOrders;
 use app\common\util\forms\Forms;
 use app\common\util\Money;
 use app\common\util\Point;
+use app\order\model\Orders;
 use think\Exception;
 
 class Fund extends AdminBase
@@ -28,6 +31,136 @@ class Fund extends AdminBase
     public function create($user_id)
     {
         return $this->view->fetch();
+    }
+    /**
+     * 房宝消费
+     * @param  [type] $data [description]
+     * @return [type]       [description]
+     * 
+        $data['seller_user_id'] = '2108';
+        $data['amount'] = 10;
+        $data['source_type'] = 2;
+        $data['source_id'] = 100;
+        $data['note'] = 'test';
+     */
+    public function fangbao_pay($data)
+    {
+        $result = config('WEB_SUCCESS_RT');
+        try {
+            $result['data']['order_id'] = $this->create_pay_order($data);
+        } catch (Exception $e) {
+            $result = $e;
+        }
+        return $this->ajaxJson($result);
+    }
+    //创建房宝支付查看订单
+    public function create_pay_order($data)
+    {
+        global $_W;
+        if ($data['note']) {
+            $data['note'] = "用户备注: " . $data['note'];
+        }
+
+        if (!$data['amount'] || $data['amount'] <= 0) {
+            throw new Exception("对不起，金额错误！", 1);
+        }
+        $seller_user = Users::get(['id' => $data['seller_user_id']]);
+        if (!$seller_user) {
+            throw new Exception("卖家不存在", 1);
+        }
+        if (!$data['source_type'] || !$data['source_id']) {
+            throw new Exception("来源信息为空", 1);
+        }
+        $order_insert = [];
+        $order_insert['id'] = $order_insert['trade_sn'] = create_sn();
+        $order_insert['out_trade_no'] = $order_insert['id'] . "@" . time();
+        $order_insert['buyer_user_id'] = $this->user['id'];
+        $order_insert['user_id'] = $this->user['id'];
+        $order_insert['seller_user_id'] = $data['seller_user_id'];
+        //
+        $order_insert['gateway'] = $gateway = 'balance';
+        //计算费用
+        $order_insert['amount'] = $data['amount'];
+        $order_insert['total_fee'] = $data['amount'];
+        $order_insert['express_fee'] = 0;
+        $order_insert['delivery'] = "";
+        //common info
+        $order_insert['address'] = "";
+        $order_insert['receiver'] = "";
+        $order_insert['mobile'] = empty($data['mobile']) ? '' : $data['mobile'];
+        $order_insert['create_time'] = date("Y-m-d H:i:s");
+        $order_insert['create_ip'] = $this->request->ip();
+        $order_insert['note'] = "房宝消费. " . $data['note'];
+        $order_insert['site_id'] = $_W['site']['id'];
+        $order_insert['month'] = date("m");
+        $order_insert['year'] = date('Y');
+        $order_insert['status'] = '已支付';
+        //支付模式公众号模式
+        $order_insert['pay_mode'] = 'WX_GZH';
+        $order_insert['unit_type'] = 1;
+        $order_insert['is_online'] = 1;
+        $order_insert['source_type'] = $data['source_type'];
+        $order_insert['source_id'] = $data['source_id'];
+
+        $order_insert = set_model('orders')->setDefaultValueByFields($order_insert);
+
+        $spend_data = [];
+        $spend_data['user_id'] = $order_insert['user_id'];
+        $spend_data['amount'] = $order_insert['total_fee'];
+        $spend_data['unit_type'] = 1;
+        $spend_data['pay_type'] = 1;
+        $spend_data['note'] = $order_insert['note'];
+
+        try {
+            $this->chg($spend_data);
+            $order = Orders::create($order_insert);
+            Orders::log_add($order['id'], $order_insert['buyer_user_id'], '创建订单');
+            $this->create_distribution_order($order_insert['seller_user_id'], $order['id'], $order_insert['total_fee']);
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+        if ($order) {
+            return $order['id'];
+        } else {
+            throw new Exception("订单创建失败！", 1);
+        }
+    }
+    public function create_distribution_order($seller_user_id, $order_id, $amount)
+    {
+        global $_W;
+        $user = Users::get($seller_user_id);
+        $user_id = $user['parent_id'];
+        $rest = 1;
+        while (!empty($user_id)) {
+            $user = Users::get($user_id);
+            if (!in_array($user['user_role_id'], [1,3,22,23])) {
+                break;
+            }
+            $user_role = UserRoles::get(['id'=>$user['user_role_id']]);
+
+            $distribution_order_insert = array();
+            $distribution_order_insert['order_id'] = $order_id;
+            $distribution_order_insert['user_id'] = $user_id;
+            $distribution_order_insert['amount'] = $amount;
+            $distribution_order_insert['total_fee'] = $amount * (float)$_W['site']['config']['trade']['balance_point_ratio'] * $user_role['distribution_rate'] / 100;
+            $distribution_order_insert['create_time'] = date('Y-m-d H:i:s', time());
+            $distribution_order_insert['note'] = '';
+
+            DistributionOrders::create($distribution_order_insert);
+            $rest = $rest - $user_role['distribution_rate'] / 100;
+            $user_id = $user['parent_id'];
+        }
+        $distribution_order_insert = array();
+        $distribution_order_insert['order_id'] = $order_id;
+        $distribution_order_insert['user_id'] = $seller_user_id;
+        $distribution_order_insert['amount'] = $amount;
+        $distribution_order_insert['total_fee'] = $amount * (float)$_W['site']['config']['trade']['balance_point_ratio'] * $rest;
+        $distribution_order_insert['create_time'] = date('Y-m-d H:i:s', time());
+        $distribution_order_insert['note'] = '';
+
+        DistributionOrders::create($distribution_order_insert);
+        return true;
     }
     public function amount_chg()
     {
@@ -62,13 +195,24 @@ class Fund extends AdminBase
             throw new Exception("用户不存在", 1);
         }
 
-        //1 消费;2 充值
-        if ($data['operate'] == 1) {
-            if (!Money::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
-                throw new Exception("余额不足", 1);
+        if ($data['unit_type'] == 1) {
+            //1 消费;2 充值
+            if ($data['operate'] == 1) {
+                if (!Money::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
+                    throw new Exception("余额不足", 1);
+                }
+            } else if ($data['operate'] == 2) {
+                Money::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
             }
-        } else if ($data['operate'] == 2) {
-            Money::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
+        }  elseif ($data['unit_type'] == 2) {
+            //1 消费;2 充值
+            if ($data['operate'] == 1) {
+                if (!Point::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
+                    throw new Exception("余额不足", 1);
+                }
+            } else if ($data['operate'] == 2) {
+                Point::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
+            }
         }
         return true;
     }

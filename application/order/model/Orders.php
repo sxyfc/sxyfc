@@ -3,6 +3,7 @@ namespace app\order\model;
 use app\common\model\Common;
 use app\common\model\Users;
 use app\common\model\WeixinMsgtpl;
+use app\order\model\OrdersLogs;
 use app\pay\payment\micropay\utils\WxPayCloseOrder;
 use app\pay\payment\micropay\utils\WxPayApi;
 use app\pay\payment\micropay\utils\WxPayConfig;
@@ -267,6 +268,15 @@ class Orders extends Common {
 
             $res = $this->save();
         }
+    }
+
+    public static function log_add($order_id, $user_id, $desc = '')
+    {
+        $insert['order_id'] = $order_id;
+        $insert['create_time'] = date('Y-m-d H:i:s', time());
+        $insert['description'] = $desc;
+        $insert['user_id'] = $user_id;
+        OrdersLogs::create($insert);
     }
 
 }

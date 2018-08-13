@@ -33,7 +33,7 @@ class Point
         $extra['operate'] = 1;
         if ($user) {
             $user['point'] = $user['point'] - abs($amount);
-            if ($user['balance']>= 0 && $user->save() ) {
+            if ($user['point']>= 0 && $user->save() ) {
                 self::log($user->id, -$amount, $pay_type, $note, $extra);
                 return true;
             } else {

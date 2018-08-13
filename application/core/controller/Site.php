@@ -63,7 +63,7 @@ class Site extends AdminBase
             }
 
             if ($res) {
-                $this->zbn_msg("操作成功");
+                $this->zbn_msg("操作成功", 1, 'true', 1000, "''", "'reload_page()'");
             }
         } else {
             if (!$_W['site']['id'] || !$_W['site']) {

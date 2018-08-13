@@ -497,4 +497,14 @@ class Base extends App
         ob_get_clean();
         die(json_encode($data));
     }
+    public function ajaxJson($data)
+    {
+        if ($data instanceof Exception) {
+            $data = array(
+                'result'   => 0 == $data->getCode() ? -1 : $data->getCode(),
+                'reason'   => $data->getMessage(),
+            );
+        }
+        return $data;
+    }
 }
