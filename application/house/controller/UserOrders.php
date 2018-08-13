@@ -92,28 +92,19 @@ class UserOrders extends HouseUserBase
         $base_info['user_id'] = $this->user_id;
         if ($type == 1) {//租房
             $model_name = 'house_rent_order';
-            $model_user = set_model("user_rent");
             $model = set_model($model_name);
             $base_info['rent_id'] = $id;
         } else if ($type == 2) {//二手房
             $model_name = "house_esf_order";
             $model = set_model($model_name);
-            $model_user = set_model("user_esf");
             $base_info['esf_id'] = $id;
         }
-        $res_user = $model_user->add_content($base_info);
-        if ($res_user['code'] != 1) {
-            $this->zbn_msg($res_user['msg'], 2);
-            return false;
-        }
-
         $base_info['order_id'] = $fb_order_id;
         $res = $model->add_content($base_info);
         if ($res['code'] != 1) {
             $this->zbn_msg($res['msg'], 2);
             return false;
         }
-        // 消费订单记录和分润处理
     }
 
     /**
