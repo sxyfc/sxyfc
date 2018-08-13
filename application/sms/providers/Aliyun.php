@@ -38,11 +38,10 @@ class Aliyun extends Providers
         $sms_params = array();
 
         // *** 需用户填写部分 ***
-
-        $accessKeyId = $this->config['app_key'];
-        $accessKeySecret = $this->config['app_secret'];
+        $accessKeyId = config('alidayu.app_key');
+        $accessKeySecret = config('alidayu.app_secret');
         $sms_params["PhoneNumbers"] = $target;
-        $sms_params["SignName"] = $this->config["signature"];
+        $sms_params["SignName"] = config('alidayu.signature');
 
         // fixme 必填: 短信模板Code，应严格按"模板CODE"填写, 请参考: https://dysms.console.aliyun.com/dysms.htm#/develop/template
         $sms_params["TemplateCode"] = "$tpl_id";
@@ -79,14 +78,13 @@ class Aliyun extends Providers
 
         if ($resp_sms->Message == "OK" && $resp_sms->Code == "OK") {
             $resp['code'] = 1;
-
             $resp['msg'] = "短信发送成功";
         } else {
             $resp['code'] = 0;
             $resp['msg'] = "短信发送失败" .  $resp_sms->Message;
             $resp['data'] = $resp_sms;
         }
-        return $resp;
 
+        return $resp;
     }
 }

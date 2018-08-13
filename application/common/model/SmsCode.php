@@ -13,6 +13,6 @@ namespace app\common\model;
 
 use think\Db;
 
-class Seo extends Common
+class SmsCode extends Common
 {
 }
