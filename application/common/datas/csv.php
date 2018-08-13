@@ -14,7 +14,7 @@ class csv
     //导出csv文件
     public function put_csv($list, $title)
     {
-        $file_name = "CSV" . date("mdHis", time()) . ".csv";
+        $file_name = date("Y-m-d", time()) . ".csv";
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename=' . $file_name);
         header('Cache-Control: max-age=0');
