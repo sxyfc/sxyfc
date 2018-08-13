@@ -12,7 +12,7 @@ use think\Log;
 class InfoSearch extends AdminBase
 {
     /*
-     * 房管列表
+     * 区域管理列表
      */
     public function area_manage_list()
     {
@@ -38,7 +38,7 @@ class InfoSearch extends AdminBase
     }
 
     /*
-     * 房管下辖房源管家
+     * 区域管理下辖房源管家
      */
     public function house_manage()
     {
@@ -64,6 +64,7 @@ class InfoSearch extends AdminBase
         return $this->view->fetch();
     }
 
+    //房管列表
     public function house_manage_list()
     {
         $where['user_role_id'] = 23;
