@@ -15,6 +15,7 @@ use app\common\model\Hits;
 use app\common\model\Models;
 use app\core\util\ContentTag;
 use think\Db;
+use think\Log;
 
 class Esf extends HouseBase
 {
@@ -23,16 +24,51 @@ class Esf extends HouseBase
     public function index()
     {
         global $_W;
-        $this->view->areas = ContentTag::model_tree('area', '', 'area_name');
 
+        $type = trim(input('param.type', ' ', 'htmlspecialchars'));
+        $data = trim(input('param.data', '', 'htmlspecialchars'));
 
-        $this->view->loupan_type_options = ContentTag::load_options("house_esf", 'loupan_type');
-        //$this->view->price_options = ContentTag::load_options("house_esf", 'price_qujian');
-        $this->view->tags_options = ContentTag::load_options("house_esf", 'tags');
-        $this->view->zhuangxiu_options = ContentTag::load_options("house_esf", 'zhuangxiu');
+        $order = 'update_at desc';
+        if ($type) {//增加查询选择条件，否则默认
+            if ($data) {
+                switch ($type) {
+                    case "huxing"://户型筛选
+                        $where['shi'] = $data;
+                        break;
+                    case "area"://区域筛选
+                        $where['area_id'] = $data;
+                        break;
+                    case "jiage"://低到高0、高到低1
+                        if ($data == 0) {
+                            $order = "price desc";
+                        } elseif ($data == 1) {
+                            $order = "price asc";
+                        }
+                        break;
+                    case "zhuangxiu"://1|毛胚\r\n2|简装\r\n3|精装\r\n4|豪装
+                        $where['zhuangxiu'] = $data;
+                        break;
+                    case "tese"://tags->1|满五年\r\n2|满两年\r\n3|
+                        //不满两年\r\n4|满五唯一\r\n5|随时看房\r\n6|
+                        //学区房\r\n7|新房源\r\n8|大产权\r\n9|小产权
+                        $where['tags'] = array('LIKE', '%' . $data . '%');
+                        break;
+                    case "leixing"://yongtu->1|商铺\r\n2|住宅\r\n3|商住两用\r\n4|厂房\r\n5|酒店公寓
+                        $where['yongtu'] = $data;
+                        break;
+                }
+            }
+        }
+        $model = set_model('house_esf');
+        $this->view->lists = $model->where($where)->order($order)->select()->toArray();
+
+        //设置筛选数据
+        $this->view->area_data = set_model('area')->field('id,area_name')->select()->toArray();
+
 
         return $this->view->fetch();
     }
+
 
     public function detail($id)
     {

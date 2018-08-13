@@ -51,6 +51,10 @@ class Area extends AdminBase
                 $base_info = input('post.data/a');//get the base info
             }
 
+            if (!isset($base_info['site_id'])) {
+                $base_info['site_id'] = 1;
+            }
+
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");

@@ -1239,6 +1239,8 @@ class Models extends Common
             }
         } catch (\Exception $e) {
             Log::error("TING_EXE");
+            Log::error($base . $this->toJson() . "");
+            Log::error($e->getMessage() . "");
             $info['code'] = 0;
             $info['msg'] = $e->getMessage();
             return $info;
