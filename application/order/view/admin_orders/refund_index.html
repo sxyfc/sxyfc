@@ -1,0 +1,123 @@
+{extend name="admin@public/content_frame" /}
+{block name="main"}
+<?php
+if (!isset($keyword)) {
+    $keyword = "";
+}
+?>
+<form class="layui-form form-inline" method="post" action="{:\think\\Request::instance()->url()}">
+    <table class="layui-table -group">
+        <tr>
+
+            <td class="input-group">
+
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            {:zlang('买家')}：
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="buyer_name" value="{$buyer_name}" type="text" placeholder="{:zlang('买家')}">
+                    </p>
+
+                </div>
+
+
+            </td>
+
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            交易流水号：
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="trade_sn" value="{$trade_sn}" type="text" placeholder="交易流水号">
+                    </p>
+
+                </div>
+            </td>
+
+            {foreach $filter_info.fields as $field}
+                <td class="input-group"><div class="layui-inline">    {$field.slug} :
+                <select name="{$field.field_name}"  class="layui-select" lay-ignore="">
+                    <option value="">{$field.slug}</option>
+                    {foreach $field.options as $option}
+                    <option value="{$option.id}" {if $field.selected==$option.id} selected {/if}  href="{$option.href}"> {$option.name}</option>
+                    {/foreach}
+                </select>
+            </div></td>
+            {/foreach}
+        <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+        </td></tr>
+    </table>
+</form>
+<div class="tableBox">
+    <table class="table table-bordered" style="">
+        <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+            <td>ID</td>
+            <td>交易流水</td>
+            <td>{:zlang('买家')}</td>
+            <td>{:zlang('订单类型')}</td>
+            <td>{:zlang('创建时间')}</td>
+            <td>{:zlang('金额')}</td>
+            <td>{:zlang('状态')}</td>
+
+            <td>{:zlang('卖家')}</td>
+            <td>{:zlang('operation')}</td>
+        </tr>
+        
+        {foreach $lists as $item}
+        <?php
+            $item['order_id'] = $item['id'];
+            $item['order_type_name'] = $product_dict[$item['source_type']];
+            $buyer = \app\common\model\Users::get(['id'=>$item['buyer_user_id']]);
+            $seller = \app\common\model\Users::get(['id'=>$item['seller_user_id']]);
+            $buyer['name'] = $buyer['nickname'] ? $buyer['user_name']. '('.$buyer['nickname'].')' : $buyer['user_name'];
+            if (!$seller) {
+                $seller['name'] = '';
+            } else {
+                $seller['name'] = $seller['nickname'] ? $seller['user_name']. '('.$seller['nickname'].')' : $seller['user_name'];
+            }
+        ?>
+        <tr>
+            <td>{$item.order_id}</td>
+            <td>{$item.trade_sn}</td>
+            <td>{$buyer.name}</td>
+            <td>{$item.order_type_name}
+            </td>
+            <td>{$item.create_time}</td>
+
+            <td>{$item.total_fee}</td>
+            <td>{$item.status}</td>
+
+            <td>{$seller.name}</td>
+            <td>
+                <?php
+                $mapping['order_id'] = $item['order_id'];
+                ?>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                {neq name="item.source_type" value="1"}
+                <?php
+                $mini = $menu['user_menu_mini'];
+                $btn_class = strpos($menu['user_menu_name'],"delete")=== false ?  'btn btn-default' : "btn btn-danger";
+                ?>
+                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$mini,$btn_class,'80%','90%' , $mapping)}
+                {/neq}
+                {/eq}
+                {/volist}
+            </td>
+        </tr>
+
+        {/foreach}
+
+    </table>
+
+</div>
+<div>
+    {:$lists->render()}
+</div>
+        {/block}
