@@ -10,109 +10,74 @@
 
 {block name="mhcms_module_js"}{/block}
 {block name="main"}
-<div class="dropdown">
-    <button class="mui-btn dropdown-toggle" type="button" id="dropdown_area"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        区域
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        {foreach $area_data as $ar}
-        <li><a href="/house/esf?type=area&data=$ar['id']">$ar['area_name']</a></li>
-        {/foreach}
-    </ul>
+<div>
+    <form method="get" action="/house/esf">
+        <select name="area">
+            <option value="">区域</option>
+            {foreach $area_data as $ar}
+            <option value="{$ar['id']}" {if $ar['id'] == $area} selected {/if}>{$ar['area_name']}</option>
+            {/foreach}
+        </select>
+        <select name="leixing">
+            <option value="">类型</option>
+            {foreach $select['leixing'] as $key=>$value}
+            <option value="{$key}" {if $key == $leixing} selected {/if}>{$value}</option>
+            {/foreach}
+        </select>
+
+        <select name="jiage">
+            <option value="">价格</option>
+            {foreach $select['jiage'] as $key=>$value}
+            <option value="{$key}" {if $key == $jiage} selected {/if}>{$value}</option>
+            {/foreach}
+        </select>
+
+        <select name="tese">
+            <option value="">特色</option>
+            {foreach $select['tese'] as $key=>$value}
+            <option value="{$key}" {if $key == $tese} selected {/if}>{$value}</option>
+            {/foreach}
+        </select>
+
+        <select name="zhuangxiu">
+            <option value="">装修</option>
+            {foreach $select['zhuangxiu'] as $key=>$value}
+            <option value="{$key}" {if $key == $zhuangxiu} selected {/if}>{$value}</option>
+            {/foreach}
+        </select>
+
+        <select name="huxing">
+            <option value="">户型</option>
+            {foreach $select['huxing'] as $key=>$value}
+            <option value="{$key}" {if $key == $huxing} selected {/if}>{$value}</option>
+            {/foreach}
+        </select>
+        <input type="submit" value="搜索">
+    </form>
 </div>
-<div class="dropdown">
-    <button class="mui-btn dropdown-toggle" type="button" id="dropdown_leixing"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        类型
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="/house/esf?type=leixing&data=1">商铺</a></li>
-        <li><a href="/house/esf?type=leixing&data=2">住宅</a></li>
-        <li><a href="/house/esf?type=leixing&data=3">商住两用</a></li>
-        <li><a href="/house/esf?type=leixing&data=4">厂房</a></li>
-        <li><a href="/house/esf?type=leixing&data=5">酒店公寓</a></li>
-    </ul>
-</div>
-<div class="dropdown">
-    <button class="mui-btn dropdown-toggle" type="button" id="dropdown_jiage"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        价格
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="/house/esf?type=jiage&data=0">价格从低到高</a></li>
-        <li><a href="/house/esf?type=jiage&data=1">价格从高到低</a></li>
-    </ul>
-</div>
-<div class="dropdown">
-    <button class="mui-btn dropdown-toggle" type="button" id="dropdown_tese"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        特色
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="/house/esf?type=tese&data=1">满五年</a></li>
-        <li><a href="/house/esf?type=tese&data=2">满两年</a></li>
-        <li><a href="/house/esf?type=tese&data=3">不满两年</a></li>
-        <li><a href="/house/esf?type=tese&data=4">满五唯一</a></li>
-        <li><a href="/house/esf?type=tese&data=5">随时看房</a></li>
-        <li><a href="/house/esf?type=tese&data=6">学区房</a></li>
-        <li><a href="/house/esf?type=tese&data=7">新房源</a></li>
-        <li><a href="/house/esf?type=tese&data=8">大产权</a></li>
-        <li><a href="/house/esf?type=tese&data=9">小产权</a></li>
-    </ul>
-</div>
-<div class="dropdown">
-    <button class="mui-btn dropdown-toggle" type="button" id="dropdown_zhuangxiu"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        装修
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="/house/esf?type=zhuangxiu&data=1">毛胚</a></li>
-        <li><a href="/house/esf?type=zhuangxiu&data=2">简装</a></li>
-        <li><a href="/house/esf?type=zhuangxiu&data=3">精装</a></li>
-        <li><a href="/house/esf?type=zhuangxiu&data=4">豪装</a></li>
-    </ul>
-</div>
-<div class="dropdown">
-    <button class="mui-btn dropdown-toggle" type="button" id="dropdown_huxing"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        户型
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-        <li><a href="/house/esf?type=huxing&data=0">0室</a></li>
-        <li><a href="/house/esf?type=huxing&data=1">1室</a></li>
-        <li><a href="/house/esf?type=huxing&data=2">2室</a></li>
-        <li><a href="/house/esf?type=huxing&data=3">3室</a></li>
-        <li><a href="/house/esf?type=huxing&data=4">4室</a></li>
-        <li><a href="/house/esf?type=huxing&data=5">5室</a></li>
-    </ul>
-</div>
-<div class="weui-panel__ft has-text-centered" style="display: none">
-    <a class=" button is-light is-mobile-loading is-loading">
-        <img src="/statics/images/logo.png" class="loading_icon">
-    </a>
+<div class="ui mhcms-panel" id="rent_esf">
+    <div class="ui  mhcms-panel-body">
+        <div class="ui mhcms-list unstackable items" v-show="show_esf">
+            {foreach $lists as $key=>$value}
+            <a href="/house/esf/detail/id/{$value['id']}.html" class="ui item mhcms-list-item ">
+                <div class=" image tiny ui"><img :data-src="{$value['url']}"></div>
+                <div class="content">
+                    <div class="header" style="font-size: 14px;">{$value['title']}</div>
+                    <div class="extra">
+                        {$value['size']}平方 / {$select['zhuangxiu'][$value['zhuangxiu']]} / 浏览：{$value['views']}
+                    </div>
+                    <div class="extra">
+                        <small class="has-text-gray">{$value['create_at']}</small>
+                        <span class="mhcms-list-price is-pulled-right"> ￥<strong>{$value['price']}</strong><small>万</small></span>
+                    </div>
+                </div>
+            </a>
+            {/foreach}
+        </div>
+    </div>
 </div>
 
-<div class="weui-loadmore weui-loadmore_line" id="no_data" style="display: none">
-    <span class="weui-loadmore__tips">暂无数据</span>
-</div>
-<input type="hidden" id="page" value="1">
-
-
-<script>
-    $(function () {
-        $('.dropdown-toggle').dropdown('toggle');
-
-    })
-</script>
 {/block}
-
 {block name="footer"}
 {include file="public/footer" /}
 {/block}

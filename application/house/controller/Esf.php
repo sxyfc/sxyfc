@@ -24,46 +24,69 @@ class Esf extends HouseBase
     public function index()
     {
         global $_W;
+        $select = array();
+        $select['leixing'] = array('商铺', '住宅', '商住两用', '厂房', '酒店公寓');
+        $select['jiage'] = array('价格从低到高', '价格从高到低');
+        $select['tese'] = array('满五年', '满两年', '不满两年', '满五唯一', '随时看房', '学区房', '新房源', '大产权', '小产权');
+        $select['zhuangxiu'] = array('毛胚', '简装', '精装', '豪装');
+        $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
 
-        $type = trim(input('param.type', ' ', 'htmlspecialchars'));
-        $data = trim(input('param.data', '', 'htmlspecialchars'));
+        $area = $_GET['area'];
+        $leixing = $_GET['leixing'];
+        $zhuangxiu = $_GET['zhuangxiu'];
+        $jiage = $_GET['jiage'];
+        $tese = $_GET['tese'];
+        $huxing = $_GET['huxing'];
 
-        $order = 'update_at desc';
-        if ($type) {//增加查询选择条件，否则默认
-            if ($data) {
-                switch ($type) {
-                    case "huxing"://户型筛选
-                        $where['shi'] = $data;
-                        break;
-                    case "area"://区域筛选
-                        $where['area_id'] = $data;
-                        break;
-                    case "jiage"://低到高0、高到低1
-                        if ($data == 0) {
-                            $order = "price desc";
-                        } elseif ($data == 1) {
-                            $order = "price asc";
-                        }
-                        break;
-                    case "zhuangxiu"://1|毛胚\r\n2|简装\r\n3|精装\r\n4|豪装
-                        $where['zhuangxiu'] = $data;
-                        break;
-                    case "tese"://tags->1|满五年\r\n2|满两年\r\n3|
-                        //不满两年\r\n4|满五唯一\r\n5|随时看房\r\n6|
-                        //学区房\r\n7|新房源\r\n8|大产权\r\n9|小产权
-                        $where['tags'] = array('LIKE', '%' . $data . '%');
-                        break;
-                    case "leixing"://yongtu->1|商铺\r\n2|住宅\r\n3|商住两用\r\n4|厂房\r\n5|酒店公寓
-                        $where['yongtu'] = $data;
-                        break;
-                }
-            }
+        if ($area != null) {
+            $where['mhcms_house_esf.area_id'] = $area;
+            $this->assign('area', $area);
         }
+        if ($leixing != null) {
+            $where['mhcms_house_esf.yongtu'] = $leixing + 1;
+            $this->assign('leixing', $leixing);
+        }
+        if ($zhuangxiu != null) {
+            $where['mhcms_house_esf.zhuangxiu'] = $zhuangxiu + 1;
+            $this->assign('zhuangxiu', $zhuangxiu);
+        }
+        if ($jiage != null) {
+            if ($jiage == 0) {
+                $order = "mhcms_house_esf.price desc,mhcms_house_esf.update_at desc";
+            } elseif ($jiage == 1) {
+                $order = "mhcms_house_esf.price asc,mhcms_house_esf.update_at desc";
+            }
+
+            $this->assign('jiage', $jiage);
+        } else {
+            $order = "mhcms_house_esf.update_at desc";
+        }
+        if ($tese != null) {
+            $tags = $tese + 1;
+            $where['mhcms_house_esf.tags'] = array('LIKE', '%' . $tags . '%');
+            $this->assign('tese', $tese);
+        }
+        if ($huxing != null) {
+            $where['mhcms_house_esf.shi'] = $huxing;
+            $this->assign('huxing', $huxing);
+        }
+
+//        case "huxing"://户型筛选
+//        case "jiage"://低到高0、高到低1
+//        case "zhuangxiu"://1|毛胚\r\n2|简装\r\n3|精装\r\n4|豪装
+//        case "tese"://tags->1|满五年\r\n2|满两年\r\n3|
+//            //不满两年\r\n4|满五唯一\r\n5|随时看房\r\n6|
+//            //学区房\r\n7|新房源\r\n8|大产权\r\n9|小产权
+//        case "leixing"://yongtu->1|商铺\r\n2|住宅\r\n3|商住两用\r\n4|厂房\r\n5|酒店公寓
+
+
         $model = set_model('house_esf');
-        $this->view->lists = $model->where($where)->order($order)->select()->toArray();
+        $this->view->lists = $model->join('mhcms_file','mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->select()->toArray();
 
         //设置筛选数据
-        $this->view->area_data = set_model('area')->field('id,area_name')->select()->toArray();
+        $area_data = set_model('area')->field('id,area_name')->select()->toArray();
+        $this->assign('area_data', $area_data);
+        $this->assign('select', $select);
 
 
         return $this->view->fetch();
