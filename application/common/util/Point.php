@@ -34,7 +34,7 @@ class Point
         if ($user) {
             $user['point'] = $user['point'] - abs($amount);
             if ($user['point']>= 0 && $user->save() ) {
-                self::log($user->id, -$amount, $pay_type, $note, $extra);
+                self::log($user, -$amount, $pay_type, $note, $extra);
                 return true;
             } else {
                 return false;
@@ -60,7 +60,7 @@ class Point
         if ($user) {
             $user['point'] = $user['point'] + abs($amount);
             if ($user->save()) {
-                self::log($user->id, $amount, $pay_type, $note, $extra);
+                self::log($user, $amount, $pay_type, $note, $extra);
                 return true;
             } else {
                 return false;
@@ -71,27 +71,31 @@ class Point
 
 
     /**日志
-     * @param $user_id
+     * @param $user
      * @param $amount
      * @param $pay_type
      * @param string $note
      * @param $extra
      */
-    public static function log($user_id, $amount, $pay_type, $note = "", $extra)
+    public static function log($user, $amount, $pay_type, $note = "", $extra)
     {
         global $_W;
         $payment_logs = new PaymentLogs();
         $insert = [
-            "user_id" => $user_id,
+            "user_id" => $user['id'],
             "total_fee" => $amount,
             "pay_type" => $pay_type,
             "note" => $note,
             "create_at" => date("Y-m-d H:i:s"),
             "site_id" => $_W['site']['id'],
+            "balance" => $user['point'],
         ];
 
         if (!empty($extra)) {
             $insert = array_merge($insert, $extra);
+        }
+        if (!isset($insert['order_id'])) {
+            $insert['order_id'] = 0;
         }
 
         $payment_logs->isUpdate(false)->save($insert);
