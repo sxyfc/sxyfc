@@ -41,19 +41,7 @@ class Index extends ModuleBase {
         $where = array();
         $where[$pk] = $sign;
         $result = set_model($model)->where($where)->find();
-        if (config('app_debug')) {
-            switch ($model) {
-                case 'orders':
-                    $this->order = Orders::get($where);
-                    $this->call_back();
-                    break;
-                
-                default:
-                    # code...
-                    break;
-            }
-        }
-        echo json_encode($result);
+        echo json_encode(['id'=>$result['id'], 'status'=>$result['status']]);
     }
 
     //演示专用技能
@@ -86,8 +74,6 @@ class Index extends ModuleBase {
         $this->view->to_url = url("member/wallet/index");
 
 
-
-
         //设置支付模式
         //todo mobile mode
         //JSAPI，NATIVE，APP
@@ -117,7 +103,6 @@ class Index extends ModuleBase {
             $order->save();
         }
 
-/*
         //②、统一下单
         $input = new WxPayUnifiedOrder();
 
@@ -125,7 +110,7 @@ class Index extends ModuleBase {
         $input->SetMch_id($_W['WxPayConfig']['mchid']);
         $input->SetBody($order['note'].'');
         $input->SetOut_trade_no($order['trade_sn']);
-        $input->SetTotal_fee($order['total_fee'] * 100);
+        $input->SetTotal_fee(round($order['amount'] * 100));
         $input->SetTime_start(date("YmdHis"));
         if(isset($order['sub_mch_id'])){
             $input->SetSubMchid($order['sub_mch_id']);
@@ -142,9 +127,6 @@ class Index extends ModuleBase {
         $input->SetAttach($id);//原样返还
         $result = $tools->GetPayUrl($input);
 
-*/
-        $result['return_code'] = 'SUCCESS';
-        $result['result_code'] = 'SUCCESS';
         if($result['return_code'] !="SUCCESS" || $result['result_code'] !="SUCCESS"){
             $order->trade_sn = create_sn();
             $order->save();

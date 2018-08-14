@@ -7,8 +7,20 @@
 
     <div class="row">
     <div class="page__bd page__bd_spacing column">
-        <h3 class="has-text-centered">我的余额</h3>
-        <h3 class="has-text-centered">{$user.balance}</h3>
+        <div class="columns is-mobile menu-box  has-text-centered">
+            <div class="column">
+                <a>
+                    <i class="iconfont icon-daikuan"></i>
+                    <span>{$_W['site']['config']['trade']['balance_text']}: {$user.balance}</span>
+                </a>
+            </div>
+            <div class="column">
+                <a>
+                    <i class="iconfont icon-jifen3"></i>
+                    <span>{$_W['site']['config']['trade']['point_text']}: {$user.point}</span>
+                </a>
+            </div>
+        </div>
         <a href="{:url('pay/deposit/do_deposit')}" class="weui-btn weui-btn_primary">在线充值</a>
         <a href="{:url('pay/fund/draw')}" class="weui-btn weui-btn_default">申请提现</a>
         <a href="{:url('pay/fund/bill_list')}" class="weui-btn weui-btn_default">资金明细</a>

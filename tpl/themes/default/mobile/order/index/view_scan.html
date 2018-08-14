@@ -6,11 +6,11 @@
 {/block}
 
 {block name="main"}
-<img class="img-responsive" style="width: 200px;margin:30px auto" src="{:url('service/api/str_to_qr' , ['str'=>urlencode($result['code_url'])])}">
+<img class="img-responsive" style="width: 200px;margin:30px auto" src="{:url('core/common_service/str_to_qr' , ['str'=>urlencode($result['code_url'])])}">
 
 
 <div class="text-info text-center" style="width: 80%;margin: auto;line-height: 35px">
-您好，缴费金额 {$order.total_fee}
+您好，缴费金额 {$order.amount}
 </div>
 <div class="text-info text-center" style="width: 80%;margin: auto;line-height: 35px">
 拿起手机打开微信扫一扫开始支付！

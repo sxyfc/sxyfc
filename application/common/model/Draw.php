@@ -12,6 +12,7 @@
 namespace app\common\model;
 
 use anerg\helper\Http;
+use app\pay\payment\micropay\utils\WxPayConfig;
 
 class Draw extends Common
 {
@@ -36,10 +37,12 @@ class Draw extends Common
         }
         test($fans);
 
+        $_W['WxPayConfig'] = WxPayConfig::get_config();
+
         $options = [
-            'cert_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'apiclient_cert.pem',
-            'key_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'apiclient_key.pem',
-            'ca_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'rootca.pem',
+            'cert_path' => $_W['WxPayConfig']['SSLCERT_PATH'],
+            'key_path' => $_W['WxPayConfig']['SSLKEY_PATH'],
+            // 'ca_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'rootca.pem',
         ];
         $url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers";
 
@@ -67,14 +70,17 @@ class Draw extends Common
 
     public function send_redbag()
     {
+        global $_W;
         $user = Users::get($this->user_id);
         if (!$user->weixin_id) {
             return false;
         }
+        $_W['WxPayConfig'] = WxPayConfig::get_config();
+        
         $options = [
-            'cert_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'apiclient_cert.pem',
-            'key_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'apiclient_key.pem',
-            'ca_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'rootca.pem',
+            'cert_path' => $_W['WxPayConfig']['SSLCERT_PATH'],
+            'key_path' => $_W['WxPayConfig']['SSLKEY_PATH'],
+            // 'ca_path' => APP_PATH . ".." . DS . "upload_file" . DS . 'micropay' . DS . 'rootca.pem',
         ];
         $url = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack";
         $data = [

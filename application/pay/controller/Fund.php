@@ -6,7 +6,7 @@ use app\common\controller\ModuleUserBase;
 use app\common\model\Draw;
 use app\common\model\PaymentLogs;
 use app\common\payment\micropay\utils\WxPayConfig;
-use app\common\util\Money;
+use app\common\util\Point;
 
 class Fund extends ModuleUserBase{
     public function deposit()
@@ -66,23 +66,28 @@ class Fund extends ModuleUserBase{
     public function draw(){
 
         global $_W;
+        $draw_amount = $this->user['point'] - $this->get_freeze_amount($this->user->id);
         if ($this->isPost()) {
             $insert = input('param.data/a');
             $insert['user_id'] = $this->user['id'];
             $insert['type'] = 1;
             $insert['status'] = 0;
+            $insert['from'] = 1;
             $insert['create_time'] = date("Y-m-d H:i:s" , SYS_TIME);
 
             if (is_numeric($insert['amount']) && $insert['amount'] > 0) {
+                if($insert['amount'] > $draw_amount){
+                    $this->zbn_msg("余额不足！");
+                }
                 if($insert['amount'] < 1.2){
                     $this->zbn_msg("申请失败 ， 系统最低提现金额为1.2元！");
                 }
                 $insert['create_time'] = date("Y-m-d H:i:s");
                 $insert['site_id'] = $_W['site']['id'];
-                if (Money::spend($this->user, $insert['amount'], 1, "余额提现申请")) {
-                    $insert['user_id'] = $this->user->id;
+                $insert = db('draw')->setDefaultValueByFields($insert);
+                if (Point::spend($this->user, $insert['amount'], 1, "余额提现申请")) {
                     Draw::create($insert);
-                    $this->zbn_msg("申请成功！");
+                    $this->zbn_msg("申请成功！", 1, 'true', 1000, "''", "'reload_page()'");
                 } else {
                     $this->zbn_msg("申请失败 ， 可能是您的余额不足！");
                 }
@@ -91,7 +96,20 @@ class Fund extends ModuleUserBase{
             }
 
         } else {
+            $this->view->amount = $draw_amount;
             return $this->view->fetch();
         }
+    }
+
+    public function get_freeze_amount($user_id)
+    {
+        
+       $data = db('')->query("SELECT SUM(a.total_fee) total_fee
+  FROM ".config("database.prefix")."distribution_orders a INNER JOIN ".config("database.prefix")."orders b
+       ON a.order_id = b.id
+ WHERE b.`status` IN ('已支付', '已完成')
+   AND a.create_time >= date_add(now(), interval -1 day)
+   AND a.user_id = $user_id");
+        return $data ? $data[0]['total_fee'] : 0;
     }
 }
