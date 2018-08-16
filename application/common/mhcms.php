@@ -257,7 +257,6 @@ function nb_url($querys, $domain = "", $options = [])
     if (isset($_W['sites_domain']) && $_W['sites_domain']) {
         $domain = $_W['sites_domain']['domain'];
     } else {
-
         if (!isset($sites[$domain])) {
             if (is_numeric($domain)) {
                 $sites[$domain] = Sites::get(['id' => $domain]);
@@ -265,7 +264,11 @@ function nb_url($querys, $domain = "", $options = [])
                 $sites[$domain] = Sites::get(['site_domain' => $domain]);
             }
         }
-        $domain = $sites[$domain]['site_domain'] . $_W['root']['root_domain'];
+        if (config('app_debug')) {
+            $domain = (empty($sites[$domain]['site_domain']) ? 'www.' : $sites[$domain]['site_domain']) . $_W['root']['root_domain'];
+        } else {
+            $domain = $sites[$domain]['site_domain'] . $_W['root']['root_domain'];
+        }
 
     }
 
