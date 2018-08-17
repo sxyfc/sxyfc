@@ -588,10 +588,6 @@ class Passport extends ModuleBase
                 return;
             }
         }
-
-        if ($uuid) {
-            Cache::set("mhcms_wechat_login:" . $uuid, $user['id']);
-        }
     }
 
     /**

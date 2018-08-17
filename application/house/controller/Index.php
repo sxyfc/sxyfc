@@ -18,7 +18,7 @@ use app\sso\controller\Passport;
 class Index extends HouseBase {
 
     public function index(){
-        if (is_weixin() && !$this->user) {
+        if (is_weixin()) {
             $passport = new Passport();
             $passport->wx_register();
         }
