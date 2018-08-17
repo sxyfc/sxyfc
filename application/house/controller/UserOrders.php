@@ -10,9 +10,9 @@
 // +----------------------------------------------------------------------
 namespace app\house\controller;
 
-use app\common\controller\HomeBase;
-use app\core\util\ContentTag;
-use app\core\util\MhcmsMenu;
+
+use app\admin\controller\Fund;
+use app\common\util\forms\input;
 
 class UserOrders extends HouseUserBase
 {
@@ -67,8 +67,10 @@ class UserOrders extends HouseUserBase
      * @param $id 房源id
      * @param $type 类型  1-租房 2-二手房
      */
-    public function pay_for_see($id, $type)
+    public function pay_for_see()
     {
+        $id = trim(input('param.id'));
+        $type = trim(input('param.type'));
         /**
          * 1.检查房宝余额
          * 2.余额不足，提示余额不足
@@ -85,9 +87,6 @@ class UserOrders extends HouseUserBase
             return false;
         }
 
-        //房宝消费订单号获取
-        $fb_order_id = "";
-
         $model_name = "";
         $base_info['user_id'] = $this->user_id;
         if ($type == 1) {//租房
@@ -99,20 +98,57 @@ class UserOrders extends HouseUserBase
             $model = set_model($model_name);
             $base_info['esf_id'] = $id;
         }
+        $fund = new Fund();
+        $info = $model->field('id')->find();
+        $data['seller_user_id'] = $info['user_id'];
+        $data['amount'] = $fb_value;
+        $data['source_type'] = 2;
+        $data['source_id'] = $this->user_id;
+        $data['note'] = '支付查看消费';
+        $result_json = $fund->fangbao_pay($data);
+        //房宝消费订单号获取，生产真正的消费记录
+        $fb_order_id = "";
+        if ($result_json['result'] == 0) {
+            $fb_order_id = $result_json['data']['order_id'];
+        } else {
+            $this->zbn_msg($result_json['reason'], 2);
+            return false;
+        }
+
         $base_info['order_id'] = $fb_order_id;
         $res = $model->add_content($base_info);
         if ($res['code'] != 1) {
             $this->zbn_msg($res['msg'], 2);
             return false;
+        }else{
+            return $this->view-$this->fetch();
         }
     }
 
     /**
-     * 房宝退款
-     * @param $order_id 消费订单id
+     * 房宝退款申请
+     * @param $order_id 消费权限订单id
      */
-    public function refund_fangbao($order_id)
+    public function refund_fangbao($id, $type)
     {
+        $where['user_id'] = $this->user_id;
+        if ($type == 1) {//租房
+            $model_name = 'house_rent_order';
+            $model = set_model($model_name);
+            $where['rent_id'] = $id;
+            $m = $model->where($where)->find();
+        } else if ($type == 2) {//二手房
+            $model_name = "house_esf_order";
+            $model = set_model($model_name);
+            $where['esf_id'] = $id;
+            $m = $model->where($where)->find();
+        }
+        $order_id = $m['order_id'];
+        if (isset($order_id)) {
+
+        } else {
+            return false;
+        }
 
     }
 
