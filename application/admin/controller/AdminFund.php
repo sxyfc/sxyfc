@@ -192,7 +192,7 @@ class AdminFund extends AdminBase
                 $bag_config['withdraw_id'] = $draw['id'];
                 $bag_config['send_name'] = $_W['site']['config']['system_name'];
 
-                $bag_config['amount'] = $draw['amount'];
+                $bag_config['amount'] = $draw['amount'] * (1 - $_W['site']['config']['trade']['withdraw_rate']/100);
                 $bag_config['act_name'] = "红包奖励";
 
                 $send_res = MhcmsRegbag::send_redbag($user , $bag_config);
