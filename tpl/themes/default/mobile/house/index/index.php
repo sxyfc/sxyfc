@@ -49,7 +49,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
         <div class="blender">
 
             <div class="swiper-container swiper-container-horizontal new-better-swiper-container"
-                 id="index_ad" style="overflow: hidden; max-height: 200px;">
+                 id="index_ad" style="overflow: hidden; max-height: 300px;">
                 <div class="swiper-wrapper">
                     {foreach $ads as $ad}
                     <?php
@@ -58,9 +58,9 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                     }
                     ?>
                     <div class="swiper-slide  swiper-slide-prev">
-                        <div><a href='{$ad[' link']}' ><img :data-src='"{$url}"'
+                        <div><a href='{$ad[' link']}' ><img src={$url}
                                                             class='ui swiper-lazy image'
-                                                            style='width: 100%'/></a></div>
+                                                            style='width: 100%;max-width: 100%; display: block;'/></a></div>
                     </div>
                     {/foreach}
                 </div><!-- Add Pagination -->

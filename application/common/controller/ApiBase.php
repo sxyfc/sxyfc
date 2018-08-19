@@ -54,7 +54,7 @@ class ApiBase extends App
         if (count($domain_data) != 3) {
             die();
         }
-        $this->request_root_host = $domain_data[1] . "." . $domain_data[2];
+        $this->request_root_host = $domain_data[1]  . $domain_data[2];
         $this->root = $_W['root'] = Roots::where(['root_domain' => $this->request_root_host])->find();
 
 
