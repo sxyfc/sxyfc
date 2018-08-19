@@ -281,9 +281,9 @@ return [
     // +----------------------------------------------------------------------
 
     'alidayu' => [
-        'app_key' => 'LTAInfsDmyugUib7',
-        'app_secret' => 'r92e1BSuj2xpgWzT3uSoPztcptc3vz',
-        'signature' => '阿里云短信测试专用',
-        'template_code' => 'SMS_142075372'
+        'app_key' => 'LTAI9DnD8iEnUr1D',
+        'app_secret' => 'ACGLioMVdTVkZAmhGKdPEASHj6disT',
+        'signature' => '随心用房产网',
+        'template_code' => 'SMS_142190011'
     ]
 ];
