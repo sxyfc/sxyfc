@@ -41,6 +41,19 @@ class Index extends ModuleBase {
         $where = array();
         $where[$pk] = $sign;
         $result = set_model($model)->where($where)->find();
+        if ((time() - strtotime($result['create_time']))%30 > 24 && $result['status'] == '待支付') {
+            $test = $this->Queryorder('' ,$result['trade_sn']);
+            if($test['trade_state'] == 'SUCCESS'){
+                $data = [];
+                $result['status'] = $data['status'] = '已支付';
+                $data['pay_time'] = date('Y-m-d H:i:s', time());
+                set_model($model)->where($where)->save($data);
+                $buyer = Users::get(['id' => $result['buyer_user_id']]);
+                if($buyer){
+                    Money::deposit($buyer, $result['total_fee'], 2 , $result['note'], ['order_id' => $result['id']]);
+                }
+            }
+        }
         echo json_encode(['id'=>$result['id'], 'status'=>$result['status']]);
     }
 

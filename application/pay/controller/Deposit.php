@@ -28,6 +28,9 @@ class Deposit extends ModuleUserBase
             if (!$data['amount'] || $data['amount'] <= 0) {
                 $this->zbn_msg("对不起，金额错误！");
             }
+            if ($data['amount'] < $_W['site']['config']['trade']['minimum_charge']) {
+                $this->zbn_msg("对不起，最低充值金额为".$_W['site']['config']['trade']['minimum_charge']."！");
+            }
             $order_insert = [];
             $order_insert['id'] = $order_insert['trade_sn'] = create_sn();
             $order_insert['out_trade_no'] = $order_insert['id'] . "@" . time();
@@ -37,7 +40,7 @@ class Deposit extends ModuleUserBase
             $order_insert['gateway'] = $gateway = $data['gateway'];
             //计算费用
             $order_insert['amount'] = $data['amount'];
-            $order_insert['total_fee'] = $data['amount'] * empty($_W['site']['config']['trade']['rmb_balance_ratio']) ? 1 : $_W['site']['config']['trade']['rmb_balance_ratio'];
+            $order_insert['total_fee'] = $data['amount'] * $_W['site']['config']['trade']['rmb_balance_ratio'] * (1 - $_W['site']['config']['trade']['rmb_balance_ratio']/100);
             $order_insert['express_fee'] = 0;
             $order_insert['delivery'] = "";
             //common info
