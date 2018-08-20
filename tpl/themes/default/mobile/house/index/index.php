@@ -243,53 +243,53 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
     {if(count($rec_loupan['items']))}
     <div class="is-clearfix bk10"></div>
 
-    <div class="ui mhcms-panel">
-
-        <div class="ui  mhcms-panel-header">
-            推荐楼盘
-
-            <a class="is-pulled-right" href="{:url('house/loupan/index')}">
-                <small class="has-text-grey-light">查看更多楼盘 <i class="icon angle right"></i></small>
-            </a>
-        </div>
-        <div class="ui  mhcms-panel-body">
-
-            <div class="columns is-multiline is-mobile">
-                <?php
-
-                $i = 0;
-                ?>
-                {foreach $rec_loupan['items'] as $item}
-                <?php
-                $i++;
-                $_item = \app\common\model\Models::get_item($item['id'], "house_loupan");
-                $url = $_item['thumb']['0']['url'];
-                $_W['module_config']['default_thumb'] = '/upload_file/default.jpg';
-                ?>
-                <a href="{:url('house/loupan/detail' , ['id'=>$item['id'] ])}"
-                   class="column is-half {if $i%2 !== 0} even {else} odd {/if}"
-                   style="padding:10px 20px">
-
-                    <div class=" image tiny ui"><img src="{$url|default=$_W['module_config']['default_thumb']}">
-                    </div>
-
-                    <div class="content">
-                        <div style="line-height: 1.9em;font-size: 14px;"
-                             class="header mhcms-item-header">{$item.loupan_name}
-                        </div>
-                        <div class="meta" style="font-size: 10px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;">
-                            <div style="color: #0D9BF2;line-height: 1.5em">{$item.area_id} <span class="has-text-danger is-pulled-right" style="font-size: 14px">均价{$item['price']} 元/平方</span></div>
-                        </div>
-                    </div>
-
-                </a>
-                {/foreach}
-            </div>
-        </div>
-    </div>
+<!--    <div class="ui mhcms-panel">-->
+<!---->
+<!--        <div class="ui  mhcms-panel-header">-->
+<!--            推荐楼盘-->
+<!---->
+<!--            <a class="is-pulled-right" href="{:url('house/loupan/index')}">-->
+<!--                <small class="has-text-grey-light">查看更多楼盘 <i class="icon angle right"></i></small>-->
+<!--            </a>-->
+<!--        </div>-->
+<!--        <div class="ui  mhcms-panel-body">-->
+<!---->
+<!--            <div class="columns is-multiline is-mobile">-->
+<!--                --><?php
+//
+//                $i = 0;
+//                ?>
+<!--                {foreach $rec_loupan['items'] as $item}-->
+<!--                --><?php
+//                $i++;
+//                $_item = \app\common\model\Models::get_item($item['id'], "house_loupan");
+//                $url = $_item['thumb']['0']['url'];
+//                $_W['module_config']['default_thumb'] = '/upload_file/default.jpg';
+//                ?>
+<!--                <a href="{:url('house/loupan/detail' , ['id'=>$item['id'] ])}"-->
+<!--                   class="column is-half {if $i%2 !== 0} even {else} odd {/if}"-->
+<!--                   style="padding:10px 20px">-->
+<!---->
+<!--                    <div class=" image tiny ui"><img src="{$url|default=$_W['module_config']['default_thumb']}">-->
+<!--                    </div>-->
+<!---->
+<!--                    <div class="content">-->
+<!--                        <div style="line-height: 1.9em;font-size: 14px;"-->
+<!--                             class="header mhcms-item-header">{$item.loupan_name}-->
+<!--                        </div>-->
+<!--                        <div class="meta" style="font-size: 10px;-->
+<!--    white-space: nowrap;-->
+<!--    text-overflow: ellipsis;-->
+<!--    overflow: hidden;">-->
+<!--                            <div style="color: #0D9BF2;line-height: 1.5em">{$item.area_id} <span class="has-text-danger is-pulled-right" style="font-size: 14px">均价{$item['price']} 元/平方</span></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!---->
+<!--                </a>-->
+<!--                {/foreach}-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
     {/if}
     <div class="bk10"></div>
 
