@@ -58,9 +58,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                     }
                     ?>
                     <div class="swiper-slide  swiper-slide-prev">
-                        <div><a href='{$ad[' link']}' ><img src={$url}
-                                                            class='ui swiper-lazy image'
-                                                            style='width: 100%;max-width: 100%; display: block;'/></a></div>
+                        <div><a href='{$ad[' link']}' ><img src={$url} class='ui swiper-lazy image' style='width: 100%;max-width: 100%; display: block;'/></a></div>
                     </div>
                     {/foreach}
                 </div><!-- Add Pagination -->
@@ -266,13 +264,13 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                 $i++;
                 $_item = \app\common\model\Models::get_item($item['id'], "house_loupan");
                 $url = $_item['thumb']['0']['url'];
+                $_W['module_config']['default_thumb'] = '/upload_file/default.jpg';
                 ?>
                 <a href="{:url('house/loupan/detail' , ['id'=>$item['id'] ])}"
                    class="column is-half {if $i%2 !== 0} even {else} odd {/if}"
                    style="padding:10px 20px">
 
-                    <div class=" image tiny ui"><img
-                                :data-src="'{$url|default=$_W['module_config']['default_thumb']}'">
+                    <div class=" image tiny ui"><img src="{$url|default=$_W['module_config']['default_thumb']}">
                     </div>
 
                     <div class="content">
@@ -283,9 +281,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;">
-                            <div style="color: #0D9BF2;line-height: 1.5em">{$item.area_id} <span
-                                        class="has-text-danger is-pulled-right"
-                                        style="font-size: 14px">均价{$item['price']} 元/平方</span></div>
+                            <div style="color: #0D9BF2;line-height: 1.5em">{$item.area_id} <span class="has-text-danger is-pulled-right" style="font-size: 14px">均价{$item['price']} 元/平方</span></div>
                         </div>
                     </div>
 
@@ -322,7 +318,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                 <a href="{:url('house/esf/detail' , ['id'=>$item['id']])}"
                    class="ui item mhcms-list-item ">
                     {if $url}
-                    <div class=" image tiny ui"><img :data-src="'{$url}'"></div>
+                    <div class=" image tiny ui"><img src="{$url}"></div>
                     {/if}
                     <div class="content">
                         <div class="header" style="    font-size: 14px;"> {if
@@ -363,7 +359,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                 <a href="{:url('house/rent/detail' , ['id'=>$item['id']])}"
                    class="ui item mhcms-list-item ">
                     {if $url}
-                    <div class=" image tiny ui"><img :data-src="'{$url}'"></div>
+                    <div class=" image tiny ui"><img src="{$url}"></div>
                     {/if}
                     <div class="content">
                         <div class="header" style="    font-size: 14px;"> {if
@@ -446,8 +442,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                 ?>
                 <a class="ui item mhcms-list-item " data-mha style="    font-size: 14px;"
                    href="{:url('house/content/detail' , ['id'=>$item['id'] , 'cate_id'=>$item['old_data']['cate_id']])}">
-                    <div data-mha class=" image tiny ui"><img
-                                :data-src="'{$url|default=$_W['module_config']['default_thumb']}'">
+                    <div data-mha class=" image tiny ui"><img src="{$url|default=$_W['module_config']['default_thumb']}">
                     </div>
                     <div class="content">
                         <div class="header">{$item.title}</div>

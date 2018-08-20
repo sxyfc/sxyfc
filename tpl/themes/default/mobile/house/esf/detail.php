@@ -135,6 +135,13 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="column is-full">
+                    <div class="columns option is-mobile is-marginless">
+                        <div class="column is-narrow">房源描述 :</div>
+                        <div class="column">{$detail['description']}</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
