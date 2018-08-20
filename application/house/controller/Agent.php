@@ -71,6 +71,7 @@ class Agent extends HouseUserBase
 
             Db::startTrans();
             $base_info = input('post.data/a');
+            $spend_top = true;
             foreach ($_W['module_config']['agent_reg_set'] as $k => $set) {
                 if ($k == $_GPC['set_index']) {
                     //top expire top_expire
@@ -107,7 +108,6 @@ class Agent extends HouseUserBase
             } else {
                 $res = $this->house_agent->model_info->edit_content($base_info, $where);
             }
-
 
             $url = url('house/index/index');
             if ($res['code'] == 1 && $spend_top) {
