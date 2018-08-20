@@ -1054,7 +1054,6 @@ class Models extends Common
         $model_info = $base_model->model_info;
         $this->node_fields = $this->setting['fields'];
         $info['code'] = 1;
-
         /*
          * TODO：if the content need check
          * */
@@ -1063,11 +1062,9 @@ class Models extends Common
          * */
         if (self::field_exits('user_id', $this->table_name)) {
             if (defined("IN_MHCMS_ADMIN")) {
-                /** * user_id
-                 * if (!isset($base['user_id'])  && isset($this->user_id)) {
-                 * $base['user_id'] = $this->user_id;
-                 * }
-                 */
+                if (!isset($base['user_id']) && isset($this->user_id)) {
+                    $base['user_id'] = $this->user_id;
+                }
             } else {
                 /**
                  * if the user is empty ,assign it to the current user
@@ -1075,10 +1072,6 @@ class Models extends Common
                 if (!isset($base['user_id'])) {
                     $base['user_id'] = $_W['user']['id'];
                 }
-                /*
-                 * :检查用户本node type是否已经超过允许的数量
-                 * */
-
                 if ($base['user_id']) {
                     if ($this->amount_per_user != 0) {
                         /**
@@ -1193,8 +1186,6 @@ class Models extends Common
         //临时解决views not default value 问题
         if ((!isset($base['views']) || empty($base['views'])) && self::field_exits('views', $this->table_name)) {
             $base['views'] = 0;
-        } else {
-            $base['views'] = 0;
         }
 
         if ((!isset($base['site_id']) || empty($base['site_id'])) && self::field_exits('site_id', $this->table_name)) {
@@ -1225,9 +1216,9 @@ class Models extends Common
                 $ret['item'] = $base;
                 $ret['data'] = $base;
 
-                if ($this->is_index) {
-                    MhcmsIndex::create($ret['item']['id'], $this->id);
-                }
+//                if ($this->is_index) {
+//                    MhcmsIndex::create($ret['item']['id'], $this->id);
+//                }
 
                 return $ret;
             } else {
@@ -1236,8 +1227,6 @@ class Models extends Common
                 return $info;
             }
         } catch (\Exception $e) {
-            Log::error("TING_EXE");
-//            Log::error("TING_EXE" . $base . $this->toJson() . "");
             Log::error("TING_EXE" . $e->getMessage() . "--" . $e->getTraceAsString());
             $info['code'] = 0;
             $info['msg'] = $e->getMessage();
