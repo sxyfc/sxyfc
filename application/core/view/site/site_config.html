@@ -103,6 +103,13 @@
                 </div>
 
                 <div class="layui-form-item">
+                    <label class="layui-form-label">{$_W['site']['config']['trade']['point_text']}兑换人民币比例</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="trade[point_rmb_ratio]" required value="{$config.trade.point_rmb_ratio|default="1"}"  placeholder="{$_W['site']['config']['trade']['point_text']}兑换人民币比例" autocomplete="off" class="layui-input" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
                     <label class="layui-form-label">最低充值金额</label>
                     <div class="layui-input-block">
                         <input type="number" name="trade[minimum_charge]"  value="{$config.trade.minimum_charge|default="0.01"}"  placeholder="最低充值金额" autocomplete="off" class="layui-input" step="0.01" min="0">
