@@ -13,6 +13,7 @@ namespace app\house\controller;
 use app\common\controller\AdminBase;
 use app\common\model\Models;
 use app\common\model\Users;
+use app\common\util\forms\date;
 use app\common\util\forms\select;
 use app\common\util\Tree2;
 use think\Db;
@@ -164,6 +165,7 @@ class AdminEsf extends AdminBase
             } else {
                 //自动获取data分组数据
                 $base_info = input('post.data/a');//get the base info
+                if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
             }
 
 
