@@ -50,6 +50,11 @@ class Esf extends HouseBase
             $where['mhcms_house_esf.zhuangxiu'] = $zhuangxiu + 1;
             $this->assign('zhuangxiu', $zhuangxiu);
         }
+        if ($tese != null) {
+            $tags = $tese + 1;
+            $where['mhcms_house_esf.tags'] = array('LIKE', '%' . $tags . '%');
+            $this->assign('tese', $tese);
+        }
         if ($jiage != null) {
             if ($jiage == 0) {
                 $order = "mhcms_house_esf.price desc,mhcms_house_esf.update_at desc";
@@ -60,11 +65,6 @@ class Esf extends HouseBase
             $this->assign('jiage', $jiage);
         } else {
             $order = "mhcms_house_esf.update_at desc";
-        }
-        if ($tese != null) {
-            $tags = $tese + 1;
-            $where['mhcms_house_esf.tags'] = array('LIKE', '%' . $tags . '%');
-            $this->assign('tese', $tese);
         }
         if ($huxing != null) {
             $where['mhcms_house_esf.shi'] = $huxing;
@@ -81,7 +81,11 @@ class Esf extends HouseBase
 
 
         $model = set_model('house_esf');
-        $this->view->lists = $model->join('mhcms_file','mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->select()->toArray();
+        if ($huxing != null || $tese != null || $zhuangxiu != null || $leixing != null || $area != null) {
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->select()->toArray();
+        } else {
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->limit(30)->select()->toArray();
+        }
 
         //设置筛选数据
         $area_data = set_model('area')->field('id,area_name')->select()->toArray();
