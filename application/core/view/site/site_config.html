@@ -91,27 +91,37 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">人民币兑换{$_W['site']['config']['trade']['balance_text']}比例</label>
                     <div class="layui-input-block">
-                        <input type="text" name="trade[rmb_balance_ratio]" required value="{$config.trade.rmb_balance_ratio|default="10"}"  placeholder="人民币兑换{$_W['site']['config']['trade']['balance_text']}比例" autocomplete="off" class="layui-input">
+                        <input type="number" name="trade[rmb_balance_ratio]" required value="{$config.trade.rmb_balance_ratio|default="10"}"  placeholder="人民币兑换{$_W['site']['config']['trade']['balance_text']}比例" autocomplete="off" class="layui-input" step="0.01" min="0">
                     </div>
                 </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">{$_W['site']['config']['trade']['balance_text']}兑换{$_W['site']['config']['trade']['point_text']}比例</label>
                     <div class="layui-input-block">
-                        <input type="text" name="trade[balance_point_ratio]" required value="{$config.trade.balance_point_ratio|default="1"}"  placeholder="{$_W['site']['config']['trade']['balance_text']}兑换{$_W['site']['config']['trade']['point_text']}比例" autocomplete="off" class="layui-input">
+                        <input type="number" name="trade[balance_point_ratio]" required value="{$config.trade.balance_point_ratio|default="1"}"  placeholder="{$_W['site']['config']['trade']['balance_text']}兑换{$_W['site']['config']['trade']['point_text']}比例" autocomplete="off" class="layui-input" step="0.01" min="0">
                     </div>
                 </div>
-
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">最低充值金额</label>
                     <div class="layui-input-block">
-                        <input type="text" name="trade[minimum_charge]"  value="{$config.trade.minimum_charge|default=""}"  placeholder="最低充值金额" autocomplete="off" class="layui-input">
+                        <input type="number" name="trade[minimum_charge]"  value="{$config.trade.minimum_charge|default="0.01"}"  placeholder="最低充值金额" autocomplete="off" class="layui-input" step="0.01" min="0">
                     </div>
                 </div>
 
+                <div class="layui-form-item">
+                    <label class="layui-form-label">充值服务费比例(%)</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="trade[fund_rate]"  value="{$config.trade.fund_rate|default="0.1"}"  placeholder="充值服务费比例" autocomplete="off" class="layui-input" step="0.01" min="0">
+                    </div>
+                </div>
 
-
+                <div class="layui-form-item">
+                    <label class="layui-form-label">提现服务费比例(%)</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="trade[withdraw_rate]"  value="{$config.trade.withdraw_rate|default="0.1"}"  placeholder="提现服务费比例" autocomplete="off" class="layui-input" step="0.01" min="0">
+                    </div>
+                </div>
 
                 <div class="layui-form-item">
                     <label class="layui-form-label">点击系统基数</label>

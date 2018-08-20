@@ -460,6 +460,136 @@ class Passport extends ModuleBase
 
     }
 
+    public function wx_register($uuid = 0)
+    {
+        global $_W, $_GPC;
+        
+        $site_id = $_GPC['site_id'] ? $_GPC['site_id'] : $_W['site']['id'];//input('param.site_id', 0);
+
+        if (is_weixin()) {
+            if (!$_W['account']) {
+                return;
+            }
+
+            $wechat = MhcmsWechatEngine::create($_W['account']);
+            $fans_info = $wechat->oauth_user_info_login();
+        } else {
+            return;
+        }
+
+        $where['openid'] = $fans_info['openid'];
+        $_fan = $_W['wechat_fans_model']->where($where)->find();
+
+        $new_fan = [];
+        $new_fan['openid'] = $fans_info['openid'];
+        $new_fan['avatar'] = $fans_info['headimgurl'];
+        $new_fan['nickname'] = $fans_info['nickname'];            
+        $new_fan['subscribe'] = (int)$fans_info['subscribe'];
+        $new_fan['province'] = $fans_info['province'];
+        $new_fan['city'] = $fans_info['city'];
+        $new_fan['gender'] = $fans_info['sex'];
+        $new_fan['country'] = $fans_info['country'];
+        $new_fan['follow_time'] = date("Y-m-d H:i:s", $fans_info['subscribe_time']);
+        $new_fan['site_id'] = $site_id;
+
+        //test($new_fan);
+        //创建粉丝信息
+        if (empty($new_fan['openid'])) {
+            return;
+        }
+        if (!$_fan) {
+            if ($new_fan['openid']) {
+                $new_fan = $_W['wechat_fans_model']->setDefaultValueByFields($new_fan, ['id']);
+                $_W['wechat_fans_model']->insert($new_fan);
+            }
+
+            $_fan = $new_fan;
+        }
+
+        if ($_fan && !$_fan['nickname']) {
+            $_W['wechat_fans_model']->where(['openid' => $_fan['openid']])->update($new_fan);
+        }
+
+        if ($_fan['user_id']) {
+            $user = Users::get(['id' => $_fan['user_id']]);
+        }
+        //先处理 unionid
+        //union 处理失败 处理openid
+        if (!$user) {
+            //todo process unionid
+            if ($fans_info['unionid']) {
+                $union_where = [];
+                $union_where['wechat_unionid'] = $fans_info['unionid'];
+                // try to find the union user
+                if ($user = Users::get($union_where)) {
+                    $new_fan['user_id'] = $user['id'];
+                    $_W['wechat_fans_model']->where(['openid' => $_fan['openid']])->update($new_fan);
+                }
+            }
+        }
+        // test($fans_info);
+        if ($user) {
+            if ($fans_info['unionid'] && !$user['wechat_unionid']) {
+                $user->wechat_unionid = $fans_info['unionid'];
+            }
+            if (empty($user->avatar) && $fans_info['headimgurl']) {
+                $user->avatar = $fans_info['headimgurl'];
+            }
+            if (empty($user->nickname) && $fans_info['nickname']) {
+                $user->nickname = $fans_info['nickname'];
+            }
+            $user->save();
+            $user->log_user_in();
+        } else {
+            //todo 创建用户账号
+            $user = new Users();
+            $user_data['user_name'] = $_W['openid'] = $_fan['openid'];
+            Cookie::set("openid_" . $this->site['id'], $_W['openid']);
+            $user_data['site_id'] = $site_id;
+            $user_data['user_crypt'] = random(6);
+            switch ((int)$fans_info['sex']) {
+                case 1:
+                    $user_data['sex'] = '男';
+                    break;
+                case 2:
+                    $user_data['sex'] = '女';
+                    break;
+                default:
+                    $user_data['sex'] = '保密';
+                    break;
+            }
+
+            $user_data['avatar'] = $fans_info['headimgurl'];
+            $user_data['nickname'] = $fans_info['nickname'];
+
+            $user_data['pass'] = "NOTSET"; //crypt_pass($user_data['password'], $user_data['user_crypt']);
+
+            //默认用户状态
+            $user_data['status'] = 99;
+            //默认用户组
+            $user_data['user_role_id'] = 4;
+            $user_data['created'] = date("Y-m-d H:i:s");
+            if ($fans_info['unionid']) {
+                $user_data['wechat_unionid'] = $fans_info['unionid'];
+            }
+            $user_data = $user->setDefaultValueByFields($user_data, ['id', 'last_update']);
+            //不存在用户
+            if ($res = $user->allowField(true)->validate(true)->save($user_data)) {
+                //注册成功以后 绑定
+                $connect['user_id'] = $user['id'];
+                $_W['wechat_fans_model']->where(['openid' => $fans_info['openid']])->update($connect);
+                $user->log_user_in();
+                $from_uid = $_W['refer'];
+                if ($from_uid) {
+                    // send data to
+                    MhcmsDistribution::make_down_line($user['id'], $from_uid);
+                }
+            } else {
+                return;
+            }
+        }
+    }
+
     /**
      *
      */
@@ -502,22 +632,22 @@ class Passport extends ModuleBase
             return $this->view->fetch();
         }
 
-
         $where['openid'] = $fans_info['openid'];
         $_fan = $_W['wechat_fans_model']->where($where)->find();
 
         $new_fan = [];
         $new_fan['openid'] = $fans_info['openid'];
-        if ($fans_info['country']) {
+        // if ($fans_info['country']) {
             $new_fan['avatar'] = $fans_info['headimgurl'];
-            $new_fan['nickname'] = $fans_info['nickname'];
+            $new_fan['nickname'] = $fans_info['nickname'];            
             $new_fan['subscribe'] = (int)$fans_info['subscribe'];
             $new_fan['province'] = $fans_info['province'];
             $new_fan['city'] = $fans_info['city'];
             $new_fan['gender'] = $fans_info['sex'];
             $new_fan['country'] = $fans_info['country'];
             $new_fan['follow_time'] = date("Y-m-d H:i:s", $fans_info['subscribe_time']);
-        }
+            $new_fan['site_id'] = $site_id;
+        // }
 
         //test($new_fan);
         //创建粉丝信息
@@ -527,6 +657,7 @@ class Passport extends ModuleBase
         }
         if (!$_fan) {
             if ($new_fan['openid']) {
+                $new_fan = $_W['wechat_fans_model']->setDefaultValueByFields($new_fan, ['id']);
                 $_W['wechat_fans_model']->insert($new_fan);
             }
 
@@ -576,6 +707,17 @@ class Passport extends ModuleBase
             Cookie::set("openid_" . $this->site['id'], $_W['openid']);
             $user_data['site_id'] = $site_id;
             $user_data['user_crypt'] = random(6);
+            switch ((int)$fans_info['sex']) {
+                case 1:
+                    $user_data['sex'] = '男';
+                    break;
+                case 2:
+                    $user_data['sex'] = '女';
+                    break;
+                default:
+                    $user_data['sex'] = '保密';
+                    break;
+            }
 
             $user_data['avatar'] = $fans_info['headimgurl'];
             $user_data['nickname'] = $fans_info['nickname'];
@@ -590,6 +732,7 @@ class Passport extends ModuleBase
             if ($fans_info['unionid']) {
                 $user_data['wechat_unionid'] = $fans_info['unionid'];
             }
+            $user_data = $user->setDefaultValueByFields($user_data, ['id', 'last_update']);
             //不存在用户
             if ($res = $user->allowField(true)->validate(true)->save($user_data)) {
                 //注册成功以后 绑定
@@ -716,6 +859,7 @@ class Passport extends ModuleBase
 
 
         if (!$_fan && $new_fan['openid']) {
+            $new_fan = $_W['wechat_fans_model']->setDefaultValueByFields($new_fan, ['id']);
             $_W['wechat_fans_model']->insert($new_fan);
             $_fan = $new_fan;
         }

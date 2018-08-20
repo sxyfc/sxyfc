@@ -62,7 +62,8 @@ if (!isset($keyword)) {
             <td>{:zlang('买家')}</td>
             <td>{:zlang('订单类型')}</td>
             <td>{:zlang('创建时间')}</td>
-            <td>{:zlang('金额')}</td>
+            <td>{:zlang('实际金额')}</td>
+            <td>{:zlang('到账金额')}</td>
             <td>{:zlang('状态')}</td>
 
             <td>{:zlang('卖家')}</td>
@@ -86,10 +87,9 @@ if (!isset($keyword)) {
             <td>{$item.order_id}</td>
             <td>{$item.trade_sn}</td>
             <td>{$buyer.name}</td>
-            <td>{$item.order_type_name}
-            </td>
+            <td>{$item.order_type_name}</td>
             <td>{$item.create_time}</td>
-
+            <td>{$item.amount}</td>
             <td>{$item.total_fee}</td>
             <td>{$item.status}</td>
 

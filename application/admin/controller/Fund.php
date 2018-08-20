@@ -21,6 +21,7 @@ use app\common\util\Money;
 use app\common\util\Point;
 use app\order\model\Orders;
 use think\Exception;
+use think\Log;
 
 class Fund extends AdminBase
 {
@@ -115,7 +116,7 @@ class Fund extends AdminBase
             $this->chg($spend_data);
             $order = Orders::create($order_insert);
             Orders::log_add($order['id'], $order_insert['buyer_user_id'], '创建订单');
-            $this->create_distribution_order($order_insert['seller_user_id'], $order['id'], $order_insert['total_fee']);
+            $this->create_distribution_orders($order_insert['seller_user_id'], $order['id'], $order_insert['total_fee']);
         } catch (Exception $e) {
             throw $e;
         }
@@ -126,11 +127,10 @@ class Fund extends AdminBase
             throw new Exception("订单创建失败！", 1);
         }
     }
-    public function create_distribution_order($seller_user_id, $order_id, $amount)
+    public function create_distribution_orders($seller_user_id, $order_id, $amount)
     {
-        global $_W;
-        $user = Users::get($seller_user_id);
-        $user_id = $user['parent_id'];
+        $seller_user = Users::get($seller_user_id);
+        $user_id = $seller_user['parent_id'];
         $rest = 1;
         while (!empty($user_id)) {
             $user = Users::get($user_id);
@@ -138,29 +138,32 @@ class Fund extends AdminBase
                 break;
             }
             $user_role = UserRoles::get(['id'=>$user['user_role_id']]);
-
-            $distribution_order_insert = array();
-            $distribution_order_insert['order_id'] = $order_id;
-            $distribution_order_insert['user_id'] = $user_id;
-            $distribution_order_insert['amount'] = $amount;
-            $distribution_order_insert['total_fee'] = $amount * (float)$_W['site']['config']['trade']['balance_point_ratio'] * $user_role['distribution_rate'] / 100;
-            $distribution_order_insert['create_time'] = date('Y-m-d H:i:s', time());
-            $distribution_order_insert['note'] = '';
-
-            DistributionOrders::create($distribution_order_insert);
+            
+            $this->create_distribution_order($user, $order_id, $amount, $user_role['distribution_rate'] / 100);
             $rest = $rest - $user_role['distribution_rate'] / 100;
             $user_id = $user['parent_id'];
         }
+        $this->create_distribution_order($seller_user, $order_id, $amount, $rest);
+        return true;
+    }
+    public function create_distribution_order(Users $user, $user_id, $order_id, $amount, $rest)
+    {
+        global $_W;
         $distribution_order_insert = array();
         $distribution_order_insert['order_id'] = $order_id;
-        $distribution_order_insert['user_id'] = $seller_user_id;
+        $distribution_order_insert['user_id'] = $user['id'];
         $distribution_order_insert['amount'] = $amount;
         $distribution_order_insert['total_fee'] = $amount * (float)$_W['site']['config']['trade']['balance_point_ratio'] * $rest;
         $distribution_order_insert['create_time'] = date('Y-m-d H:i:s', time());
         $distribution_order_insert['note'] = '';
 
-        DistributionOrders::create($distribution_order_insert);
-        return true;
+        if (DistributionOrders::create($distribution_order_insert)) {
+            if (!Point::deposit($user, $distribution_order_insert['total_fee'], 3, '订单分润')) {
+                Log::write("分润失败！订单号：".$order_id.",user_id:".$distribution_order_insert['user_id'].',金额：'.$distribution_order_insert['total_fee']);
+            }
+        } else {
+            Log::write("分润订单创建失败！订单号：".$order_id.",user_id:".$distribution_order_insert['user_id'].',金额：'.$distribution_order_insert['total_fee']);
+        }
     }
     public function amount_chg()
     {

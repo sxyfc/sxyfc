@@ -1055,7 +1055,6 @@ class Models extends Common
         $this->node_fields = $this->setting['fields'];
         $info['code'] = 1;
 
-        Log::error("TING_1");
         /*
          * TODO：if the content need check
          * */
@@ -1126,7 +1125,6 @@ class Models extends Common
 
             //检测安全过滤
             if ($bad_words) {
-                Log::error("TING_2");
                 foreach ($bad_words as $bad_word) {
 
                     if ($base[$k] && strpos($base[$k], $bad_word) !== false) {
@@ -1239,8 +1237,8 @@ class Models extends Common
             }
         } catch (\Exception $e) {
             Log::error("TING_EXE");
-            Log::error($base . $this->toJson() . "");
-            Log::error($e->getMessage() . "");
+//            Log::error("TING_EXE" . $base . $this->toJson() . "");
+            Log::error("TING_EXE" . $e->getMessage() . "--" . $e->getTraceAsString());
             $info['code'] = 0;
             $info['msg'] = $e->getMessage();
             return $info;

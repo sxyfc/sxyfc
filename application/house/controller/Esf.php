@@ -122,13 +122,15 @@ class Esf extends HouseBase
         } else {
             $show_power = false;
         }
-        $this->assign("show_power", $show_power);
 
         //设置支付查看交易结果
         $pay_result = false;
+        //查询对应表，通过esf_id和user_id
         $this->assign("pay_result", $pay_result);
+        $this->assign("show_power", $show_power);
         return $this->view->fetch();
     }
+
 
     /**
      * 二手房一键导入

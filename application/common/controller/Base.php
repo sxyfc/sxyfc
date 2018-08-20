@@ -314,7 +314,7 @@ class Base extends App
             die();
         }
 
-        $request_root_host = $domain_data[1] . "." . $domain_data[2];
+        $request_root_host = $domain_data[1]  . $domain_data[2];
         $root = $_W['root'] = Roots::where(['root_domain' => $request_root_host])->find();
         return $root;
     }
