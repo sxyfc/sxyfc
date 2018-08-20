@@ -149,9 +149,22 @@ class UserContent extends HouseUserBase
             //todo check check_repeat
 
             $base_info = input('post.data/a');//get the base info
+            if (is_array($base_info['shi'])) {
+                $base_info['shi'] = reset($base_info['shi']);
+            }
+            if (is_array($base_info['ting'])) {
+                $base_info['ting'] = reset($base_info['ting']);
+            }
+            if (is_array($base_info['chu'])) {
+                $base_info['chu'] = reset($base_info['chu']);
+            }
+            if (is_array($base_info['wei'])) {
+                $base_info['wei'] = reset($base_info['wei']);
+            }
+            $base_info['update_id'] = empty($base_info['update_id']) ? $this->user['id'] : $base_info['update_id'];
 
             $test_where = [];
-            $test_where['shi'] = $base_info['shi'];
+            $test_where['address'] = $base_info['address'];
             $test_where['mobile'] = $base_info['mobile'];
             $test = $model->where($test_where)->find();
 

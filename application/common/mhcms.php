@@ -265,7 +265,7 @@ function nb_url($querys, $domain = "", $options = [])
             }
         }
         if (config('app_debug')) {
-            $domain = (empty($sites[$domain]['site_domain']) ? 'www.' : $sites[$domain]['site_domain']) . $_W['root']['root_domain'];
+            $domain = empty($sites[$domain]['site_domain']) ? 'www' : $sites[$domain]['site_domain'];
         } else {
             $domain = $sites[$domain]['site_domain'];
         }
