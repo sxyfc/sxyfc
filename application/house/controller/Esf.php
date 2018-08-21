@@ -83,9 +83,9 @@ class Esf extends HouseBase
 
         $model = set_model('house_esf');
         if ($huxing != null || $tese != null || $zhuangxiu != null || $leixing != null || $area != null) {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->select()->toArray();
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->paginate();
         } else {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->limit(30)->select()->toArray();
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->paginate();
         }
 
         //设置筛选数据

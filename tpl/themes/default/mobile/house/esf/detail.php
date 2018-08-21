@@ -36,7 +36,7 @@
 
                 <div class="column">
                     <div class="text">户型</div>
-                    <div class="em">{$detail['shi']}</div>
+                    <div class="em">{$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫</div>
                 </div>
 
                 <div class="column">

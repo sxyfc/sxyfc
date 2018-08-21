@@ -325,7 +325,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                             {/if} {$item.title}
                         </div>
                         <div class="extra">
-                            {$item.size}平方 / {$item.shi} / {$item.direction}
+                            {$item.size}平方 / {$item.direction}
 
                         </div>
                         <div class="extra">
@@ -366,7 +366,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                             {/if} {$item.title}
                         </div>
                         <div class="extra">
-                            {$item.size}平方 / {$item.shi} / {$item.direction}
+                            {$item.size}平方 / {$item.direction}
 
                         </div>
                         <div class="extra">
