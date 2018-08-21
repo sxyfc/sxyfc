@@ -140,7 +140,7 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
                             <?php
                             $_icon = render_file_id($nav['image']);
                             ?>
-                            <div class="is-one-fifth  column">
+                            <div class="is-one-fifth  column" style="width: 33%;">
                                 <a {$nav.property} class="nav_item" href="{$nav.url}">
                                     {if $nav['image']}
                                     <i>
@@ -296,10 +296,8 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
     {if !$_W['module_config']['close_esf'] || !$_W['module_config']['close_rent']}
     <div class="ui mhcms-panel" id="rent_esf">
         <div class="ui  mhcms-panel-header weui-flex has-text-centered">
-            <div class="weui-flex__item" @click="show_esf=true"
-                 v-bind:class="{ active:show_esf==true }"><span>最新二手房源</span></div>
-            <div class="weui-flex__item" @click="show_esf=false"
-                 v-bind:class="{ active:show_esf==false }"><span>最新出租房源</span></div>
+            <div class="weui-navbar__item" @click="show_esf=true" v-bind:class="{ active:show_esf==true }"><span>最新二手房源</span></div>
+            <div class="weui-navbar__item" @click="show_esf=false" v-bind:class="{ active:show_esf==false }"><span>最新出租房源</span></div>
         </div>
 
         <div class="ui  mhcms-panel-body">

@@ -25,10 +25,10 @@ class Esf extends HouseBase
     {
         global $_W;
         $select = array();
-        $select['leixing'] = array('商铺', '住宅', '商住两用', '厂房', '酒店公寓');
-        $select['jiage'] = array('价格从低到高', '价格从高到低');
-        $select['tese'] = array('满五年', '满两年', '不满两年', '满五唯一', '随时看房', '学区房', '新房源', '大产权', '小产权');
-        $select['zhuangxiu'] = array('毛胚', '简装', '精装', '豪装');
+        $select['leixing'] = array('类型','商铺', '住宅', '商住两用', '厂房', '酒店公寓');
+        $select['jiage'] = array('价格','价格从低到高', '价格从高到低');
+        $select['tese'] = array('特色','满五年', '满两年', '不满两年', '满五唯一', '随时看房', '学区房', '新房源', '大产权', '小产权');
+        $select['zhuangxiu'] = array('装修','毛胚', '简装', '精装', '豪装');
         $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
 
         $area = $_GET['area'];
@@ -42,31 +42,32 @@ class Esf extends HouseBase
             $where['mhcms_house_esf.area_id'] = $area;
             $this->assign('area', $area);
         }
-        if ($leixing != null) {
-            $where['mhcms_house_esf.yongtu'] = $leixing + 1;
+
+        if (!empty($leixing)) {
+            $where['mhcms_house_esf.yongtu'] = $leixing;
             $this->assign('leixing', $leixing);
         }
-        if ($zhuangxiu != null) {
-            $where['mhcms_house_esf.zhuangxiu'] = $zhuangxiu + 1;
+        if (!empty($zhuangxiu)) {
+            $where['mhcms_house_esf.zhuangxiu'] = $zhuangxiu;
             $this->assign('zhuangxiu', $zhuangxiu);
         }
-        if ($tese != null) {
-            $tags = $tese + 1;
+        if (!empty($tese)) {
+            $tags = $tese;
             $where['mhcms_house_esf.tags'] = array('LIKE', '%' . $tags . '%');
             $this->assign('tese', $tese);
         }
-        if ($jiage != null) {
-            if ($jiage == 0) {
-                $order = "mhcms_house_esf.price desc,mhcms_house_esf.update_at desc";
-            } elseif ($jiage == 1) {
+        if (!empty($jiage)) {
+            if ($jiage == 1) {
                 $order = "mhcms_house_esf.price asc,mhcms_house_esf.update_at desc";
+            } elseif ($jiage == 2) {
+                $order = "mhcms_house_esf.price desc,mhcms_house_esf.update_at desc";
             }
 
             $this->assign('jiage', $jiage);
         } else {
             $order = "mhcms_house_esf.update_at desc";
         }
-        if ($huxing != null) {
+        if (!empty($huxing)) {
             $where['mhcms_house_esf.shi'] = $huxing;
             $this->assign('huxing', $huxing);
         }
