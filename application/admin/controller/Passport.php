@@ -41,9 +41,11 @@ class Passport extends Base
             if (!captcha_check($code)) {
                 // $this->zbn_msg("verify code, error", 2, '', 1000, "", "\"reset_code('#code')\"");
             }
-            // $where = ['user_name' => $data['admin_user_name']];
-            // $current_admin = Users::get($where);
-            $current_admin = set_model('users')->where(['user_name' => $data['admin_user_name']])->whereOr(['mobile' => $data['admin_user_name']])->find();
+            $where = ['user_name' => $data['admin_user_name']];
+            $current_admin = Users::get($where);
+            if (!$current_admin) {
+                $current_admin = Users::get(['mobile' => $data['admin_user_name']]);
+            }
 
             if ($current_admin['id'] != 1) {
 
