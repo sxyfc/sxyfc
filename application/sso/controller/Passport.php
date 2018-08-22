@@ -352,8 +352,9 @@ class Passport extends ModuleBase
             if (!captcha_check($code)) {
                 //    $this->zbn_msg("verify code, error", 2, '', 1000, "", "\"reset_code('#code')\"");
             }
-            $where = ['user_name' => $data['user_name'], 'is_admin' => 0];
-            $current_user = Users::get($where);
+            // $where = ['user_name' => $data['user_name'], 'is_admin' => 0];
+            // $current_user = Users::get($where);
+            $current_user = set_model('users')->where(['user_name' => $data['user_name']])->whereOr(['mobile' => $data['user_name']])->find();
 
             if ($current_user) {
                 //获取角色信息
