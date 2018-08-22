@@ -53,6 +53,10 @@ class AdminEsf extends AdminBase
             $where['user_id'] = $user_model['id'];
         }
 
+        if (!$this->super_power) {
+            $where['user_id'] = $this->user['id'];
+        }
+
         $content_model_id = $this->house_esf;
         $model = set_model($content_model_id);
         /** @var Models $model_info */
@@ -81,7 +85,7 @@ class AdminEsf extends AdminBase
                 $base_info = input('post.data/a');//get the base info
             }
             $base_info['loupan_id'] = $loupan_id;
-
+            $base_info['user_id'] = $this->user['id'];
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");

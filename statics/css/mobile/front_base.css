@@ -1088,7 +1088,7 @@ toast
     content: ' ';
     height: 200px;
     width: 200%;
-    border-radius: 0 0 45% 45%;
+    /*border-radius: 0 0 45% 45%;*/
     overflow: hidden;
 }
 

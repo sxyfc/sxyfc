@@ -118,7 +118,7 @@ class Esf extends HouseBase
         $user_role_id = $this->user['user_role_id'];
         if ($user_role_id == 2 || $user_role_id == 4 || $user_role_id == 5) {
             $show_power = false;
-        } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 33) {
+        } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 23) {
             $show_power = true;
         } else {
             $show_power = false;

@@ -28,6 +28,9 @@ class AdminRent extends AdminBase
         $model_info = $model->model_info;
         $where = [];
         $where['site_id'] = $_W['site']['id'];
+        if (!$this->super_power) {
+            $where['user_id'] = $this->user['id'];
+        }
 
         $loupan_name = trim(input('param.loupan_name'));
         if ($loupan_name) {
@@ -70,6 +73,7 @@ class AdminRent extends AdminBase
                 $base_info = input('post.data/a');//get the base info
                 if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
             }
+            $base_info['user_id'] = $this->user['id'];
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");

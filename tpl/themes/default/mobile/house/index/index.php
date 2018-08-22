@@ -6,6 +6,9 @@ if (ROUTE_C == "index" && ROUTE_A == "index" && module_exist('sites')) {
 }
 
 $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id($_W['global_config']['data']['logo']) : "/statics/images/logo.png";
+
+$agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+$is_ipad = (strpos($agent, 'ipad')) ? true : false;
 ?>
 
 <div class="mh_header columns is-mobile is-marginless">
@@ -45,11 +48,16 @@ $logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id
     $ads = render_ad("手机版房产首页");
     ?>
     {if $ads['has_ads']}
-    <div class="slider_wraper" style="  background: #fff;">
-        <div class="blender">
+        {if $is_ipad}
+            <div class="slider_wraper" style="background: #fff; height:382px">
+            <div class="blender" style="height:382px">
+        {else}
+            <div class="slider_wraper" style="background: #fff; ">
+            <div class="blender">
+        {/if}
 
             <div class="swiper-container swiper-container-horizontal new-better-swiper-container"
-                 id="index_ad" style="overflow: hidden; max-height: 300px;">
+                 id="index_ad" style="overflow: hidden; max-height: 382px;">
                 <div class="swiper-wrapper">
                     {foreach $ads as $ad}
                     <?php
