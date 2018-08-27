@@ -62,6 +62,9 @@ class AdminRent extends AdminBase
     {
         global $_W, $_GPC;
         $model = set_model($this->house_rent);
+
+        // 新增租房、二手房源，同县城、小区、联系方式、地址 不可重复添加
+
         /** @var Models $model_info */
         $model_info = $model->model_info;
         if ($this->isPost()) {
@@ -72,6 +75,17 @@ class AdminRent extends AdminBase
                 //自动获取data分组数据
                 $base_info = input('post.data/a');//get the base info
                 if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
+                $where['mobile'] = $base_info['mobile'];
+                $where['address'] = $base_info['address'];
+                $where['area_id'] = $base_info['area_id'];
+                $where['site_id'] = $_W['site']['id'];
+                $where['title'] = $base_info['title'];
+                $find_data=set_model($this->house_rent);
+                $find_data = $find_data->where($where)->find();
+//                Log::error("where==" . json_encode($where)."====".$model_info);
+                if ($find_data) {
+                    return $this->zbn_msg("不可添加重复房源", 2);
+                }
             }
             $base_info['user_id'] = $this->user['id'];
             $res = $model_info->add_content($base_info);

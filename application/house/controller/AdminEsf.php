@@ -17,6 +17,7 @@ use app\common\util\forms\date;
 use app\common\util\forms\select;
 use app\common\util\Tree2;
 use think\Db;
+use think\Log;
 
 class AdminEsf extends AdminBase
 {
@@ -74,6 +75,7 @@ class AdminEsf extends AdminBase
     {
         global $_W, $_GPC;
         $model = set_model($this->house_esf);
+
         /** @var Models $model_info */
         $model_info = $model->model_info;
         if ($this->isPost()) {
@@ -83,12 +85,25 @@ class AdminEsf extends AdminBase
             } else {
                 //自动获取data分组数据
                 $base_info = input('post.data/a');//get the base info
+                $where['mobile'] = $base_info['mobile'];
+                $where['address'] = $base_info['address'];
+                $where['area_id'] = $base_info['area_id'];
+                $where['site_id'] = $_W['site']['id'];
+                $where['title'] = $base_info['title'];
+                $find_data=set_model($this->house_esf);
+                $find_data = $find_data->where($where)->find();
+//                Log::error("where==" . json_encode($where)."====".$model_info);
+                if ($find_data) {
+                    return $this->zbn_msg("不可添加重复房源", 2);
+                }
             }
+            if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
+
             $base_info['loupan_id'] = $loupan_id;
             $base_info['user_id'] = $this->user['id'];
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
+                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'close_page()'");
             } else {
                 return $this->zbn_msg($res['msg'], 2);
             }
@@ -119,7 +134,7 @@ class AdminEsf extends AdminBase
                 $base_info = input('post.data/a');//get the base info
             }
 
-
+            if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
@@ -149,7 +164,8 @@ class AdminEsf extends AdminBase
             $model_info::delete_item($id, $this->house_esf);
         }
 
-        return ['code' => 1, 'msg' => 'ok'];
+//        return ['code' => 1, 'msg' => 'ok'];
+        return $this->zbn_msg('ok', 1, 'true', 1000, "''", "window.location.reload()");
     }
 
     public function record($id)
