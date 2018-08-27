@@ -301,7 +301,8 @@ $is_ipad = (strpos($agent, 'ipad')) ? true : false;
     {/if}
     <div class="bk10"></div>
 
-    {if !$_W['module_config']['close_esf'] || !$_W['module_config']['close_rent']}
+<!--    {if !$_W['module_config']['close_esf'] || !$_W['module_config']['close_rent']}-->
+                {if !true}
     <div class="ui mhcms-panel" id="rent_esf">
         <div class="ui  mhcms-panel-header weui-flex has-text-centered">
             <div class="weui-navbar__item" @click="show_esf=true" v-bind:class="{ active:show_esf==true }"><span>最新二手房源</span></div>
