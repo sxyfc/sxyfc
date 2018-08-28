@@ -12,8 +12,10 @@ namespace app\house\controller;
 
 use app\common\controller\AdminBase;
 use app\common\model\Models;
+use app\common\model\Users;
 use app\common\util\Tree2;
 use think\Db;
+use think\Log;
 
 class AdminAgent extends AdminBase
 {
@@ -68,7 +70,8 @@ class AdminAgent extends AdminBase
         }
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         global $_W, $_GPC;
         $model = set_model($this->house_agent);
         /** @var Models $model_info */
@@ -102,7 +105,8 @@ class AdminAgent extends AdminBase
         }
     }
 
-    public function status($id){
+    public function status($id)
+    {
         global $_W, $_GPC;
         $model = set_model($this->house_agent);
         /** @var Models $model_info */
@@ -111,25 +115,31 @@ class AdminAgent extends AdminBase
         $where['site_id'] = $_W['site']['id'];
         $detail = $model->where($where)->find();
 
-        if($detail['status'] == 1){
+        if ($detail['status'] == 1) {
             $update_data = [];
             $update_data['status'] = 99;
             $model->where($where)->update($update_data);
+            $user_model = set_model("users");
+            $user_update = [];
+            $user_update['user_role_id'] = 24;
+            $user_model->where(['id' => $detail['user_id']])->update($user_update);
+            $this->delete($id);
         }
 
-        if($detail['status'] == 99){
+        if ($detail['status'] == 99) {
             $update_data = [];
             $update_data['status'] = 1;
             $model->where($where)->update($update_data);
         }
 
-        $res = $update_data['status'] == 99 ?  "通过成功成功":"取消审核成功";
+        $res = $update_data['status'] == 99 ? "通过成功" : "取消成功";
         $ret['code'] = 1;
         $ret['msg'] = $res;
         return $ret;
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         global $_W, $_GPC;
         $model = set_model($this->house_agent);
         /** @var Models $model_info */
@@ -137,7 +147,7 @@ class AdminAgent extends AdminBase
         $where['id'] = $id;
         $where['site_id'] = $_W['site']['id'];
         $detail = $model->where($where)->find();
-        if($detail){
+        if ($detail) {
             $detail = $model->where($where)->delete();
         }
         $ret['code'] = 1;
