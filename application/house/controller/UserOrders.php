@@ -107,7 +107,7 @@ class UserOrders extends HouseUserBase
         $data['note'] = '支付查看消费';
         $result_json = $fund->fangbao_pay($data);
         //房宝消费订单号获取，生产真正的消费记录
-        $fb_order_id = "";
+     
         if ($result_json['result'] == 0) {
             $fb_order_id = $result_json['data']['order_id'];
         } else {
