@@ -144,6 +144,7 @@
                 </div>
             </div>
         </div>
+        <div class="ui mhcms-item"> 户型图  <img src="{$detail['huxing_link']}" class="image ui" style="max-height: 350px;margin: auto"></div>
     </div>
     <?php
     $agent = \app\common\model\Models::get_item_by(['user_id' => $detail['user_id']], 'house_agent');

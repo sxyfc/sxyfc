@@ -25,10 +25,10 @@ class Esf extends HouseBase
     {
         global $_W;
         $select = array();
-        $select['leixing'] = array('类型','商铺', '住宅', '商住两用', '厂房', '酒店公寓');
-        $select['jiage'] = array('价格','价格从低到高', '价格从高到低');
-        $select['tese'] = array('特色','满五年', '满两年', '不满两年', '满五唯一', '随时看房', '学区房', '新房源', '大产权', '小产权');
-        $select['zhuangxiu'] = array('装修','毛胚', '简装', '精装', '豪装');
+        $select['leixing'] = array('类型', '商铺', '住宅', '商住两用', '厂房', '酒店公寓');
+        $select['jiage'] = array('价格', '价格从低到高', '价格从高到低');
+        $select['tese'] = array('特色', '满五年', '满两年', '不满两年', '满五唯一', '随时看房', '学区房', '新房源', '大产权', '小产权');
+        $select['zhuangxiu'] = array('装修', '毛胚', '简装', '精装', '豪装');
         $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
 
         $area = $_GET['area'];
@@ -118,7 +118,7 @@ class Esf extends HouseBase
         $user_role_id = $this->user['user_role_id'];
         if ($user_role_id == 2 || $user_role_id == 4 || $user_role_id == 5) {
             $show_power = false;
-        } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 23) {
+        } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 23 || $user_role_id == 24) {
             $show_power = true;
         } else {
             $show_power = false;
