@@ -14,7 +14,7 @@ return [
     // 服务器地址
     'hostname'        => '47.94.83.227',
     // 数据库名
-    'database'        => 'fangchan_main',
+    'database'        => 'fangchan',//fangchan_main  ->生产测试环境
     // 用户名
     'username'        => 'root',
     // 密码
