@@ -83,10 +83,9 @@
         <td class="input-group">
             <div class="layui-inline"> {$field.slug} :
                 <select name="{$field.field_name}" class="layui-select" lay-ignore="">
-                    <option value="">{$field.slug}</option>
+                    <option value="" selected>{$field.slug}</option>
                     {foreach $field.options as $option}
-                    <option value="{$option.id}" {if $field.selected==$option.id} selected {
-                    /if} href="{$option.href}"> {$option.name}</option>
+                    <option value="{$option.id}" {if $field.selected==$option.id} selected {/if} href="{$option.href}"> {$option.name}</option>
                     {/foreach}
                 </select>
             </div>
