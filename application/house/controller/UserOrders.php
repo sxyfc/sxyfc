@@ -11,12 +11,25 @@
 namespace app\house\controller;
 
 
+use app\common\model\Hits;
 use app\admin\controller\Fund;
 use app\common\util\forms\input;
+use app\common\controller\AdminBase;
+use app\common\model\Draw;
+use app\common\model\PaymentLogs;
+use app\common\model\Users;
+use app\common\model\UserRoles;
+use app\common\model\DistributionOrders;
+use app\common\util\forms\Forms;
+use app\common\util\Money;
+use app\common\util\Point;
+use app\order\model\Orders;
+use think\Exception;
+use think\Log;
 
 class UserOrders extends HouseUserBase
 {
-
+    private $house_esf = "house_esf";
     private $house_appointment = "house_appointment";
 
 
@@ -92,36 +105,41 @@ class UserOrders extends HouseUserBase
         if ($type == 1) {//租房
             $model_name = 'house_rent_order';
             $model = set_model($model_name);
+            $models = set_model('house_rent');
             $base_info['rent_id'] = $id;
         } else if ($type == 2) {//二手房
             $model_name = "house_esf_order";
             $model = set_model($model_name);
+            $models = set_model('house_esf');
             $base_info['esf_id'] = $id;
         }
-        $fund = new Fund();
-        $info = $model->field('id')->find();
+
+        $info = $models->where(['id'=>$id])->field('user_id')->find();
         $data['seller_user_id'] = $info['user_id'];
         $data['amount'] = $fb_value;
         $data['source_type'] = 2;
         $data['source_id'] = $this->user_id;
         $data['note'] = '支付查看消费';
-        $result_json = $fund->fangbao_pay($data);
+
+        $result_json = $this->create_pay_order($data);
+
         //房宝消费订单号获取，生产真正的消费记录
-     
-        if ($result_json['result'] == 0) {
-            $fb_order_id = $result_json['data']['order_id'];
+        if ($result_json) {
+            $fb_order_id = $result_json;
         } else {
-            $this->zbn_msg($result_json['reason'], 2);
+            $this->zbn_msg('创建订单失败', 2);
             return false;
         }
 
         $base_info['order_id'] = $fb_order_id;
         $res = $model->add_content($base_info);
+
+
         if ($res['code'] != 1) {
             $this->zbn_msg($res['msg'], 2);
             return false;
         }else{
-            return $this->view-$this->fetch();
+            return $this->view->fetch();
         }
     }
 
@@ -151,5 +169,118 @@ class UserOrders extends HouseUserBase
         }
 
     }
+
+    //创建房宝支付查看订单
+    public function create_pay_order($data)
+    {
+        global $_W;
+        if ($data['note']) {
+            $data['note'] = "用户备注: " . $data['note'];
+        }
+
+        if (!$data['amount'] || $data['amount'] <= 0) {
+            throw new Exception("对不起，金额错误！", 1);
+        }
+
+        $seller_user = Users::get(['id' => $data['seller_user_id']]);
+        if (!$seller_user) {
+            throw new Exception("卖家不存在", 1);
+        }
+        if (!$data['source_type'] || !$data['source_id']) {
+            throw new Exception("来源信息为空", 1);
+        }
+
+        $order_insert = [];
+        $order_insert['id'] = $order_insert['trade_sn'] = create_sn();
+        $order_insert['out_trade_no'] = $order_insert['id'] . "@" . time();
+        $order_insert['buyer_user_id'] = $data['source_id'];
+        $order_insert['user_id'] = $data['source_id'];
+        $order_insert['seller_user_id'] = $data['seller_user_id'];
+        $order_insert['gateway'] = $gateway = 'balance';
+        //计算费用
+        $order_insert['amount'] = $data['amount'];
+        $order_insert['total_fee'] = $data['amount'];
+        $order_insert['express_fee'] = 0;
+        $order_insert['delivery'] = "";
+        //common info
+        $order_insert['address'] = "";
+        $order_insert['receiver'] = "";
+        $order_insert['mobile'] = empty($data['mobile']) ? '' : $data['mobile'];
+        $order_insert['create_time'] = date("Y-m-d H:i:s");
+        $order_insert['create_ip'] = $this->request->ip();
+        $order_insert['note'] = "房宝消费. " . $data['note'];
+        $order_insert['site_id'] = $_W['site']['id'];
+        $order_insert['month'] = date("m");
+        $order_insert['year'] = date('Y');
+        $order_insert['status'] = '已支付';
+        //支付模式公众号模式
+        $order_insert['pay_mode'] = 'WX_GZH';
+        $order_insert['unit_type'] = 1;
+        $order_insert['is_online'] = 1;
+        $order_insert['source_type'] = $data['source_type'];
+        $order_insert['source_id'] = $data['source_id'];
+
+        $order_insert = set_model('orders')->setDefaultValueByFields($order_insert);
+
+        $spend_data = [];
+        $spend_data['user_id'] = $order_insert['user_id'];
+        $spend_data['amount'] = $order_insert['total_fee'];
+        $spend_data['unit_type'] = 1;
+        $spend_data['pay_type'] = 1;
+        $spend_data['note'] = $order_insert['note'];
+
+        try {
+            $this->chg($spend_data);
+            $order = Orders::create($order_insert);
+            Orders::log_add($order['id'], $order_insert['buyer_user_id'], '创建订单');
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+        if ($order) {
+            return $order['id'];
+        } else {
+            throw new Exception("订单创建失败！", 1);
+        }
+    }
+
+
+    public function chg($data)
+    {
+        switch ($data['pay_type']) {
+            case 1:
+                $data['operate'] = 1;//1 减少;2 增加
+                break;
+            default:
+                $data['operate'] = 2;
+                break;
+        }
+        $user = Users::get(['id' => $data['user_id']]);
+        if (!$user) {
+            throw new Exception("用户不存在", 1);
+        }
+
+        if ($data['unit_type'] == 1) {
+            //1 消费;2 充值
+            if ($data['operate'] == 1) {
+                if (!Money::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
+                    throw new Exception("余额不足", 1);
+                }
+            } else if ($data['operate'] == 2) {
+                Money::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
+            }
+        }  elseif ($data['unit_type'] == 2) {
+            //1 消费;2 充值
+            if ($data['operate'] == 1) {
+                if (!Point::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
+                    throw new Exception("余额不足", 1);
+                }
+            } else if ($data['operate'] == 2) {
+                Point::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
+            }
+        }
+        return true;
+    }
+
 
 }

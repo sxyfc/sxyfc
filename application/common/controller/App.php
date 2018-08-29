@@ -154,7 +154,7 @@ class App extends Controller
     {
         global $_W;
         $auto_close = empty($auto_close) ? "false" : "true";
-        $str = '<script>';
+        $str = '<script type="text/javascript" src="/statics/components/layui/layui.js"></script>  <script src="/statics/js/admin/base_common.js?v="></script><script>';
         $jumpUrl = $jumpUrl == "''" || empty($jumpUrl) ? "''" : $jumpUrl;
         $javascript = $javascript == "''" || empty($javascript) ? "''" : $javascript;
         $str .= 'parent.show_message("' . $message . '",' . $icon . "," . $auto_close . "," . $time . ',' . $jumpUrl . ',' . $javascript . ');';

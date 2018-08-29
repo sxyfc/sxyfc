@@ -267,7 +267,7 @@
         </a>
 
         {else}
-        <a class="weui-navbar__item" href="/house/user_order/pay_for_see/$detail['id']">
+        <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/2">
             支付查看信息
         </a>
         </form>
