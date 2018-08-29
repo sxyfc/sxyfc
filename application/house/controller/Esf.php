@@ -115,17 +115,19 @@ class Esf extends HouseBase
         $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 
         //设置可见权限：支付查看信息
-        $user_role_id = $this->user['user_role_id'];
-        if ($user_role_id == 2 || $user_role_id == 4 || $user_role_id == 5) {
-            $show_power = false;
-        } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 23 || $user_role_id == 24) {
-            $show_power = true;
-        } else {
-            $show_power = false;
-        }
-
+        $show_power = true;
         //设置支付查看交易结果
-        $pay_result = false;
+        $user_id = $this->user_id;
+        $esf_id = $id;
+
+        if ($result = Db::table('mhcms_house_esf_order')->where(['user_id' => $user_id, 'esf_id' => $esf_id])->find()) {
+            $pay_result = true;
+        } else {
+            $pay_result = false;
+        }
+        $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
+        $mobile = $agent['mobile'];
+        $this->assign("mobile", $mobile);
         //查询对应表，通过esf_id和user_id
         $this->assign("pay_result", $pay_result);
         $this->assign("show_power", $show_power);

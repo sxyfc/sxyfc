@@ -188,7 +188,7 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
     {if $show_power}
 
         {if $pay_result}
-            <a class="weui-navbar__item" href="tel:{$agent['mobile']}">
+            <a class="weui-navbar__item" href="tel:{$mobile}">
                 一键拨号
             </a>
 
@@ -197,7 +197,7 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
             </a>
 
         {else}
-            <a class="weui-navbar__item" href="/">
+            <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/1">
                 支付查看信息
             </a>
         {/if}
