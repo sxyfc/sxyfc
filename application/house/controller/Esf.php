@@ -142,21 +142,30 @@ class Esf extends HouseBase
      * @throws \think\Exception
      * @throws \think\exception\DbException
      */
-    public function autoAdd($id)
+    public function autoAdd()
     {
-        global $_W;
+        $esf_id = trim(input('param.id'));
         $user_id = $this->user['id'];
-        $esf_id = $id;
+        $base_info['user_id'] = $where['user_id'] = $user_id;
+        $base_info['esf_id'] = $where['esf_id'] = $esf_id;
 
-        $model_info = set_model('user_esf');
-        $base_info['user_id'] = $user_id;
-        $base_info['esf_id'] = $esf_id;
+        $url = '/house/esf/detail/id/' . $esf_id;
 
-        $res = $model_info->add_content($base_info);
-        if ($res['code'] == 1) {
-            return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''");
+        if ($result = Db::table('mhcms_user_esf')->where($where)->find()) {
+            echo "<script> alert('请勿重复导入！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
+        }
+
+        $res = Db::table('mhcms_user_esf')->insert($base_info);
+        if ($res) {
+            echo "<script> alert('导入成功！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
         } else {
-            return $this->zbn_msg($res['msg'], 2);
+            echo "<script> alert('导入失败，请稍后再试！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
         }
     }
 }

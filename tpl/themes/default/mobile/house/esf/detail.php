@@ -262,7 +262,7 @@
             一键拨号
         </a>
 
-        <a class="weui-navbar__item" href="/house/esf/autoAdd">
+        <a class="weui-navbar__item" href="/house/esf/autoAdd/id/{$detail['id']}">
             一键导入
         </a>
 
