@@ -25,7 +25,7 @@ class ApiUserBase extends ApiBase
                 $_W['wechat_fans'] = $_W['wechat_fans_model']->where(['user_id' =>$this->user['id']])->find();
 
                 if( $_W['wechat_fans']){
-                    $_W['openid'] = $_W['wechat_fans']['id'];
+                    $_W['openid'] = $_W['wechat_fans']['openid'];
                 }
             }else{
 

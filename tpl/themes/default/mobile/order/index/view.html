@@ -92,7 +92,7 @@
                                 order_id :  "{$order.id}"
                             }
                         } , function (resp) {
-                            //alert(JSON.stringify(resp));
+                            // alert(JSON.stringify(resp));return;
                             if(resp.code===1){
                                 if(resp.data.return_code == "FAIL"){
                                     alert(resp.data.return_msg);
@@ -108,8 +108,37 @@
                                 }else{
                                     that.jsApiCall(resp.data);
                                 }
-                            }else{
-                                alert(resp.data.err_code_des);
+                            } else if (resp.code == -1) {
+                                layui.use(['layer'] , function () {
+                                    var layer = layui.layer;
+                                    layer.alert(resp.data.err_code_des,{
+                                        title: '提示'
+                                        ,shade: 0.2
+                                        ,closeBtn:0
+                                        ,offset: 'auto'
+                                    });
+                                });
+                            } else {
+                                layui.use(['layer'] , function () {
+                                    var layer = layui.layer;
+                                    if (resp.data.err_code_des == '该订单已支付') {
+                                        var api_url = "{:url('wechat/api/call_back', ['id'=>$order.id, site_id => $_W['site']['id']])}";
+                                        $.get(api_url, function () {
+                                        }, 'json');
+                                        layer.alert(resp.data.err_code_des,{
+                                            title: '提示'
+                                            ,shade: 0.2
+                                            ,closeBtn:0
+                                            ,offset: 'auto'
+                                            ,time: 3000
+                                            ,end: function() {
+                                                window.location.href = '/member/wallet';
+                                            }
+                                        });
+                                    } else {
+                                        layer.msg(resp.data.err_code_des);
+                                    }
+                                });
                             }
                         } , 'json');
 
@@ -121,13 +150,24 @@
                         function(res){
                             WeixinJSBridge.log(res.err_msg);
                             layui.use(['layer'] , function () {
-
-                                if(res.err_msg == "get_brand_wcpay_request:ok"){
-                                    layer.msg("支付成功！");
-                                }else{
-
-                                        var layer = layui.layer;
-                                    layer.msg(  "您取消了支付！");
+                                var layer = layui.layer;
+                                // alert(JSON.stringify(res));
+                                if (res.err_msg == "get_brand_wcpay_request:ok") {
+                                    // var api_url = "{:url('wechat/api/call_back', ['id'=>$order.id, site_id => $_W['site']['id']])}";
+                                    // $.get(api_url, function () {
+                                    // }, 'json');
+                                    layer.alert('支付成功',{
+                                        title: '提示'
+                                        ,shade: 0.2
+                                        ,closeBtn:0
+                                        ,offset: 'auto'
+                                        ,time: 3000
+                                        ,end: function() {
+                                            window.location.href = '/member/wallet';
+                                        }
+                                    });
+                                } else {
+                                    layer.msg("您取消了支付！");
                                 }
 
                             });

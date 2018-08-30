@@ -98,6 +98,7 @@ class micropay extends WxPayNotify
     {
         global $_W , $_GPC;
         $xml = $postData = file_get_contents('php://input');
+        $msg = 'ok';
         $data = $this->FromXml($xml);
 
         Log::write($data ,'log' , true);
