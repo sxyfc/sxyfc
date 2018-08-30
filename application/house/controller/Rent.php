@@ -61,18 +61,22 @@ class Rent extends HouseBase
 
 
         //设置可见权限：支付查看信息
-        $user_role_id = $this->user['user_role_id'];
-        if ($user_role_id == 2 || $user_role_id == 4 || $user_role_id == 5) {
-            $show_power = false;
-        } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 33) {
-            $show_power = true;
-        } else {
-            $show_power = false;
-        }
+        $show_power = true;
         $this->assign("show_power", $show_power);
 
+
+        $user_id = $this->user_id;
+        $rent_id = $id;
+
         //设置支付查看交易结果
-        $pay_result = false;
+        if ($result = Db::table('mhcms_house_rent_order')->where(['user_id' => $user_id, 'rent_id' => $rent_id])->find()) {
+            $pay_result = true;
+        } else {
+            $pay_result = false;
+        }
+        $agent = Db::table('mhcms_house_rent')->where(['id' => $id])->find();
+        $mobile = $agent['mobile'];
+        $this->assign("mobile", $mobile);
         $this->assign("pay_result", $pay_result);
         return $this->view->fetch();
     }
@@ -84,21 +88,30 @@ class Rent extends HouseBase
      * @throws \think\Exception
      * @throws \think\exception\DbException
      */
-    public function autoAdd($id)
+    public function autoAdd()
     {
-        global $_W;
+        $rent_id = trim(input('param.id'));
         $user_id = $this->user['id'];
-        $rent_id = $id;
+        $base_info['user_id'] = $where['user_id'] = $user_id;
+        $base_info['rent_id'] = $where['rent_id'] = $rent_id;
 
-        $model_info = set_model('user_rent');
-        $base_info['user_id'] = $user_id;
-        $base_info['rent_id'] = $rent_id;
+        $url = '/house/rent/detail/id/' . $rent_id;
 
-        $res = $model_info->add_content($base_info);
-        if ($res['code'] == 1) {
-            return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''");
+        if ($result = Db::table('mhcms_user_rent')->where($where)->find()) {
+            echo "<script> alert('请勿重复导入！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
+        }
+
+        $res = Db::table('mhcms_user_rent')->insert($base_info);
+        if ($res) {
+            echo "<script> alert('导入成功！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
         } else {
-            return $this->zbn_msg($res['msg'], 2);
+            echo "<script> alert('导入失败，请稍后再试！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
         }
     }
 

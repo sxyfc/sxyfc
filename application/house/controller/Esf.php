@@ -115,17 +115,19 @@ class Esf extends HouseBase
         $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 
         //设置可见权限：支付查看信息
-        $user_role_id = $this->user['user_role_id'];
-        if ($user_role_id == 2 || $user_role_id == 4 || $user_role_id == 5) {
-            $show_power = false;
-        } else if ($user_role_id == 1 || $user_role_id == 3 || $user_role_id == 22 || $user_role_id == 23 || $user_role_id == 24) {
-            $show_power = true;
-        } else {
-            $show_power = false;
-        }
-
+        $show_power = true;
         //设置支付查看交易结果
-        $pay_result = false;
+        $user_id = $this->user_id;
+        $esf_id = $id;
+
+        if ($result = Db::table('mhcms_house_esf_order')->where(['user_id' => $user_id, 'esf_id' => $esf_id])->find()) {
+            $pay_result = true;
+        } else {
+            $pay_result = false;
+        }
+        $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
+        $mobile = $agent['mobile'];
+        $this->assign("mobile", $mobile);
         //查询对应表，通过esf_id和user_id
         $this->assign("pay_result", $pay_result);
         $this->assign("show_power", $show_power);
@@ -140,21 +142,30 @@ class Esf extends HouseBase
      * @throws \think\Exception
      * @throws \think\exception\DbException
      */
-    public function autoAdd($id)
+    public function autoAdd()
     {
-        global $_W;
+        $esf_id = trim(input('param.id'));
         $user_id = $this->user['id'];
-        $esf_id = $id;
+        $base_info['user_id'] = $where['user_id'] = $user_id;
+        $base_info['esf_id'] = $where['esf_id'] = $esf_id;
 
-        $model_info = set_model('user_esf');
-        $base_info['user_id'] = $user_id;
-        $base_info['esf_id'] = $esf_id;
+        $url = '/house/esf/detail/id/' . $esf_id;
 
-        $res = $model_info->add_content($base_info);
-        if ($res['code'] == 1) {
-            return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''");
+        if ($result = Db::table('mhcms_user_esf')->where($where)->find()) {
+            echo "<script> alert('请勿重复导入！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
+        }
+
+        $res = Db::table('mhcms_user_esf')->insert($base_info);
+        if ($res) {
+            echo "<script> alert('导入成功！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
         } else {
-            return $this->zbn_msg($res['msg'], 2);
+            echo "<script> alert('导入失败，请稍后再试！'); </script>";
+            echo "<meta http-equiv='Refresh' content='0;URL=$url'>";
+            exit();
         }
     }
 }

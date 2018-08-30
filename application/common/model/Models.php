@@ -1044,8 +1044,7 @@ class Models extends Common
     }
 
 
-    public
-    function add_content($base)
+    public function add_content($base)
     {
         global $_W;
         //$this->table_name 对应数据库字段table_name//Db::name($this->table_name);

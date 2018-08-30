@@ -258,11 +258,11 @@
         <!-- 这里改为 支付查看信息，支付后展示 一键导入和查看房东电话-->
         {if $show_power}
         {if $pay_result}
-        <a class="weui-navbar__item" href="tel:{$agent['mobile']}">
+        <a class="weui-navbar__item" href="tel:{$mobile}">
             一键拨号
         </a>
 
-        <a class="weui-navbar__item" href="/house/esf/autoAdd">
+        <a class="weui-navbar__item" href="/house/esf/autoAdd/id/{$detail['id']}">
             一键导入
         </a>
 

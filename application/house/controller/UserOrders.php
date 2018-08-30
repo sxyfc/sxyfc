@@ -24,6 +24,7 @@ use app\common\util\forms\Forms;
 use app\common\util\Money;
 use app\common\util\Point;
 use app\order\model\Orders;
+use think\Db;
 use think\Exception;
 use think\Log;
 
@@ -90,6 +91,14 @@ class UserOrders extends HouseUserBase
          * 3.余额充足，则消费对应余额
          * 4.写入对应查看权限记录
          */
+
+        //检查权限
+        $user_role_id = $this->user['user_role_id'];
+        $user_role_ids = array(1, 3, 22, 23, 24);
+        if (!in_array($user_role_id,$user_role_ids)) {
+            $this->zbn_msg("权限不足，请先申请为经纪人！");
+        }
+
         //检查房宝余额
         $balance = $this->user['balance'];
         $fb_value = config("pay.fangbao_ratio");
@@ -114,7 +123,7 @@ class UserOrders extends HouseUserBase
             $base_info['esf_id'] = $id;
         }
 
-        $info = $models->where(['id'=>$id])->field('user_id')->find();
+        $info = $models->where(['id' => $id])->field('user_id')->find();
         $data['seller_user_id'] = $info['user_id'];
         $data['amount'] = $fb_value;
         $data['source_type'] = 2;
@@ -132,14 +141,17 @@ class UserOrders extends HouseUserBase
         }
 
         $base_info['order_id'] = $fb_order_id;
-        $res = $model->add_content($base_info);
+        if ($type == 1) {
+            $res = Db::table('mhcms_house_rent_order')->insert($base_info);
+        } elseif ($type == 2) {
+            $res = Db::table('mhcms_house_esf_order')->insert($base_info);
+        }
 
-
-        if ($res['code'] != 1) {
-            $this->zbn_msg($res['msg'], 2);
+        if (!$res) {
+            $this->zbn_msg('网络故障，请稍后再试！', 2);
             return false;
-        }else{
-            return $this->view->fetch();
+        } else {
+            echo "<script>history.back();</script>";
         }
     }
 
@@ -269,7 +281,7 @@ class UserOrders extends HouseUserBase
             } else if ($data['operate'] == 2) {
                 Money::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
             }
-        }  elseif ($data['unit_type'] == 2) {
+        } elseif ($data['unit_type'] == 2) {
             //1 消费;2 充值
             if ($data['operate'] == 1) {
                 if (!Point::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {

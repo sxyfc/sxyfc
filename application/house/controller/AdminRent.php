@@ -32,6 +32,12 @@ class AdminRent extends AdminBase
             $where['user_id'] = $this->user['id'];
         }
 
+        $mobile = trim(input('param.mobile', '', 'htmlspecialchars'));
+        if ($mobile) {
+            $where['mobile'] = array('LIKE', '%' . $mobile . '%');
+            $this->view->assign('mobile', $mobile);
+        }
+
         $loupan_name = trim(input('param.loupan_name'));
         if ($loupan_name) {
             $ids = array();
@@ -90,7 +96,7 @@ class AdminRent extends AdminBase
             $base_info['user_id'] = $this->user['id'];
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
+                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
             } else {
                 return $this->zbn_msg($res['msg'], 2);
             }
@@ -125,7 +131,7 @@ class AdminRent extends AdminBase
 
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
+                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
             } else {
                 return $this->zbn_msg($res['msg'], 2);
             }
