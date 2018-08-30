@@ -142,7 +142,7 @@ class AdminEsf extends AdminBase
             if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
+                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
             } else {
                 return $this->zbn_msg($res['msg'], 2);
             }
@@ -196,7 +196,7 @@ class AdminEsf extends AdminBase
 
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
+                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
             } else {
                 return $this->zbn_msg($res['msg'], 2);
             }
