@@ -33,11 +33,16 @@ class AdminEsf extends AdminBase
         $update_time = trim(input('param.update_time', '', 'htmlspecialchars'));
         $create_time = trim(input('param.create_time', '', 'htmlspecialchars'));
         $esf_name = trim(input('param.esf_name', '', 'htmlspecialchars'));
+        $mobile = trim(input('param.mobile', '', 'htmlspecialchars'));
 
+
+        if ($mobile) {
+            $where['mobile'] = array('LIKE', '%' . $mobile . '%');
+            $this->view->assign('mobile', $mobile);
+        }
 
         if ($update_time) {
             $where['update_at'] = array('LIKE', '%' . $update_time . '%');
-
         }
 
         if ($create_time) {
@@ -90,7 +95,7 @@ class AdminEsf extends AdminBase
                 $where['area_id'] = $base_info['area_id'];
                 $where['site_id'] = $_W['site']['id'];
                 $where['title'] = $base_info['title'];
-                $find_data=set_model($this->house_esf);
+                $find_data = set_model($this->house_esf);
                 $find_data = $find_data->where($where)->find();
 //                Log::error("where==" . json_encode($where)."====".$model_info);
                 if ($find_data) {

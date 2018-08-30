@@ -32,6 +32,12 @@ class AdminRent extends AdminBase
             $where['user_id'] = $this->user['id'];
         }
 
+        $mobile = trim(input('param.mobile', '', 'htmlspecialchars'));
+        if ($mobile) {
+            $where['mobile'] = array('LIKE', '%' . $mobile . '%');
+            $this->view->assign('mobile', $mobile);
+        }
+
         $loupan_name = trim(input('param.loupan_name'));
         if ($loupan_name) {
             $ids = array();
