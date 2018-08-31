@@ -14,6 +14,7 @@ use app\common\model\Models;
 use app\core\util\MhcmsModules;
 use app\core\util\MhcmsTheme;
 use think\Db;
+use think\Log;
 
 class Form implements FormInterface
 {
@@ -77,18 +78,34 @@ class Form implements FormInterface
                     $this->__get_data($result['data']);
                     break;
                 case "user_roles":
-                    $where['site_id'] = ["IN" , [0 , $_W['site']['id']]];
+                    $where['site_id'] = ["IN", [0, $_W['site']['id']]];
                 case 'model' :
                     //字段配置里面的where数据
-                    if($field->where){
+                    if ($field->where) {
                         //支持site_id
-                        if(Models::field_exits('site_id' , $field->node_field_data_source_config)){
+                        if (Models::field_exits('site_id', $field->node_field_data_source_config)) {
                             $mapping['site_id'] = $_W['site']['id'];
                         }
 
-                       $field->where = parseParam($field->where , $mapping);
-                       $_where_data = explode('$' , $field->where);
-                       $where[$_where_data[0]] = [$_where_data[1] , $_where_data[2]];
+//                        Log::error("--where--");
+//                        Log::error($field->where);
+
+                        $field->where = parseParam($field->where, $mapping);
+                        $_where_data = explode('$', $field->where);
+                        $where[$_where_data[0]] = [$_where_data[1], $_where_data[2]];
+                    } elseif ($field->and) {
+                        //支持site_id
+                        if (Models::field_exits('site_id', $field->node_field_data_source_config)) {
+                            $mapping['site_id'] = $_W['site']['id'];
+                        }
+                        Log::error("--and--");
+                        Log::error($field->and);
+                        $where_sql = explode(",", $field->and);
+                        foreach ($where_sql as $count_sql) {
+                            $count_spt_sql = explode("=", $count_sql);
+                            $where[$count_spt_sql[0]] = $count_spt_sql[1];
+                        }
+                        Log::error($where);
                     }
 
                     //{loupan_id}
@@ -101,15 +118,15 @@ class Form implements FormInterface
                         $distribute = true;
                         $none_distribute_models = ['{cate}'];
 
-                        if(in_array($field->node_field_data_source_config , $none_distribute_models)){
-                         //   $distribute = false;
+                        if (in_array($field->node_field_data_source_config, $none_distribute_models)) {
+                            //   $distribute = false;
                         }
 
                         //var_dump($field->node_field_data_source_config);
 
                         //var_dump($mapping);
                         //test();
-                        $field->node_field_data_source_config = parseParam($field->node_field_data_source_config , $mapping);
+                        $field->node_field_data_source_config = parseParam($field->node_field_data_source_config, $mapping);
 
                         $model = set_model($field->node_field_data_source_config);
                         /** @var Models $model_info */
@@ -118,13 +135,13 @@ class Form implements FormInterface
                         /* 不区分模块的 模型 */
 
                         $sys_models = ['admin'];
-                        if ($distribute  && !$where['module'] && !in_array(ROUTE_M, $sys_models) && ROUTE_M != "debug" ) {
+                        if ($distribute && !$where['module'] && !in_array(ROUTE_M, $sys_models) && ROUTE_M != "debug") {
                             if (Models::field_exits('module', $field->node_field_data_source_config)) {
                                 $where['module'] = ROUTE_M;
                             }
                         }
 
-                        if ($distribute && !$where['site_id'] && $model_info::field_exits('site_id', $field->node_field_data_source_config) ) {
+                        if ($distribute && !$where['site_id'] && $model_info::field_exits('site_id', $field->node_field_data_source_config)) {
                             //    $cate = set_model("article_cate")->where(['site_id'=>$_W['']])->find();
                             $where['site_id'] = $_W['site']['id'];
                         }
@@ -149,10 +166,10 @@ class Form implements FormInterface
 
                         $result = $model->select()->toArray();
 
-                        if(!$field->node_field_pk_key){
+                        if (!$field->node_field_pk_key) {
                             $field->node_field_pk_key = $model->model_info['id_key'];
                         }
-                        if(!$field->node_field_name_key){
+                        if (!$field->node_field_name_key) {
                             $field->node_field_name_key = $model->model_info['name_key'];
                         }
                     }
@@ -263,8 +280,8 @@ class Form implements FormInterface
                     if (Models::field_exits('site_id', $field->model_id)) {
                         $where['site_id'] = $field->site_id;
                     }
-                    if($field->bind_cate && $base['cate_id']){
-                        $where['cate_ids'] = ['like' , "%,{$base['cate_id']},%"];
+                    if ($field->bind_cate && $base['cate_id']) {
+                        $where['cate_ids'] = ['like', "%,{$base['cate_id']},%"];
                     }
 
                     $model = set_model('option');
