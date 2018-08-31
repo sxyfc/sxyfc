@@ -52,6 +52,10 @@ class AdminOptions extends AdminBase
             } else {
                 //自动获取data分组数据
                 $base_info = input('post.data/a');//get the base info
+                if ($field_name == 'size' || $field_name == 'price') {
+                    $base_info['top'] = $base_info['top'] ? $base_info['top'] : "MAX";
+                    $base_info['bot'] = $base_info['bot'] ? $base_info['bot'] : "0";
+                }
             }
             $base_info['field_name'] = $field_name;
             $res = $model_info->add_content($base_info);
@@ -62,7 +66,7 @@ class AdminOptions extends AdminBase
             }
         } else {
             $this->view->field_list = $model_info->get_admin_publish_fields([]);
-            $this->assign("field_name",$field_name);
+            $this->assign("field_name", $field_name);
             return $this->view->fetch();
         }
 
