@@ -12,56 +12,39 @@ namespace app\core\controller;
 
 use app\common\controller\AdminBase;
 use app\common\model\Models;
+use think\Log;
 
 class AdminOptions extends AdminBase
 {
     private $option = "option";
 
 
-    public function index_options(){
-        //load all models in modules
-
-        $this->view->models = Models::all(['module' => ["IN" , ['core' , 'system']]]);
-
+    public function index_options()
+    {
         return $this->view->fetch();
     }
 
 
-
-
-    public function index($field_name, $model_id)
+    public function index($field_name)
     {
         global $_W;
-        $model = set_model($this->option);
-        /** @var Models $model_info */
-        $model_info = $model->model_info;
-        $where = [];
-        $where['site_id'] = $_W['site']['id'];
-        $bind_model = set_model($model_id);
-        $where['field_name'] = $field_name;
-        $where['model_id'] = $bind_model->model_info['id'];
+        $model_ = set_model($this->option);
 
-        $this->view->lists = $model->where($where)->order("id desc")->paginate();
-        $this->view->pages = $this->view->lists->render();
-        $this->view->field_list = $model_info->get_admin_column_fields();
-        $this->view->content_model_id = $this->option;
-        $this->mapping['model_id'] = $model_id;
-        $this->mapping['field_name'] = $field_name;
-        $this->view->mapping = $this->mapping;
+        /** @var Models $model_info */
+        $this->view->datas = $lists = $model_->where(['field_name' => $field_name])->select()->toArray();
+        $this->assign('field_name', $field_name);
+        Log::error($lists);
         return $this->view->fetch();
     }
 
-    public function add($field_name, $model_id)
+    public function add($field_name)
     {
         global $_W, $_GPC;
 
-        $target_model = set_model($model_id);
         $model = set_model($this->option);
         /** @var Models $model_info */
         $model_info = $model->model_info;
         //todo dynamic bind module
-        $bind_model = set_model($model_id);
-        $model_info->module = $bind_model->model_info['module'];
         if ($this->isPost()) {
             if (isset($_GPC['_form_manual'])) {
                 //手动处理数据
@@ -70,7 +53,6 @@ class AdminOptions extends AdminBase
                 //自动获取data分组数据
                 $base_info = input('post.data/a');//get the base info
             }
-            $base_info['model_id'] = $target_model->model_info['id'];
             $base_info['field_name'] = $field_name;
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
@@ -80,6 +62,7 @@ class AdminOptions extends AdminBase
             }
         } else {
             $this->view->field_list = $model_info->get_admin_publish_fields([]);
+            $this->assign("field_name",$field_name);
             return $this->view->fetch();
         }
 

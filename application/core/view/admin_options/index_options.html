@@ -3,18 +3,33 @@
 自定义字段选项
 {/block}
 {block name="main"}
-{foreach $models as $model}
-{foreach $model.setting.fields as $field}
-{if $field.node_field_data_source_type =='mhcms_options'}
-<?php
-$map = [];
-$map['field_name'] = $field['field_name'];
-$map['table_name'] = $model['table_name'];
-$vars = "field_name={field_name}&model_id={table_name}";
-?>
-<a class="layui-btn" mini="iframe" href="{:build_back_link(729 , $vars , $map )}" >{$field.slug} ({$model.model_name})</a>
-{/if}
-{/foreach}
-{/foreach}
+<div class="larry-body-content clearfix">
+
+
+
+    <div class="sub-menu-top">
+
+        <div class="clearfix"></div>
+    </div>
+
+
+
+    <div class="text-info">
+
+    </div>
+
+
+    <a class="layui-btn" mini="iframe" href="/core/admin_options/index/field_name/size.html">面积管理</a>
+    <a class="layui-btn" mini="iframe" href="/core/admin_options/index/field_name/price.html">价格管理</a>
+    <a class="layui-btn" mini="iframe" href="/core/admin_options/index/field_name/use.html">用途管理</a>
+    <a class="layui-btn" mini="iframe" href="/core/admin_options/index/field_name/set.html">租房配置</a>
+    <a class="layui-btn" mini="iframe" href="/core/admin_options/index/field_name/tag.html">标签管理</a>
+
+
+
+
+
+</div>
+
 
 {/block}

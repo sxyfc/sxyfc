@@ -1,37 +1,35 @@
 {extend name="admin@public/content_frame" /}
-
 {block name="main"}
-<div class="tableBox" >
+<div class="tableBox">
+    <div class="tit">
+
+        ﻿<a href="/core/admin_options/add/field_name/{$field_name}/user_menu_id/730.html"
+            mini="frame" class="layui-btn layui-btn-sm " width="90% " height="80% ">新增 </a>
+    </div>
     <table class="layui-table table-bordered" lay-size="sm">
         <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
             <td>ID</td>
-            {foreach $field_list as $field}
-            <td>{$field['slug']}</td>
-            {/foreach}
+            <td>选项名称</td>
+            <td>所属类型</td>
             <td>{:zlang('操作')}</td>
         </tr>
-        {foreach $lists as $item}
-        <?php
-        $_item = \app\common\model\Models::get_item($item['id'], $content_model_id);
-
-        ?>
+        {foreach $datas as $item}
         <tr>
             <td>{$item.id}</td>
-            {foreach $field_list as $field}
-            <td><pre>{$_item[$field['field_name']]}</pre></td>
-            {/foreach}
+            <td>{$item.option_name}</td>
+            <td>{if $item.model_id==553}
+                二手房源
+                {else}
+                出租房源
+                {/if}
+            </td>
             <td>
-                <?php
-                $mapping = $item;
-                ?>
-                {volist name="sub_menu" id="menu"}
-                {eq name="menu.user_menu_display" value="0"}
-                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
-                {/eq}
-                {/volist}
+                <!--<a href="/core/admin_options/edit/id/{$item.id}/field_name/{$field_name}/user_menu_id/731.html"-->
+                <!--mini="frame" class="layui-btn layui-btn-sm " width="90% " height="80% ">编辑 </a>-->
+                <a href="/core/admin_options/delete/id/{$item.id}/user_menu_id/732.html"
+                   mini="confirm" class="layui-btn layui-btn-sm " width="90% " height="80% ">删除 </a>
             </td>
         </tr>
-
         {/foreach}
 
     </table>

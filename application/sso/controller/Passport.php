@@ -1092,4 +1092,8 @@ class Passport extends ModuleBase
             exit;
         }
     }
+
+    public function register_deal_info(){
+        $this->view->fetch();
+    }
 }
