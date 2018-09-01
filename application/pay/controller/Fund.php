@@ -79,8 +79,8 @@ class Fund extends ModuleUserBase{
                 if($insert['amount'] > $draw_amount){
                     $this->zbn_msg("余额不足！");
                 }
-                if($insert['amount'] < 1.2){
-                    $this->zbn_msg("申请失败 ， 系统最低提现金额为1.2元！");
+                if(isset($_W['site']['config']['redbao']['min_withdraw']) && $insert['amount'] < $_W['site']['config']['redbao']['min_withdraw']){
+                    $this->zbn_msg("申请失败 ， 系统最低提现金额为".$_W['site']['config']['redbao']['min_withdraw']."元！");
                 }
                 $insert['create_time'] = date("Y-m-d H:i:s");
                 $insert['site_id'] = $_W['site']['id'];

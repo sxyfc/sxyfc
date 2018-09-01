@@ -220,16 +220,15 @@ class MhcmsRegbag
             'wxappid' => $config["site_wechat"]['app_id'],
 
             'send_name' => $red_bag_config['send_name'],
-            're_openid' => $fans['id'],
+            're_openid' => $fans['openid'],
 
-            'total_amount' => $red_bag_config['amount'] * 100,
+            'total_amount' => floor($red_bag_config['amount'] * 100),
             'total_num' => 1,
             'wishing' => $red_bag_config['wishing'],
 
             // 'client_ip' => '182.254.222.45',
 
             'act_name' =>  $red_bag_config['act_name'] ,
-            'remark' => $red_bag_config['remark'] ,
             'scene_id' => 'PRODUCT_4',
 
         ];

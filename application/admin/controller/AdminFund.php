@@ -207,6 +207,7 @@ class AdminFund extends AdminBase
             }
             $ret['code'] = 1;
             $ret['msg'] = "操作完成！";
+            $ret['javascript'] = "reload_page()";
             Db::commit();
         }catch (Exception $e){
             Db::rollback();
@@ -233,9 +234,10 @@ class AdminFund extends AdminBase
             $draw->status = 2;
             $draw->operat_id = $this->current_admin['id'];
             if ($user && $draw->save()) {
-                if (Money::deposit($user, $draw['amount'], 0, "申请驳回 ， ", [])) {
+                if (Point::deposit($user, $draw['amount'], 0, "申请驳回 ， ", [])) {
                     $ret['code'] = 1;
                     $ret['msg'] = "操作完成！";
+                    $ret['javascript'] = "reload_page()";
                     return $ret;
                 }
             }
