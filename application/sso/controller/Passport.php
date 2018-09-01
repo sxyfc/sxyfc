@@ -138,6 +138,9 @@ class Passport extends ModuleBase
         Session::set('user_role_id', null);
         Session::set('user_name', null);
         Cookie::set('user_id', null);
+        if (is_weixin()) {
+            Cookie::set('openid', null);
+        }
         $site = Sites::get($site_id);
 
         if (empty($_W['global_config']['sso_domain'])) {
@@ -174,6 +177,9 @@ class Passport extends ModuleBase
         Session::set('user_role_id', null);
         Session::set('user_name', null);
         Cookie::set('user_id', null);
+        if (is_weixin()) {
+            Cookie::set('openid', null);
+        }
         return jsonp(['random_auth' => '', 'user_id' => 0]);
     }
 

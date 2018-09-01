@@ -6,6 +6,8 @@ use app\common\controller\ModuleBase;
 use app\common\controller\ModuleUserBase;
 use app\common\payment\micropay\utils\WxPayConfig;
 use app\order\model\Orders;
+use app\wechat\util\MhcmsWechatEngine;
+use think\Cookie;
 
 class Deposit extends ModuleUserBase
 {
@@ -89,7 +91,19 @@ class Deposit extends ModuleUserBase
             }
 
         } else {
-
+            $openid = Cookie::get("openid");
+            if (is_weixin() && empty($openid) && $_W['account']) {
+                if (empty($_W['uuid'])) {
+                    $_W['uuid'] = Cookie::get("uuid");
+                    if(!$_W['uuid']){
+                        $_W['uuid'] =  mhcms_uuid();
+                        Cookie::set("uuid" , $_W['uuid']);
+                    }
+                }
+                $wechat = MhcmsWechatEngine::create($_W['account']);
+                $openid = $wechat->getOpenid();
+                Cookie::set("openid" , $openid);
+            }
             return $this->view->fetch();
         }
 

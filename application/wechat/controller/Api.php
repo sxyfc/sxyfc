@@ -11,7 +11,7 @@ use app\pay\payment\micropay\utils\WxPayUnifiedOrder;
 
 use app\common\util\Money;
 use app\common\model\Users;
-use app\wechat\util\MhcmsWechatEngine;
+use think\Cookie;
 
 
 /**
@@ -43,10 +43,15 @@ class Api extends ApiUserBase
 
         $tools = new JsApiPay();
         if (empty($_W['openid'])) {
-            $ret['code'] = -1;
-            $ret['data'] = array('err_code_des'=>'请先绑定微信');
-            echo json_encode($ret);
-            exit();
+            $openid = Cookie::get("openid");
+            if (empty($openid)) {
+                $ret['code'] = -1;
+                $ret['data'] = array('err_code_des'=>'请先绑定微信');
+                echo json_encode($ret);
+                exit();
+            } else {
+                $_W['openid'] = $openid;
+            }
         }
         $openId = $_W['openid'];
         // echo json_encode(array('openid'=>$openId));die;

@@ -1154,6 +1154,22 @@ class WeiXinAccount extends MhcmsWechatAccountBase
         return $user_info;
     }
 
+    public function getOpenid($code = '')
+    {
+        global $_W, $_GPC;
+        if (!empty($_GPC['code'])) {
+            $code = $_GPC['code'];
+        }
+        if (empty($code)) {
+            $forward = $this->getOauthUserInfoUrl(urlencode($_W['current_url']), $_W['uuid']);
+            header('Location: ' . $forward);
+            exit;
+        }
+        $url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid={$this->account['key']}&secret={$this->account['app_secret']}&code={$code}&grant_type=authorization_code";
+        $response = $this->request($url);
+        return $response['openid'];
+    }
+
     public function oauth_user_login($code = '')
     {
         global $_W, $_GPC;
