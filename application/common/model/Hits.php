@@ -103,4 +103,15 @@ class Hits extends Model
         $r['is_good'] = $is_good;
         return $r;
     }
+
+    public static function log($id, $model_id, $user_id)
+    {
+        $r = self::get_hit($id, $model_id);
+        $insert['user_id'] = $user_id;
+        $insert['create_at'] = date("Y-m-d H:i:s");
+        $insert['hits_id'] = $r['id'];
+        $insert['item_id'] = $r['item_id'];
+        $insert['model_id'] = $r['model_id'];
+        set_model("hits_log")->insert($insert);
+    }
 }

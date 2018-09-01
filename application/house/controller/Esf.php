@@ -110,6 +110,9 @@ class Esf extends HouseBase
         $this->view->detail = $detail;
         $this->view->page_title = $detail['title'];
         Hits::hit($id, $this->house_esf);
+        if ($this->user_id) {
+            Hits::log($id, $this->house_esf, $this->user_id);
+        }
         $this->mapping = array_merge($this->mapping, $detail);
         $this->view->seo = $this->seo($this->mapping);
         $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();

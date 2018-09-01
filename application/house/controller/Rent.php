@@ -57,6 +57,9 @@ class Rent extends HouseBase
         $this->view->seo = $this->seo($this->mapping);
 
         Hits::hit($id, $this->house_esf);
+        if ($this->user_id) {
+            Hits::log($id, $this->house_esf, $this->user_id);
+        }
         $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 
 
