@@ -12,7 +12,6 @@ namespace app\house\controller;
 
 
 use app\common\model\Hits;
-use app\admin\controller\Fund;
 use app\common\util\forms\input;
 use app\common\controller\AdminBase;
 use app\common\model\Draw;
@@ -116,27 +115,32 @@ class UserOrders extends HouseUserBase
             $model = set_model($model_name);
             $models = set_model('house_rent');
             $base_info['rent_id'] = $id;
+            $source_type = 2;
+            $url = url('house/rent/detail', ['id'=>$id]);
         } else if ($type == 2) {//二手房
             $model_name = "house_esf_order";
             $model = set_model($model_name);
             $models = set_model('house_esf');
             $base_info['esf_id'] = $id;
+            $source_type = 3;
+            $url = url('house/esf/detail', ['id'=>$id]);
         }
 
         $info = $models->where(['id' => $id])->field('user_id')->find();
         $data['seller_user_id'] = $info['user_id'];
         $data['amount'] = $fb_value;
-        $data['source_type'] = 2;
-        $data['source_id'] = $this->user_id;
+        $data['source_type'] = $source_type;
+        $data['source_id'] = $id;
         $data['note'] = '支付查看消费';
 
-        $result_json = $this->create_pay_order($data);
+        // $result_json = $this->create_pay_order($data);
+        $result_json = $this->fangbao_pay($data);
 
         //房宝消费订单号获取，生产真正的消费记录
-        if ($result_json) {
-            $fb_order_id = $result_json;
+        if ($result_json['result'] == 0) {
+            $fb_order_id = $result_json['data']['order_id'];
         } else {
-            $this->zbn_msg('创建订单失败', 2);
+            $this->error($result_json['reason'], $url);
             return false;
         }
 
@@ -148,9 +152,11 @@ class UserOrders extends HouseUserBase
         }
 
         if (!$res) {
-            $this->zbn_msg('网络故障，请稍后再试！', 2);
+            // $this->zbn_msg('网络故障，请稍后再试！', 2, '', 'history.back()');
+            $this->error('网络故障，请稍后再试！', $url);
             return false;
         } else {
+            $this->success('操作成功！', $url);
             echo "<script>history.back();</script>";
         }
     }
@@ -182,6 +188,27 @@ class UserOrders extends HouseUserBase
 
     }
 
+    /**
+     * 房宝消费
+     * @param  [type] $data [description]
+     * @return [type]       [description]
+     * 
+        $data['seller_user_id'] = '2108';
+        $data['amount'] = 10;
+        $data['source_type'] = 2;
+        $data['source_id'] = 100;
+        $data['note'] = 'test';
+     */
+    public function fangbao_pay($data)
+    {
+        $result = config('WEB_SUCCESS_RT');
+        try {
+            $result['data']['order_id'] = $this->create_pay_order($data);
+        } catch (Exception $e) {
+            $result = $e;
+        }
+        return $this->ajaxJson($result);
+    }
     //创建房宝支付查看订单
     public function create_pay_order($data)
     {
@@ -193,21 +220,34 @@ class UserOrders extends HouseUserBase
         if (!$data['amount'] || $data['amount'] <= 0) {
             throw new Exception("对不起，金额错误！", 1);
         }
-
         $seller_user = Users::get(['id' => $data['seller_user_id']]);
         if (!$seller_user) {
-            throw new Exception("卖家不存在", 1);
+            //找不到人的都是大佬的
+            // throw new Exception("卖家不存在", 1);
+            $data['seller_user_id'] = 1;
+            $seller_user = Users::get(['id' => $data['seller_user_id']]);
         }
         if (!$data['source_type'] || !$data['source_id']) {
             throw new Exception("来源信息为空", 1);
+        }
+        $order_model = set_model('orders');
+        $where = [];
+        $where['source_type'] = $data['source_type'];
+        $where['source_id'] = $data['source_id'];
+        $where['buyer_user_id'] = $this->user['id'];
+        $where['status'] = '已支付';
+        $order = $order_model->where($where)->find();
+        if ($order) {
+            throw new Exception("请勿重复支付", 1);
         }
 
         $order_insert = [];
         $order_insert['id'] = $order_insert['trade_sn'] = create_sn();
         $order_insert['out_trade_no'] = $order_insert['id'] . "@" . time();
-        $order_insert['buyer_user_id'] = $data['source_id'];
-        $order_insert['user_id'] = $data['source_id'];
+        $order_insert['buyer_user_id'] = $this->user['id'];
+        $order_insert['user_id'] = $this->user['id'];
         $order_insert['seller_user_id'] = $data['seller_user_id'];
+        //
         $order_insert['gateway'] = $gateway = 'balance';
         //计算费用
         $order_insert['amount'] = $data['amount'];
@@ -232,7 +272,7 @@ class UserOrders extends HouseUserBase
         $order_insert['source_type'] = $data['source_type'];
         $order_insert['source_id'] = $data['source_id'];
 
-        $order_insert = set_model('orders')->setDefaultValueByFields($order_insert);
+        $order_insert = $order_model->setDefaultValueByFields($order_insert);
 
         $spend_data = [];
         $spend_data['user_id'] = $order_insert['user_id'];
@@ -245,6 +285,7 @@ class UserOrders extends HouseUserBase
             $this->chg($spend_data);
             $order = Orders::create($order_insert);
             Orders::log_add($order['id'], $order_insert['buyer_user_id'], '创建订单');
+            $this->create_distribution_orders($order_insert['seller_user_id'], $order['id'], $order_insert['total_fee']);
         } catch (Exception $e) {
             throw $e;
         }
@@ -255,7 +296,45 @@ class UserOrders extends HouseUserBase
             throw new Exception("订单创建失败！", 1);
         }
     }
+    public function create_distribution_orders($seller_user_id, $order_id, $amount)
+    {
+        $seller_user = Users::get($seller_user_id);
+        $user_id = $seller_user['parent_id'];
+        $rest = 1;
+        while (!empty($user_id)) {
+            var_dump(123);
+            $user = Users::get($user_id);
+            if (!in_array($user['user_role_id'], [1,3,22,23])) {
+                break;
+            }
+            $user_role = UserRoles::get(['id'=>$user['user_role_id']]);
+            
+            $this->create_distribution_order($user, $order_id, $amount, $user_role['distribution_rate'] / 100);
+            $rest = $rest - $user_role['distribution_rate'] / 100;
+            $user_id = $user['parent_id'];
+        }
+        $this->create_distribution_order($seller_user, $order_id, $amount, $rest);
+        return true;
+    }
+    public function create_distribution_order(Users $user, $order_id, $amount, $rest)
+    {
+        global $_W;
+        $distribution_order_insert = array();
+        $distribution_order_insert['order_id'] = $order_id;
+        $distribution_order_insert['user_id'] = $user['id'];
+        $distribution_order_insert['amount'] = $amount;
+        $distribution_order_insert['total_fee'] = $amount * (float)$_W['site']['config']['trade']['balance_point_ratio'] * $rest;
+        $distribution_order_insert['create_time'] = date('Y-m-d H:i:s', time());
+        $distribution_order_insert['note'] = '';
 
+        if (DistributionOrders::create($distribution_order_insert)) {
+            if (!Point::deposit($user, $distribution_order_insert['total_fee'], 3, '订单分润')) {
+                Log::write("分润失败！订单号：".$order_id.",user_id:".$distribution_order_insert['user_id'].',金额：'.$distribution_order_insert['total_fee']);
+            }
+        } else {
+            Log::write("分润订单创建失败！订单号：".$order_id.",user_id:".$distribution_order_insert['user_id'].',金额：'.$distribution_order_insert['total_fee']);
+        }
+    }
 
     public function chg($data)
     {
@@ -281,7 +360,7 @@ class UserOrders extends HouseUserBase
             } else if ($data['operate'] == 2) {
                 Money::deposit($user, $data['amount'], $data['pay_type'], $data['note']);
             }
-        } elseif ($data['unit_type'] == 2) {
+        }  elseif ($data['unit_type'] == 2) {
             //1 消费;2 充值
             if ($data['operate'] == 1) {
                 if (!Point::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
