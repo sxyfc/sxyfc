@@ -36,7 +36,9 @@
 
                 <div class="column">
                     <div class="text">户型</div>
-                    <div class="em">{$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫</div>
+                    <div class="em">
+                        {$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫
+                    </div>
                 </div>
 
                 <div class="column">
@@ -120,7 +122,8 @@
                 </div>
             </div>
         </div>
-        <div class="ui mhcms-item"> 户型图  <img src="{$detail['huxing_link']}" class="image ui" style="max-height: 350px;margin: auto"></div>
+        <div class="ui mhcms-item"> 户型图 <img src="{$detail['huxing_link']}" class="image ui"
+                                             style="max-height: 350px;margin: auto"></div>
         {foreach $field_list as $k=>$field}
         {if $field['field_name'] == 'baidu_map'}
         <div class="ui mhcms-item">
@@ -212,28 +215,6 @@
                     }
                 });
             });
-        });
-
-
-        require(['mhcms'], function (mhcms) {
-            //todo set title bar
-            // {if is_weixin()}
-
-
-            mhcms.init_wechat_share({
-        :
-            json_encode($seo)
-        }  ,
-            '{$_W.current_url}'
-        )
-            ;
-            // {/if}
-
-            mhcms.init_seo("{$seo.seo_key}", {
-        :
-            json_encode($seo)
-        })
-            ;
         });
     </script>
     <div class="mhcms-navbar weui-navbar" style="">
