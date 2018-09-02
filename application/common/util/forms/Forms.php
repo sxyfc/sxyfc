@@ -203,7 +203,7 @@ EOF2;
             $src = tomedia($file);
             $form_str .= "<div   class='layui-upload-img'>
 <img src='{$src}' alt='{$file['filename']}' class='layui-upload-img'>
-<input type='hidden' value='{$file_id}' name='{$form_group}[$form_name]$multiple'>
+<input type='hidden' value='{$file_id}' name='{$form_group}[$form_name][]'>
 <i class='icon close' onclick='remove_parent(this , \".layui-upload-img\")'></i>
 </div>";
         }
@@ -234,7 +234,7 @@ EOF2;
     {
         global $_W, $_GPC;
         $file_ids = array_filter(explode(",", $default_value));
-
+        $form_name = $form_name.'[]';
         $form_str = "
 <div class='weui-uploader__input-box'>
 <div  class=\"weui-uploader__input needsclick layui_mutil_upload layui_mutil_upload_$field_name\" data-name='$form_name' >

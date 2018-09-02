@@ -6,7 +6,7 @@
     <div class="swiper-container swiper-container-horizontal new-better-swiper-container"
          id="detail_ad">
         <div class="swiper-wrapper">
-            {foreach $detail.thumb as $image}
+            {foreach $detail.thumbs as $image}
             <div class="swiper-slide swiper-slide-prev">
                 <img src="{$image.url}" class="image ui" style="max-height: 350px;margin: auto">
             </div>
@@ -31,7 +31,7 @@
 
                 <div class="column">
                     <div class="text">均价</div>
-                    <div class="em">{$detail['price']}万</div>
+                    <div class="em">{$detail['price']}</div>
                 </div>
 
                 <div class="column">
@@ -41,38 +41,24 @@
 
                 <div class="column">
                     <div class="text">建筑面积</div>
-                    <div class="em">{$detail['size']} 平方米</div>
+                    <div class="em">{$detail['size']}</div>
                 </div>
             </div>
 
 
             <div class="columns is-mobile is-marginless is-multiline">
-
-
                 <div class="column is-half">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">地区 :</div>
                         <div class="column">{$detail['area_id']}</div>
                     </div>
                 </div>
-
-                <div class="column is-half">
-                    <div class="columns option is-mobile is-marginless">
-                        <div class="column is-narrow">单价 :</div>
-                        <div class="column has-text-danger"><?php echo (int)($detail['price'] / $detail['size'] * 10000); ?>
-                            元
-                        </div>
-                    </div>
-                </div>
-
                 <div class="column is-half">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">装修 :</div>
                         <div class="column has-text-danger">{$detail['zhuangxiu']}</div>
                     </div>
                 </div>
-
-
                 <div class="column is-half">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">朝向 :</div>
@@ -85,8 +71,6 @@
                         <div class="column ">{$detail['yongtu']}</div>
                     </div>
                 </div>
-
-
                 <div class="column is-half">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">楼层 :</div>
@@ -100,14 +84,6 @@
                         <div class="column ">{$detail['lift']}</div>
                     </div>
                 </div>
-
-
-                <!--            <div class="column is-half">-->
-                <!--                <div class="columns option is-mobile is-marginless">-->
-                <!--                    <div class="column is-narrow">电话 :</div>-->
-                <!--                    <div class="column">{$detail['mobile']}</div>-->
-                <!--                </div>-->
-                <!--            </div>-->
                 <div class="column is-full">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">特色 :</div>
@@ -145,6 +121,16 @@
             </div>
         </div>
         <div class="ui mhcms-item"> 户型图  <img src="{$detail['huxing_link']}" class="image ui" style="max-height: 350px;margin: auto"></div>
+        {foreach $field_list as $k=>$field}
+        {if $field['field_name'] == 'baidu_map'}
+        <div class="ui mhcms-item">
+            <label class="column is-narrow">{$field['slug']}</label>
+            <div class="column">
+                {$field['form_str']}
+            </div>
+        </div>
+        {/if}
+        {/foreach}
     </div>
     <?php
     $agent = \app\common\model\Models::get_item_by(['user_id' => $detail['user_id']], 'house_agent');

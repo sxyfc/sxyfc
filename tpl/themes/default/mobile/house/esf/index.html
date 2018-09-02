@@ -36,21 +36,24 @@
             <option value="{$ar['id']}" {if $ar['id'] == $area} selected {/if}>{$ar['area_name']}</option>
             {/foreach}
         </select>
-        <select name="leixing" class="init_select">
-            {foreach $select['leixing'] as $key=>$value}
-            <option value="{$key}" {if $key == $leixing} selected {/if}>{$value}</option>
+        <select name="yongtu" class="init_select">
+            <option value="" selected>用途</option>
+            {foreach $select['yongtu'] as $key=>$value}
+            <option value="{$key}" {if $key == $yongtu} selected {/if}>{$value}</option>
             {/foreach}
         </select>
 
         <select name="jiage" class="init_select">
+            <option value="" selected>价格</option>
             {foreach $select['jiage'] as $key=>$value}
             <option value="{$key}" {if $key == $jiage} selected {/if}>{$value}</option>
             {/foreach}
         </select>
 
-        <select name="tese" class="init_select">
-            {foreach $select['tese'] as $key=>$value}
-            <option value="{$key}" {if $key == $tese} selected {/if}>{$value}</option>
+        <select name="tag" class="init_select">
+            <option value="" selected>特色</option>
+            {foreach $select['tags'] as $key=>$value}
+            <option value="{$key}" {if $key == $tag} selected {/if}>{$value}</option>
             {/foreach}
         </select>
 

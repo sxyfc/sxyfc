@@ -19,13 +19,8 @@
         <comp_filter_option :multi="true" :model_id="'house_rent'" :field_name="'zhuangxiu'" :text="names.zhuangxiu || '装修'" :ids="params.zhuangxiu" :show_filter="current_filter=='zhuangxiu' ? true : false" @post_name="set_names" @applied="change_options" @show_filter="show_filter"></comp_filter_option>
     </div>
 
-
     <div class="weui-navbar__item">
         <comp_filter_option :multi="false" :current_option_id="params.shi" :model_id="'house_rent'" :field_name="'shi'" :text="names.shi || '房型'" :show_filter="current_filter=='shi' ? true : false" @show_filter="show_filter" @applied="change_options" @post_name="set_names" ></comp_filter_option>
-    </div>
-
-    <div class="weui-navbar__item">
-        更多
     </div>
 </div>
 

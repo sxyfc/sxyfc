@@ -25,17 +25,29 @@ class Esf extends HouseBase
     {
         global $_W;
         $select = array();
-        $select['leixing'] = array('类型', '商铺', '住宅', '商住两用', '厂房', '酒店公寓');
-        $select['jiage'] = array('价格', '价格从低到高', '价格从高到低');
-        $select['tese'] = array('特色', '满五年', '满两年', '不满两年', '满五唯一', '随时看房', '学区房', '新房源', '大产权', '小产权');
         $select['zhuangxiu'] = array('装修', '毛胚', '简装', '精装', '豪装');
         $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
 
+        $tags = Db::table('mhcms_option')->where(['model_id' => '553', 'field_name' => 'tag'])->field('id,option_name')->select()->toArray();
+        foreach ($tags as $value){
+            $select['tags'][$value['id']] = $value['option_name'];
+        }
+
+        $use = Db::table('mhcms_option')->where(['model_id' => '553', 'field_name' => 'use'])->field('id,option_name')->select()->toArray();
+        foreach ($use as $value){
+            $select['yongtu'][$value['id']] = $value['option_name'];
+        }
+
+        $price = Db::table('mhcms_option')->where(['model_id' => '553', 'field_name' => 'price'])->field('id,option_name')->select()->toArray();
+        foreach ($price as $value){
+            $select['jiage'][$value['id']] = $value['option_name'];
+        }
+
         $area = $_GET['area'];
-        $leixing = $_GET['leixing'];
+        $yongtu = $_GET['yongtu'];
         $zhuangxiu = $_GET['zhuangxiu'];
         $jiage = $_GET['jiage'];
-        $tese = $_GET['tese'];
+        $tag = $_GET['tag'];
         $huxing = $_GET['huxing'];
 
         if ($area != null) {
@@ -43,18 +55,17 @@ class Esf extends HouseBase
             $this->assign('area', $area);
         }
 
-        if (!empty($leixing)) {
-            $where['mhcms_house_esf.yongtu'] = $leixing;
-            $this->assign('leixing', $leixing);
+        if (!empty($yongtu)) {
+            $where['mhcms_house_esf.yongtu'] = $yongtu;
+            $this->assign('yongtu', $yongtu);
         }
         if (!empty($zhuangxiu)) {
             $where['mhcms_house_esf.zhuangxiu'] = $zhuangxiu;
             $this->assign('zhuangxiu', $zhuangxiu);
         }
-        if (!empty($tese)) {
-            $tags = $tese;
-            $where['mhcms_house_esf.tags'] = array('LIKE', '%' . $tags . '%');
-            $this->assign('tese', $tese);
+        if (!empty($tag)) {
+            $where['mhcms_house_esf.tags'] = array('LIKE', '%' . $tag . '%');
+            $this->assign('tag', $tag);
         }
         if (!empty($jiage)) {
             if ($jiage == 1) {
@@ -82,7 +93,7 @@ class Esf extends HouseBase
 
 
         $model = set_model('house_esf');
-        if ($huxing != null || $tese != null || $zhuangxiu != null || $leixing != null || $area != null) {
+        if ($huxing != null || $tag != null || $zhuangxiu != null || $yongtu != null || $area != null) {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->paginate();
         } else {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order($order)->paginate();
@@ -103,19 +114,18 @@ class Esf extends HouseBase
         global $_W;
         $content_model_id = $this->house_esf;
         $model = set_model($content_model_id);
-        /** @var Models $model_info */
         $model_info = $model->model_info;
 
-        $detail = Models::get_item($id, $content_model_id);        //		$detail['mobile'] = '*********';//		$is_phone = Db::table('buy_phone')->where('user_id' , )->find();
+        $detail = Models::get_item($id, $content_model_id);
         $this->view->detail = $detail;
-        $this->view->page_title = $detail['title'];
+        $this->view->field_list = $model_info->get_admin_publish_fields($detail, []);
         Hits::hit($id, $this->house_esf);
         if ($this->user_id) {
             Hits::log($id, $this->house_esf, $this->user_id);
         }
-        $this->mapping = array_merge($this->mapping, $detail);
-        $this->view->seo = $this->seo($this->mapping);
-        $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
+//        $this->mapping = array_merge($this->mapping, $detail);
+//        $this->view->seo = $this->seo($this->mapping);
+//        $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 
         //设置可见权限：支付查看信息
         $show_power = true;
@@ -128,6 +138,7 @@ class Esf extends HouseBase
         } else {
             $pay_result = false;
         }
+
         $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
         $mobile = $agent['mobile'];
         $this->assign("mobile", $mobile);
