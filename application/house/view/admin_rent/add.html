@@ -1,3 +1,6 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
 <div class="layui-container">
     <div class="layui-row">
         <form class="layui-form form-inline" target="zbn_cms" method="post"
@@ -24,13 +27,13 @@
 
 </div>
 <script>
-    layui.use(['layer' , 'form'] , function () {
+    layui.use(['layer', 'form'], function () {
         var form = layui.form;
         var $ = layui.$;
         form.render();
 
 
-
     });
 
 </script>
+{/block}
