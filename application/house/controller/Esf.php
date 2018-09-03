@@ -28,26 +28,26 @@ class Esf extends HouseBase
         $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
 
         $options = Db::table('mhcms_option')->where(['model_id' => '553'])->field('id,option_name,field_name')->select()->toArray();
-        foreach ($options as $value){
-            if ($value['field_name'] == 'tag'){
+        foreach ($options as $value) {
+            if ($value['field_name'] == 'tag') {
                 $select['tags'][$value['id']] = $value['option_name'];
             }
         }
 
-        foreach ($options as $value){
-            if ($value['field_name'] == 'use'){
+        foreach ($options as $value) {
+            if ($value['field_name'] == 'use') {
                 $select['yongtu'][$value['id']] = $value['option_name'];
             }
         }
 
-        foreach ($options as $value){
-            if ($value['field_name'] == 'price'){
+        foreach ($options as $value) {
+            if ($value['field_name'] == 'price') {
                 $select['jiage'][$value['id']] = $value['option_name'];
             }
         }
 
-        foreach ($options as $value){
-            if ($value['field_name'] == 'size'){
+        foreach ($options as $value) {
+            if ($value['field_name'] == 'size') {
                 $select['size'][$value['id']] = $value['option_name'];
             }
         }
@@ -59,7 +59,7 @@ class Esf extends HouseBase
             $this->assign('area', $_GET['area']);
         }
         if ($_GET['xiaoqu'] != null) {
-            $where['mhcms_house_esf.xiaoqu'] = $_GET['xiaoqu'];
+            $where['mhcms_house_esf.xiaoqu_id'] = $_GET['xiaoqu'];
             $this->assign('xiaoqu', $_GET['xiaoqu']);
         }
         if (!empty($_GET['yongtu'])) {
@@ -136,7 +136,14 @@ class Esf extends HouseBase
         }
 
         $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
-        $mobile = $agent['mobile'];
+
+        if ($agent['user_id']) {
+            $user_info = Db::table('mhcms_users')->where(['id' => $agent['user_id']])->find();
+            $mobile = $user_info['mobile'];
+        } else {
+            $mobile = '';
+        }
+
         $this->assign("mobile", $mobile);
         //查询对应表，通过esf_id和user_id
         $this->assign("pay_result", $pay_result);
