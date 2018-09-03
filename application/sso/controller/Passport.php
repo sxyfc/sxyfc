@@ -517,7 +517,7 @@ class Passport extends ModuleBase
             $_fan = $new_fan;
         }
 
-        if ($_fan && !$_fan['nickname']) {
+        if ($_fan) {
             $_W['wechat_fans_model']->where(['openid' => $_fan['openid']])->update($new_fan);
         }
 
@@ -549,6 +549,7 @@ class Passport extends ModuleBase
             if (empty($user->nickname) && $fans_info['nickname']) {
                 $user->nickname = $fans_info['nickname'];
             }
+            $user->login_cnt += 1;
             $user->save();
             $user->log_user_in();
         } else {
