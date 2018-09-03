@@ -22,22 +22,69 @@ class Rent extends HouseBase
 
     public function index()
     {
-        global $_W;
-        $content_model_id = $this->house_esf;
-        $filter_info = Models::gen_user_filter($content_model_id, null);
+        $select = array();
+        $select['zhuangxiu'] = array('装修', '毛胚', '简装', '精装', '豪装');
+        $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
 
-        $model = set_model($content_model_id);
-        /** @var Models $model_info */
-        $model_info = $model->model_info;
-        $where = $filter_info['where'];
-        $where['site_id'] = $_W['site']['id'];
+        $options = Db::table('mhcms_option')->where(['model_id' => '673'])->field('id,option_name,field_name')->select()->toArray();
+        foreach ($options as $value) {
+            if ($value['field_name'] == 'tag') {
+                $select['tags'][$value['id']] = $value['option_name'];
+            }
+        }
 
-        $simple_page = is_mobile() ? true : false;
+        foreach ($options as $value) {
+            if ($value['field_name'] == 'price') {
+                $select['jiage'][$value['id']] = $value['option_name'];
+            }
+        }
 
-        $this->view->lists = $lists = $model->where($where)->order("id desc")->paginate(null, $simple_page, ['query' => $filter_info['query']]);
+        foreach ($options as $value) {
+            if ($value['field_name'] == 'size') {
+                $select['size'][$value['id']] = $value['option_name'];
+            }
+        }
 
-        $this->view->filter = $filter_info;
-        $this->view->content_model_id = $content_model_id;
+        // 筛选条件
+        $where = array();
+        if ($_GET['area'] != null) {
+            $where['mhcms_house_rent.area_id'] = $_GET['area'];
+            $this->assign('area', $_GET['area']);
+        }
+        if ($_GET['xiaoqu'] != null) {
+            $where['mhcms_house_rent.xiaoqu_id'] = $_GET['xiaoqu'];
+            $this->assign('xiaoqu', $_GET['xiaoqu']);
+        }
+        if (!empty($_GET['tag'])) {
+            $where['mhcms_house_rent.tags'] = array('LIKE', '%' . $_GET['tag'] . '%');
+            $this->assign('tag', $_GET['tag']);
+        }
+        if (!empty($_GET['jiage'])) {
+            $where['mhcms_house_rent.prices'] = $_GET['jiage'];
+            $this->assign('jiage', $_GET['jiage']);
+        }
+        if (!empty($_GET['huxing'])) {
+            $where['mhcms_house_rent.shi'] = $_GET['huxing'];
+            $this->assign('huxing', $_GET['huxing']);
+        }
+        if (!empty($_GET['size'])) {
+            $where['mhcms_house_rent.size'] = $_GET['size'];
+            $this->assign('size', $_GET['size']);
+        }
+
+        $model = set_model('house_rent');
+        if ($_GET['huxing'] || $_GET['tag']  || $_GET['area'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
+        } else {
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
+        }
+
+        //设置筛选数据
+        $area_data = set_model('area')->field('id,area_name')->select()->toArray();
+        $xiaoqu_data = set_model('house_xiaoqu')->field('id,xiaoqu_name')->select()->toArray();
+        $this->assign('area_data', $area_data);
+        $this->assign('xiaoqu_data', $xiaoqu_data);
+        $this->assign('select', $select);
 
         return $this->view->fetch();
     }

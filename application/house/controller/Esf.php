@@ -59,7 +59,7 @@ class Esf extends HouseBase
             $this->assign('area', $_GET['area']);
         }
         if ($_GET['xiaoqu'] != null) {
-            $where['mhcms_house_esf.xiaoqu'] = $_GET['xiaoqu'];
+            $where['mhcms_house_esf.xiaoqu_id'] = $_GET['xiaoqu'];
             $this->assign('xiaoqu', $_GET['xiaoqu']);
         }
         if (!empty($_GET['yongtu'])) {
