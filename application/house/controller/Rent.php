@@ -51,6 +51,7 @@ class Rent extends HouseBase
         $model_info = $model->model_info;
 
         $detail = Models::get_item($id, $content_model_id);
+        $this->view->field_list = $model_info->get_admin_publish_fields($detail, []);
         $this->view->detail = $detail;
         $this->view->page_title = $detail['title'];
         $this->mapping = array_merge($this->mapping, $detail);
