@@ -120,10 +120,25 @@
                         <div class="column">{$detail['description']}</div>
                     </div>
                 </div>
+                {if $show_power}
+                {if $pay_result}
+                <div class="column is-full">
+                    <div class="columns option is-mobile is-marginless">
+                        <div class="column is-narrow">经纪人电话 :</div>
+                        <div class="column">{$detail['mobile']}</div>
+                    </div>
+                </div>
+                {/if}
+                {/if}
             </div>
         </div>
-        <div class="ui mhcms-item"> 户型图 <img src="{$detail['huxing_link']}" class="image ui"
-                                             style="max-height: 350px;margin: auto"></div>
+
+        <div class="ui mhcms-item">
+            <label class="column is-narrow">户型图</label>
+            <div class="column">
+                <img src="{$detail['huxing_link']}" class="image ui" style="max-height: 350px;margin: auto">
+            </div>
+        </div>
         {foreach $field_list as $k=>$field}
         {if $field['field_name'] == 'baidu_map'}
         <div class="ui mhcms-item">

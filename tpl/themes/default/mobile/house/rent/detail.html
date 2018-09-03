@@ -141,6 +141,16 @@
                     <div class="column">{$detail['description']}</div>
                 </div>
             </div>
+            {if $show_power}
+            {if $pay_result}
+            <div class="column is-full">
+                <div class="columns option is-mobile is-marginless">
+                    <div class="column is-narrow">经纪人电话 :</div>
+                    <div class="column">{$detail['mobile']}</div>
+                </div>
+            </div>
+            {/if}
+            {/if}
             {foreach $field_list as $k=>$field}
             {if $field['field_name'] == 'baidu_map'}
             <div class="column is-full">

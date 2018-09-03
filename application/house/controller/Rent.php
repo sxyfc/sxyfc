@@ -79,7 +79,14 @@ class Rent extends HouseBase
             $pay_result = false;
         }
         $agent = Db::table('mhcms_house_rent')->where(['id' => $id])->find();
-        $mobile = $agent['mobile'];
+
+        if ($agent['user_id']) {
+            $user_info = Db::table('mhcms_users')->where(['id' => $agent['user_id']])->find();
+            $mobile = $user_info['mobile'];
+        } else {
+            $mobile = '';
+        }
+
         $this->assign("mobile", $mobile);
         $this->assign("pay_result", $pay_result);
         return $this->view->fetch();
