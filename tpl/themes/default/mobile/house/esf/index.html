@@ -36,6 +36,12 @@
             <option value="{$ar['id']}" {if $ar['id'] == $area} selected {/if}>{$ar['area_name']}</option>
             {/foreach}
         </select>
+        <select name="xiaoqu" class="init_select">
+            <option value="">小区</option>
+            {foreach $xiaoqu_data as $arr}
+            <option value="{$arr['id']}" {if $arr['id'] == $xiaoqu} selected {/if}>{$arr['xiaoqu_name']}</option>
+            {/foreach}
+        </select>
         <select name="yongtu" class="init_select">
             <option value="" selected>用途</option>
             {foreach $select['yongtu'] as $key=>$value}
@@ -67,6 +73,13 @@
             <option value="">户型</option>
             {foreach $select['huxing'] as $key=>$value}
             <option value="{$key}" {if $key === $huxing} selected {/if}>{$value}</option>
+            {/foreach}
+        </select>
+
+        <select name="size" class="init_select">
+            <option value="">面积</option>
+            {foreach $select['size'] as $key=>$value}
+            <option value="{$key}" {if $key === $size} selected {/if}>{$value}</option>
             {/foreach}
         </select>
         <input type="submit" class="weui-btn weui-btn_primary search_btn" value="搜索">
