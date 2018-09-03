@@ -66,7 +66,7 @@
     <div class="mhcms-panel-body">
         <div class="columns is-mobile user-btns has-text-centered">
             <div class=" column">
-                <a data-mha href="/house/weituo/esf_buy">
+                <a data-mha href="/house/user_content/publish_info">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="iconfont icon-svgmoban06 "></i>
                         <p>我要买房</p>
@@ -76,7 +76,7 @@
             </div>
 
             <div class="  column">
-                <a data-mha href="/house/weituo/rent_add" data-model_id="resume">
+                <a data-mha href="/house/user_content/publish_info" data-model_id="resume">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="iconfont icon-chuzu "></i>
                         <p>我要租房</p>
@@ -119,7 +119,7 @@
         <div class="columns is-mobile user-btns has-text-centered weui-cells">
 
             <div class="  column">
-                <a href="/house/weituo/create?type=1">
+                <a href="/house/user_content/publish_weituo">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="icon-woyaomaifang iconfont "></i>
                         <p>我要卖房</p>
@@ -128,7 +128,7 @@
             </div>
 
             <div class="  column">
-                <a href="/house/weituo/create?type=2">
+                <a href="/house/user_content/publish_weituo">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="iconfont iconfont icon-woyaochuzu "></i>
                         <p>我要出租</p>
@@ -266,40 +266,40 @@
 
 
                 {if !$_W['module_config']['close_esf']}
-                <a class="weui-cell weui-cell_access" href="/house/user_content/my_esf_lists">
-                    <div class="weui-cell__hd"><i class="iconfont icon-xiaoqu"
-                                                  style="width:20px;margin-right:5px;display:block"></i>
-                    </div>
-                    <div class="weui-cell__bd weui-cell_primary">
-                        <p>二手房管理</p>
-                    </div>
-                    <span class="weui-cell__ft"></span>
-                </a>
+<!--                <a class="weui-cell weui-cell_access" href="/house/user_content/my_esf_lists">-->
+<!--                    <div class="weui-cell__hd"><i class="iconfont icon-xiaoqu"-->
+<!--                                                  style="width:20px;margin-right:5px;display:block"></i>-->
+<!--                    </div>-->
+<!--                    <div class="weui-cell__bd weui-cell_primary">-->
+<!--                        <p>二手房管理</p>-->
+<!--                    </div>-->
+<!--                    <span class="weui-cell__ft"></span>-->
+<!--                </a>-->
                 {/if}
 
 
                 {if !$_W['module_config']['close_rent']}
-                <a class="weui-cell weui-cell_access" href="/house/user_content/my_rent_lists">
-                    <div class="weui-cell__hd"><i class="iconfont icon-woyaochuzu"
-                                                  style="width:20px;margin-right:5px;display:block"></i>
-                    </div>
-                    <div class="weui-cell__bd weui-cell_primary">
-                        <p>出租管理</p>
-                    </div>
-                    <span class="weui-cell__ft"></span>
-                </a>
+<!--                <a class="weui-cell weui-cell_access" href="/house/user_content/my_rent_lists">-->
+<!--                    <div class="weui-cell__hd"><i class="iconfont icon-woyaochuzu"-->
+<!--                                                  style="width:20px;margin-right:5px;display:block"></i>-->
+<!--                    </div>-->
+<!--                    <div class="weui-cell__bd weui-cell_primary">-->
+<!--                        <p>出租管理</p>-->
+<!--                    </div>-->
+<!--                    <span class="weui-cell__ft"></span>-->
+<!--                </a>-->
                 {/if}
 
 
-                <a class="weui-cell weui-cell_access" href="/house/user_content/my_info_lists">
-                    <div class="weui-cell__hd"><i class="iconfont icon-zufang"
-                                                  style="width:20px;margin-right:5px;display:block"></i>
-                    </div>
-                    <div class="weui-cell__bd weui-cell_primary">
-                        <p>求租求购</p>
-                    </div>
-                    <span class="weui-cell__ft"></span>
-                </a>
+<!--                <a class="weui-cell weui-cell_access" href="/house/user_content/my_info_lists">-->
+<!--                    <div class="weui-cell__hd"><i class="iconfont icon-zufang"-->
+<!--                                                  style="width:20px;margin-right:5px;display:block"></i>-->
+<!--                    </div>-->
+<!--                    <div class="weui-cell__bd weui-cell_primary">-->
+<!--                        <p>求租求购</p>-->
+<!--                    </div>-->
+<!--                    <span class="weui-cell__ft"></span>-->
+<!--                </a>-->
 
                 <a class="weui-cell weui-cell_access" href="/house/user_orders/index">
                     <div class="weui-cell__hd"><i class="iconfont icon-zufang"
