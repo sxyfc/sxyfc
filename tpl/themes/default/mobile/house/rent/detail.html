@@ -141,6 +141,16 @@
                     <div class="column">{$detail['description']}</div>
                 </div>
             </div>
+            {foreach $field_list as $k=>$field}
+            {if $field['field_name'] == 'baidu_map'}
+            <div class="column is-full">
+                <label class="column is-narrow">{$field['slug']}</label>
+                <div class="column">
+                    {$field['form_str']}
+                </div>
+            </div>
+            {/if}
+            {/foreach}
         </div>
     </div>
 </div>
