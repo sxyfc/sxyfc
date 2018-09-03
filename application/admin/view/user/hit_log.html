@@ -79,12 +79,9 @@ if (!isset($keyword)) {
                 <td>{if $user.nickname}{$user.nickname}{else}{$user.user_name}{/if}</td>
                 <td>
                     {if $user.avatar}
-                    <img src="{$user.avatar}"
-                         style=" width: 45px;border-radius: 50%;">
+                        <img src="{$user.avatar}" style=" width: 45px;border-radius: 50%;">
                     {else}
-
-                    <img src="/statics/images/logo.png"
-                         style=" width: 45px;border-radius: 50%;">
+                        <img src="/statics/images/logo.png" style=" width: 45px;border-radius: 50%;">
                     {/if}
                 </td>
                 <td>{if $user.mobile}{$user.mobile}{else}未绑定{/if}</td>

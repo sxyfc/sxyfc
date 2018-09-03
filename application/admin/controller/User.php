@@ -286,7 +286,7 @@ class User extends AdminBase
 
             $model = set_model('users');
             $model_infos = $model->model_info;
-            $this->view->list = $model_infos->get_admin_publish_fields();
+            $this->view->list = $model_infos->get_admin_publish_fields($detail);
 
             $this->assign('roles', D('user_roles')->where(['site_id' => ['IN', [0, $this->site_id]]])->select());
             $this->assign('detail', $detail);

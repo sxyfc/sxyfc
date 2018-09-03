@@ -80,7 +80,9 @@ if (!isset($keyword)) {
                 {foreach $field_list as $field}
                 <td>{$field['slug']}</td>
                 {/foreach}
+                <td>openid</td>
                 <td>昵称</td>
+                <td>头像</td>
                 <td>角色</td>
                 <td>手机</td>
                 <td>余额</td>
@@ -91,6 +93,7 @@ if (!isset($keyword)) {
             {foreach name="list" id="var"}
             <?php
             $role = \app\common\model\UserRoles::get(['id'=>$var['user_role_id']]);
+            $fan = set_model('sites_wechat_fans')->where(['user_id'=>$var['id']])->find();
             ?>
             <tr class="{neq name="var.status" value="99"}disabled_1 {/neq}">
 
@@ -98,7 +101,15 @@ if (!isset($keyword)) {
             {foreach $field_list as $field}
             <td><pre>{$var[$field['field_name']]}</pre></td>
             {/foreach}
+            <td><pre>{$fan.openid}</pre></td>
             <td>{$var.nickname}</td>
+            <td>
+                {if $var.avatar}
+                    <img src="{$var.avatar}" style=" width: 45px;border-radius: 50%;">
+                {else}
+                    <img src="/statics/images/logo.png" style=" width: 45px;border-radius: 50%;">
+                {/if}
+            </td>
             <td>{$role.role_name}</td>
             <td>{$var.mobile}</td>
             <td>{$var.balance}</td>
