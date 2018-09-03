@@ -1,0 +1,96 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if (!isset($keyword)) {
+    $keyword = "";
+}
+?>
+<form class="layui-form form-inline" method="post" action="{:\think\\Request::instance()->url()}">
+    <table class="layui-table -group">
+        <tr>
+
+            <td class="input-group">
+
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            用户名
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="user_name" value="{$user_name}" type="text" placeholder="用户名">
+                    </p>
+
+                </div>
+
+
+            </td>
+
+            <td class="input-group">
+
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            手机号
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="mobile" value="{$mobile}" type="text" placeholder="手机号">
+                    </p>
+
+                </div>
+
+
+            </td>
+
+        <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+        </td></tr>
+    </table>
+</form>
+{/block}
+
+
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table">
+            <tr>
+                <td class="w50">ID</td>
+                <td>用户ID</td>
+                <td>openid</td>
+                <td>昵称</td>
+                <td>头像</td>
+                <td>手机号</td>
+                <td>登录次数</td>
+                <td>最近登录时间</td>
+                <td>操作</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <tr>
+                <td>{$num++}</td>
+                <td>{$var.id}</td>
+                <td>{$var.openid}</td>
+                <td>{$var.nickname}</td>
+                <td>
+                    <img src="{$var.avatar}"
+                         style=" width: 45px;border-radius: 50%;">
+                </td>
+                <td>{$var.mobile}</td>
+                <td>{$var.login_cnt}</td>
+                <td>{$var.last_login}</td>
+                <td>
+                {volist name="sub_menu" id="menu"}
+                {eq name="menu.user_menu_display" value="0"}
+                {:build_back_a($menu['id'], $menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],"",'90%','80%',$var)}
+                {/eq}
+                {/volist}
+                </td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$page}
+    </div>
+</form>
+{/block}

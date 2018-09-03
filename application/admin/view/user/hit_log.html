@@ -1,0 +1,104 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if (!isset($keyword)) {
+    $keyword = "";
+}
+?>
+<form class="layui-form form-inline" method="post" action="{:\think\\Request::instance()->url()}">
+    <table class="layui-table -group">
+        <tr>
+
+            <td class="input-group">
+
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            用户名
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="user_name" value="{$user_name}" type="text" placeholder="用户名">
+                    </p>
+
+                </div>
+
+
+            </td>
+
+            <td class="input-group">
+
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            手机号
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="mobile" value="{$mobile}" type="text" placeholder="手机号">
+                    </p>
+
+                </div>
+
+
+            </td>
+
+        <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+        </td></tr>
+    </table>
+</form>
+{/block}
+
+
+{block name="main"}
+<form target="zbn_cms" method="post" action="{:\think\\Url::build('menu/update')}">
+    <div class="tableBox">
+        <table class="layui-table">
+            <tr>
+                <td class="w50">ID</td>
+                <td>用户ID</td>
+                <td>用户名</td>
+                <td>头像</td>
+                <td>手机号</td>
+                <td>房源标题</td>
+                <td>房源价格</td>
+                <td>房源电话</td>
+                <td>房源地址</td>
+                <td>房东姓名</td>
+                <td>房源类型</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <?php
+                $user = \app\common\model\Users::get(['id'=>$var['user_id']]);
+                $fang = set_model($var['model_id'])->find(['id'=>$var['item_id']]);
+            ?>
+            <tr>
+                <td>{$var.id}</td>
+                <td>{$var.user_id}</td>
+                <td>{if $user.nickname}{$user.nickname}{else}{$user.user_name}{/if}</td>
+                <td>
+                    {if $user.avatar}
+                    <img src="{$user.avatar}"
+                         style=" width: 45px;border-radius: 50%;">
+                    {else}
+
+                    <img src="/statics/images/logo.png"
+                         style=" width: 45px;border-radius: 50%;">
+                    {/if}
+                </td>
+                <td>{if $user.mobile}{$user.mobile}{else}未绑定{/if}</td>
+                <td>{$fang.title}</td>
+                <td>{$fang.price}{if $var.model_id == 649}万{else}元{/if}</td>
+                <td>{$fang.mobile}</td>
+                <td>{$fang.address}</td>
+                <td>{$fang.fang_user_name}</td>
+                <td>{if $var.model_id == 649}二手房{else}租房{/if}</td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$page}
+    </div>
+</form>
+{/block}

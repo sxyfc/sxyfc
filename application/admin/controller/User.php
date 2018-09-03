@@ -331,4 +331,71 @@ class User extends AdminBase
         $data['msg'] = '操作成功！' . $user_role['model_id'];
         return $data;
     }
+    public function hit_log($user_id = 0)
+    {
+        $user_id = (int)$user_id;
+        $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
+        $mobile = trim(input('param.mobile', ' ', 'htmlspecialchars'));
+        if ($user_name) {
+            $user_name_query = sprintf("user_name like '%s' OR nickname like '%s'", '%'.$user_name.'%', '%'.$user_name.'%');
+        }
+        if ($mobile) {
+            $where['mobile'] = $mobile;
+        }
+
+        if ($this->current_admin_role) {
+            if (!empty($user_id)) {
+                $where['id'] = $user_id;
+            }
+        } else {
+            $where['id'] = $this->user->id;
+        }
+        if ($user_name_query) {
+            $userids = set_model('users')->where($where)->whereExp('', $user_name_query)->field('id')->select()->column('id');
+        } else {
+            $userids = set_model('users')->where($where)->field('id')->select()->column('id');
+        }
+
+        $where = [];
+        $where['user_id'] = ['IN', $userids];
+
+        $list = set_model('hits_log')->where($where)->paginate(config('list_rows'));
+
+        $pages = $list->render();
+
+        $this->view->assign('page', $pages);
+        $this->view->assign('list', $list);
+        $this->view->assign('user_name', $user_name);
+        $this->view->assign('mobile', $mobile);
+
+        return $this->view->fetch();
+    }
+    public function wx_login_log($user_id = 0)
+    {
+        $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
+        $mobile = trim(input('param.mobile', ' ', 'htmlspecialchars'));
+        $where = [];
+        if ($user_name) {
+            $where['nickname'] = array('LIKE', '%'.$user_name.'%');
+        }
+        if ($mobile) {
+            $where['a.mobile'] = $mobile;
+        }
+
+        if (!$this->current_admin_role) {
+            $where['a.user_id'] = $this->user->id;
+        }
+        $list = set_model('users')->alias('a')->join(config("database.prefix").'sites_wechat_fans b', 'a.id = b.user_id', 'INNER')->where($where)->field('a.id,b.openid,a.avatar,a.user_name,a.nickname,a.mobile,a.login_cnt,a.last_login')->paginate(config('list_rows'));
+
+        $pages = $list->render();
+
+        $this->view->assign('num', 1);
+        $this->view->assign('page', $pages);
+        $this->view->assign('list', $list);
+        $this->view->assign('user_name', $user_name);
+        $this->view->assign('mobile', $mobile);
+
+        return $this->view->fetch();
+    }
+    
 }
