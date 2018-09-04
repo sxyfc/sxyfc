@@ -15,7 +15,6 @@ use app\common\model\Hits;
 use app\common\model\Models;
 use app\core\util\ContentTag;
 use think\Db;
-use think\Log;
 
 class Rent extends HouseBase
 {
@@ -90,7 +89,7 @@ class Rent extends HouseBase
         }
 
         //设置筛选数据
-        $area_data = set_model('area')->field('id,area_name,parent_id')->select()->toArray();
+        $area_data = set_model('area')->order(['parent_id'=>'asc'])->field('id,area_name,parent_id')->select()->toArray();
         $xiaoqu_data = set_model('house_xiaoqu')->field('id,xiaoqu_name')->select()->toArray();
         $area_province = array();
         foreach ($area_data as $area_item) {
