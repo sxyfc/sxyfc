@@ -7,6 +7,11 @@
               action="{:\think\\Request::instance()->url()}">
             <br>
             {foreach $field_list as $k=>$field}
+            {if $field['slug'] == '百度地图'}
+            <div class="layui-form-item" style="float: right">
+                <input id="searchplace"  placeholder="输入搜索地址" class="layui-input" style="width: 200px;float: left"/>
+            </div>
+            {/if}
             <div class="layui-form-item" id="row_{$k}">
                 <label class="layui-form-label">{$field['slug']}</label>
                 <div class="layui-input-block">
@@ -32,5 +37,37 @@
         form.render();
     });
 
+         $(function(){
+        createSearch();
+        createAutocomlete();
+        $("#s_p_search_btn").click(function () {
+            searchPlace($("#searchplace").val());
+        });
+    });
+    function createSearch() {
+        var map = window.map;
+        var local = new BMap.LocalSearch(map,
+            {
+                renderOptions: { map: map, panel: "" }
+            });
+        window.local = local;
+    }
+    //搜索
+    function searchPlace(value) {
+        window.local.search(value);
+    }
+    function createAutocomlete() {
+        var map = window.map;
+        var ac = new BMap.Autocomplete(    //建立一个自动完成的对象
+            {
+                "input": "searchplace",
+                "location": map
+            });
+        ac.addEventListener("onconfirm", function (e) {    //鼠标点击下拉列表后的事件
+            var _value = e.item.value;
+            var addr =_value.business+ _value.province + _value.city + _value.district + _value.street + _value.streetNumber ;
+            searchPlace(addr);
+        });
+    }
 </script>
 {/block}

@@ -26,6 +26,7 @@ class Esf extends HouseBase
         $select = array();
         $select['zhuangxiu'] = array('装修', '毛胚', '简装', '精装', '豪装');
         $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
+        $select['ting'] = array('0厅', '1厅', '2厅', '3厅', '4厅', '5厅');
 
         $options = Db::table('mhcms_option')->where(['model_id' => '553'])->field('id,option_name,field_name')->select()->toArray();
         foreach ($options as $value) {
@@ -54,9 +55,13 @@ class Esf extends HouseBase
 
         // 筛选条件
         $where = array();
-        if ($_GET['area'] != null) {
-            $where['mhcms_house_esf.area_id'] = $_GET['area'];
-            $this->assign('area', $_GET['area']);
+        if ($_GET['area_province'] != null) {
+            $area = 1;
+            if ($_GET['area_province'] != null) $area = $_GET['area_province'];
+            if ($_GET['area_city'] != null) $area = $_GET['area_city'];
+            if ($_GET['area_area'] != null) $area = $_GET['area_area'];
+            $where['mhcms_house_esf.area_id'] = $area;
+            $this->assign('area', $_GET['area_province']);
         }
         if ($_GET['xiaoqu'] != null) {
             $where['mhcms_house_esf.xiaoqu_id'] = $_GET['xiaoqu'];
@@ -78,9 +83,13 @@ class Esf extends HouseBase
             $where['mhcms_house_esf.price'] = $_GET['jiage'];
             $this->assign('jiage', $_GET['jiage']);
         }
-        if (!empty($_GET['huxing'])) {
+        if ($_GET['huxing'] != null) {
             $where['mhcms_house_esf.shi'] = $_GET['huxing'];
             $this->assign('huxing', $_GET['huxing']);
+        }
+        if ($_GET['ting'] != null) {
+            $where['mhcms_house_esf.ting'] = $_GET['ting'];
+            $this->assign('ting', $_GET['ting']);
         }
         if (!empty($_GET['size'])) {
             $where['mhcms_house_esf.size'] = $_GET['size'];
@@ -88,16 +97,25 @@ class Esf extends HouseBase
         }
 
         $model = set_model('house_esf');
-        if ($_GET['huxing'] || $_GET['tag'] || $_GET['zhuangxiu'] || $_GET['yongtu'] || $_GET['area'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
+        if (($_GET['huxing'] != null) || $_GET['tag'] || $_GET['zhuangxiu'] || $_GET['yongtu'] || $_GET['area'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage'] || ($_GET['ting'] != null)) {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
         } else {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
         }
 
         //设置筛选数据
-        $area_data = set_model('area')->field('id,area_name')->select()->toArray();
+        $area_data = set_model('area')->order(['parent_id'=>'asc'])->field('id,area_name,parent_id')->select()->toArray();
         $xiaoqu_data = set_model('house_xiaoqu')->field('id,xiaoqu_name')->select()->toArray();
-        $this->assign('area_data', $area_data);
+        $area_province = array();
+        foreach ($area_data as $area_item) {
+            if ($area_item['parent_id'] == 0) {
+                array_push($area_province, $area_item);//省
+                $key = array_search($area_item, $area_data);
+                array_splice($area_data, $key, 1);
+            }
+        }
+        $this->assign('area_data', json_encode($area_data));
+        $this->assign('area_province', json_encode($area_province));
         $this->assign('xiaoqu_data', $xiaoqu_data);
         $this->assign('select', $select);
 
