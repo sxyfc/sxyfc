@@ -100,7 +100,7 @@ class Esf extends HouseBase
         }
 
         //设置筛选数据
-        $area_data = set_model('area')->field('id,area_name')->select()->toArray();
+        $area_data = set_model('area')->order(['parent_id'=>'asc'])->field('id,area_name')->select()->toArray();
         $xiaoqu_data = set_model('house_xiaoqu')->field('id,xiaoqu_name')->select()->toArray();
         $this->assign('area_data', $area_data);
         $this->assign('xiaoqu_data', $xiaoqu_data);
