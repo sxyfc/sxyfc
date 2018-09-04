@@ -25,6 +25,7 @@ class Rent extends HouseBase
         $select = array();
         $select['zhuangxiu'] = array('装修', '毛胚', '简装', '精装', '豪装');
         $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
+        $select['ting'] = array('0厅', '1厅', '2厅', '3厅', '4厅', '5厅');
 
         $options = Db::table('mhcms_option')->where(['model_id' => '673'])->field('id,option_name,field_name')->select()->toArray();
         foreach ($options as $value) {
@@ -63,9 +64,13 @@ class Rent extends HouseBase
             $where['mhcms_house_rent.prices'] = $_GET['jiage'];
             $this->assign('jiage', $_GET['jiage']);
         }
-        if (!empty($_GET['huxing'])) {
+        if ($_GET['huxing'] != null) {
             $where['mhcms_house_rent.shi'] = $_GET['huxing'];
             $this->assign('huxing', $_GET['huxing']);
+        }
+        if ($_GET['ting'] != null) {
+            $where['mhcms_house_rent.ting'] = $_GET['ting'];
+            $this->assign('ting', $_GET['ting']);
         }
         if (!empty($_GET['size'])) {
             $where['mhcms_house_rent.size'] = $_GET['size'];
@@ -73,7 +78,7 @@ class Rent extends HouseBase
         }
 
         $model = set_model('house_rent');
-        if ($_GET['huxing'] || $_GET['tag']  || $_GET['area'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
+        if (($_GET['huxing'] != null)|| $_GET['ting'] != null || $_GET['tag']  || $_GET['area'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
         } else {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
