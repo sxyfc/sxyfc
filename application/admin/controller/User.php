@@ -339,6 +339,7 @@ class User extends AdminBase
         if ($user_name) {
             $user_name_query = sprintf("user_name like '%s' OR nickname like '%s'", '%'.$user_name.'%', '%'.$user_name.'%');
         }
+        $where = [];
         if ($mobile) {
             $where['mobile'] = $mobile;
         }
@@ -350,16 +351,18 @@ class User extends AdminBase
         } else {
             $where['id'] = $this->user->id;
         }
-        if ($user_name_query) {
-            $userids = set_model('users')->where($where)->whereExp('', $user_name_query)->field('id')->select()->column('id');
-        } else {
-            $userids = set_model('users')->where($where)->field('id')->select()->column('id');
+        if ($where || $user_name_query) {
+            if ($user_name_query) {
+                $userids = set_model('users')->where($where)->whereExp('', $user_name_query)->field('id')->select()->column('id');
+            } else {
+                $userids = set_model('users')->where($where)->field('id')->select()->column('id');
+            }
+            $where = [];
+            $where['a.user_id'] = ['IN', $userids];
         }
 
-        $where = [];
-        $where['user_id'] = ['IN', $userids];
-
-        $list = set_model('hits_log')->where($where)->paginate(config('list_rows'));
+        $sub_query = set_model('hits_log')->alias('a')->where($where)->group('user_id,model_id,item_id')->field('user_id,model_id,item_id,COUNT(1) cnt')->buildSql();
+        $list = set_model('hits_log')->alias('a')->join($sub_query.' b', 'a.user_id = b.user_id AND a.model_id = b.model_id AND a.item_id = b.item_id')->where($where)->order('a.create_at DESC')->field('a.*,b.cnt')->paginate(config('list_rows'));
 
         $pages = $list->render();
 

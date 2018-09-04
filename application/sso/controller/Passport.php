@@ -477,7 +477,8 @@ class Passport extends ModuleBase
         
         $site_id = $_GPC['site_id'] ? $_GPC['site_id'] : $_W['site']['id'];//input('param.site_id', 0);
 
-        if (is_weixin()) {
+        $user_id = Session::get('user_id');
+        if (is_weixin() && empty($user_id)) {
             if (!$_W['account']) {
                 return;
             }

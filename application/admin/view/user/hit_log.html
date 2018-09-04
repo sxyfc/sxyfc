@@ -67,6 +67,8 @@ if (!isset($keyword)) {
                 <td>房源地址</td>
                 <td>房东姓名</td>
                 <td>房源类型</td>
+                <td>访问总数</td>
+                <td>访问时间</td>
             </tr>
             {foreach name="list" id="var"}
             <?php
@@ -86,11 +88,13 @@ if (!isset($keyword)) {
                 </td>
                 <td>{if $user.mobile}{$user.mobile}{else}未绑定{/if}</td>
                 <td>{$fang.title}</td>
-                <td>{$fang.price}{if $var.model_id == 649}万{else}元{/if}</td>
+                <td>{if $fang.price}{$fang.price}{else}N/A{/if}{if $var.model_id == 649}万{else}元{/if}</td>
                 <td>{$fang.mobile}</td>
                 <td>{$fang.address}</td>
                 <td>{$fang.fang_user_name}</td>
                 <td>{if $var.model_id == 649}二手房{else}租房{/if}</td>
+                <td>{$var.cnt}</td>
+                <td>{$var.create_at}</td>
             </tr>
             {/foreach}
 
