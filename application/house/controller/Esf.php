@@ -55,9 +55,13 @@ class Esf extends HouseBase
 
         // 筛选条件
         $where = array();
-        if ($_GET['area'] != null) {
-            $where['mhcms_house_esf.area_id'] = $_GET['area'];
-            $this->assign('area', $_GET['area']);
+        if ($_GET['area_province'] != null) {
+            $area = 1;
+            if ($_GET['area_province'] != null) $area = $_GET['area_province'];
+            if ($_GET['area_city'] != null) $area = $_GET['area_city'];
+            if ($_GET['area_area'] != null) $area = $_GET['area_area'];
+            $where['mhcms_house_esf.area_id'] = $area;
+            $this->assign('area', $_GET['area_province']);
         }
         if ($_GET['xiaoqu'] != null) {
             $where['mhcms_house_esf.xiaoqu_id'] = $_GET['xiaoqu'];
@@ -100,9 +104,18 @@ class Esf extends HouseBase
         }
 
         //设置筛选数据
-        $area_data = set_model('area')->field('id,area_name')->select()->toArray();
+        $area_data = set_model('area')->field('id,area_name,parent_id')->select()->toArray();
         $xiaoqu_data = set_model('house_xiaoqu')->field('id,xiaoqu_name')->select()->toArray();
-        $this->assign('area_data', $area_data);
+        $area_province = array();
+        foreach ($area_data as $area_item) {
+            if ($area_item['parent_id'] == 0) {
+                array_push($area_province, $area_item);//省
+                $key = array_search($area_item, $area_data);
+                array_splice($area_data, $key, 1);
+            }
+        }
+        $this->assign('area_data', json_encode($area_data));
+        $this->assign('area_province', json_encode($area_province));
         $this->assign('xiaoqu_data', $xiaoqu_data);
         $this->assign('select', $select);
 
