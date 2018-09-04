@@ -188,6 +188,42 @@ class UserOrders extends HouseUserBase
 
     }
 
+    //申请退款
+    public function refund($order_id)
+    {
+        global $_W;
+
+        if ($this->isPost()) {
+            $data = input('param.data/a');
+            $orders = Orders::get(['id' => $order_id]);
+
+            if (!$orders) {
+                $this->zbn_msg('查询不到订单', 1, 'true', 1000, "'".url('house/user_orders/index')."'", "");
+            }
+            if ($orders['buyer_user_id'] !== $this->user['id']) {
+                $this->zbn_msg('没有权限', 1, 'true', 1000, "'".url('house/user_orders/index')."'", "");
+            }
+            if ($orders['status'] == '退款中') {
+                $this->zbn_msg('正在退款，等待管理员审核', 1, 'true', 1000, "'".url('house/user_orders/index')."'", "");
+            }
+            if ($orders['status'] == '待支付') {
+                $this->zbn_msg('订单未支付，无法申请退款');
+            }
+            if ($orders['status'] == '已关闭' ||(time() - strtotime($orders['pay_time'])) > 24 * 60 * 60) {
+                $this->zbn_msg('订单已关闭或者超过24小时，无法申请退款', 1, 'true', 1000, "'".url('house/user_orders/index')."'", "");
+            }
+            $order_data = array();
+            $order_data['status'] = '退款中';
+            $order_data['refund_desc'] = $data['description'];
+            $order_data['refund_time'] = date('Y-m-d H:i:s', time());
+            set_model('orders')->where(['id'=>$order_id])->update($order_data);
+            Orders::log_add($order_id, $orders['buyer_user_id'], '[申请退款]'.$data['description']);
+            $this->zbn_msg("操作成功", 1, 'true', 1000, "'".url('house/user_orders/index')."'", "");
+        } else {
+            return $this->view->fetch();
+        }
+    }
+
     /**
      * 房宝消费
      * @param  [type] $data [description]

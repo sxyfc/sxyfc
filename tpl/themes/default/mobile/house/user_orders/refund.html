@@ -1,0 +1,30 @@
+{extend name="$front_base_layout" /}
+{block name="main"}
+<form target="zbn_cms" class="layui-form" action="{:\think\\Request::instance()->url()}" method="post">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>申请退款</legend>
+                <table class="layui-table table-responsive">
+
+                    <tr>
+                        <td class="lfTdBt">{:lang('退款原因')}</td>
+                        <td class="rgTdBt"><textarea class="form-control" name="data[description]" style="width: 80%" rows="5"></textarea></td>
+                    </tr>
+                </table>
+                </fieldset>
+
+                <div class="smtQr"><input type="submit" value="提交" class="layui-btn layui-btn-small "/></div>
+            </div>
+        </div>
+    </div>
+
+</form>
+<script>
+    layui.use(['form'] , function () {
+        var form = layui.form;
+    });
+</script>
+
+{/block}

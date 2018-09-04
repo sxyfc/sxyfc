@@ -1,93 +1,95 @@
 {extend name="$front_base_layout" /}
-
 {block name="layui_js"}{/block}
 {block name="layui_css"}{/block}
+{block name="mhcms_base_js"}{/block}
 {block name="jquery"}{/block}
-{block name="semantic_css"}{/block}
 {block name="baidu_map"}{/block}
+{block name="content_header"}{/block}
+{block name="semantic_css"}{/block}
+{block name="vue_js"}{/block}
 
 {block name="mhcms_module_js"}{/block}
-{block name="content_header"}{/block}
-{block name="vue_js"}{/block}
 {block name="main"}
-
-<div id="app_mhcms" xmlns="http://www.w3.org/1999/html">
-    <form action="/退款接口">
-        <div class="tableBox" style=" padding: 10px">
-            <table class="table table-bordered" style="align-items: center">
-                <tr bgcolor="#F5F6FA" height="35px;"
-                    style="color:#333; font-size:16px; line-height:35px;">
-                    <!--<td>ID</td>-->
-                    <td>交易流水</td>
-                    <td>{:zlang('买家')}</td>
-                    <td>{:zlang('商品名称')}</td>
-                    <td>{:zlang('创建时间')}</td>
-                    <td>{:zlang('金额')}</td>
-                    <td>{:zlang('状态')}</td>
-
-                    <td>{:zlang('卖家')}</td>
-
-                    <td>退款</td>
-                </tr>
-
-                {foreach $lists as $item}
-                <?php
-            $item['order_id'] = $item['id'];
-            $product_data['title'] = '充值';
-            $buyer = \app\common\model\Users::get(['id'=>$item['buyer_user_id']]);
-                $seller = \app\common\model\Users::get(['id'=>$item['seller_user_id']]);
-                $buyer['name'] = $buyer['nickname'] ? $buyer['user_name'].
-                '('.$buyer['nickname'].')' :
-                $buyer['user_name'];
-                if (!$seller) {
-                $seller['name'] = '';
-                } else {
-                $seller['name'] = $seller['nickname'] ? $seller['user_name'].
-                '('.$seller['nickname'].')' : $seller['user_name'];
-                }
-                ?>
-                <!--<td>{$item.order_id}</td>-->
-                <td>{$item.trade_sn}</td>
-                <td>{$buyer.name}</td>
-                <td>{$product_data.title}
-                </td>
-                <td>{$item.create_time}</td>
-
-                <td>{$item.total_fee}</td>
-                <td>{$item.status}</td>
-
-                <td>{$seller.name}</td>
-                <td><a style="color: #0d71bb" href="/">申请</a></td>
-                </tr>
-
-                {/foreach}
-
-            </table>
-
-        </div>
-    </form>
-    <div>
-        {:$lists->render()}
-    </div>
-    {/block}
-
+<div class="form_container">
+    <style>
+        .form_container{
+            padding: 5px;
+        }
+        .init_select{
+            border: 1px solid #Ddd;
+            border-radius: 5px;
+            line-height: 30px;
+            height: 30px;
+            color: #777;
+            margin-bottom: 0.5rem;
+            width: 32%;
+        }
+        .search_form input.search_btn{
+            margin: 0;
+            width: 98%;
+        }
+    </style>
 </div>
-<script>
-    require(['Vue'], function (Vue) {
-        var app = new Vue({
-            el: '#app_mhcms',
-            data: {
-                status: {$status},
-
-            },
-            methods: {}
-        })
-    });
-</script>
+<div class="ui mhcms-panel" id="rent_esf">
+    <div class="ui  mhcms-panel-body">
+        <div class="ui mhcms-list unstackable items" v-show="show_esf">
+            {foreach $lists as $item}
+            {if $item.source_type == 2}
+            <?php
+                $_item= \app\common\model\Models::get_item($item['source_id'] , 'house_rent');
+            ?>
+            <a href="{:url('house/rent/detail' , ['id'=>$item.source_id])}" class="ui item mhcms-list-item ">
+                <div class=" image tiny ui"><img src="{$_item.thumb.0.url}"></div>
+                <div class="content">
+                    <div class="header" style="font-size: 14px;"><small class="has-text-gray">租房:</small>{$_item['title']}</div>
+                    <div class="extra">
+                        <small class="has-text-gray">{$item['create_time']}</small>
+                        <span class="mhcms-list-price is-pulled-right"> ￥<strong>{$item['amount']}</strong><small>房宝</small></span>
+                        <span class="mhcms-list-price is-pulled-right"> {$item.status}</span>
+                    </div>
+                </div>
+            </a>
+            {if $item.status == '已支付' && time() - strtotime($item.pay_time) <= 24 * 60 * 60}
+            <a href="{:url('house/user_orders/refund' , ['order_id'=>$item.id])}" mini="iframe" class="btn btn-default " width="80% " height="90% ">申请退款</a>
+            {/if}
+            {elseif $item.source_type == 3}
+            <?php
+                $_item= \app\common\model\Models::get_item($item['source_id'] , 'house_esf');
+            ?>
+            <a href="{:url('house/esf/detail' , ['id'=>$item.source_id])}" class="ui item mhcms-list-item ">
+                <div class=" image tiny ui"><img src="{$_item.thumb.0.url}"></div>
+                <div class="content">
+                    <div class="header" style="font-size: 14px;"><small class="has-text-gray">二手房:</small>{$_item['title']}</div>
+                    <div class="extra">
+                        <small class="has-text-gray">{$item['create_time']}</small>
+                        <span class="mhcms-list-price is-pulled-right"> ￥<strong>{$item['amount']}</strong><small>房宝</small></span>
+                        <span class="mhcms-list-price is-pulled-right"> {$item.status}</span>
+                    </div>
+                </div>
+            </a>
+            {if $item.status == '已支付' && time() - strtotime($item.pay_time) <= 24 * 60 * 60}
+            <a href="{:url('house/user_orders/refund' , ['order_id'=>$item.id])}" mini="iframe" class="btn btn-default " width="80% " height="90% ">申请退款</a>
+            {/if}
+            {else}
+            <a href="#" class="ui item mhcms-list-item ">
+                <div class=" image tiny ui"><img src="/statics/images/logo.png"></div>
+                <div class="content">
+                    <div class="header" style="font-size: 14px;">充值</div>
+                    <div class="extra">
+                        <small class="has-text-gray">{$item['create_time']}</small>
+                        <span class="mhcms-list-price is-pulled-right"> ￥<strong>{$item['amount']}</strong><small>元</small></span>
+                        <span class="mhcms-list-price is-pulled-right"> {$item.status}</span>
+                    </div>
+                </div>
+            </a>
+            {/if}
+            {/foreach}
+        </div>
+    </div>
+    {:$lists->render()}
 </div>
 
 {/block}
-
 {block name="footer"}
 {include file="public/footer" /}
 {/block}
