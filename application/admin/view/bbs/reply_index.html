@@ -18,12 +18,12 @@
             {foreach $lists as $var}
             <tr>
                 <td>
-                    <div class="layui-form-item">
-                        <h1><span class="mhcms-list-price is-pulled-left"><small>楼层{$var['rank']}</small></span></h1>
-                        <div style="font-size: 14px;text-indent: 10px;text-align:left;"><label>{$var['content']}</label></div>
+                    <div class="">
+                        <h3><span><small>楼层{$var['rank']}</small></span></h3>
+                        <div style="font-size: 14px;text-indent: 25px;text-align:left;"><label>{$var['content']}</label></div>
                     </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
+                    <div class="">
+                        <div class="">
                             <span class="mhcms-list-price is-pulled-right"><small>{$var['user_name']} {$var['create_time']}</small>
                                 <?php
                                 $mapping = $var;
@@ -52,7 +52,7 @@
             <div class="layui-form-item" id="row_content">
                 <label class="layui-form-label">回复内容</label>
                 <div class="layui-input-block">
-                    <textarea placeholder="" data-toggle="tooltip" title="" name="data[content]" id="content" class="layui-textarea" style="width:;height:"></textarea>
+                    <textarea placeholder="" data-toggle="tooltip" title="" name="data[content]" id="content" class="layui-textarea" maxlength="200"></textarea>
                 </div>
             </div>
             <div class="layui-form-item">
