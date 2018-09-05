@@ -192,6 +192,27 @@ class AdminOrders extends AdminBase
 
         $fund = new Fund();
         $fund->chg($deposit_data);
+
+        if ($orders['source_type'] != 1) {
+            $this->refund_distribution($orders['id']);
+        }
+    }
+
+    public function refund_distribution($order_id)
+    {
+        $data = set_model('distribution_orders')->where(['order_id'=>$order_id])->select()->toArray();
+
+        $fund = new Fund();
+        foreach ($data as $v) {
+            $deposit_data = [];
+            $deposit_data['user_id'] = $v['user_id'];
+            $deposit_data['amount'] = $v['total_fee'];
+            $deposit_data['unit_type'] = 2;
+            $deposit_data['pay_type'] = 1;
+            $deposit_data['note'] = '房宝退款,管理员：'.$this->user['id'];
+
+            $fund->chg($deposit_data);
+        }
     }
 
     public function view_logs($order_id){

@@ -140,7 +140,7 @@ class UserOrders extends HouseUserBase
         if ($result_json['result'] == 0) {
             $fb_order_id = $result_json['data']['order_id'];
         } else {
-            $this->error($result_json['reason'], $url);
+            $this->zbn_msg($result_json['reason'], 1, 'true', 1500, "'".$url."'", "");
             return false;
         }
 
@@ -153,10 +153,10 @@ class UserOrders extends HouseUserBase
 
         if (!$res) {
             // $this->zbn_msg('网络故障，请稍后再试！', 2, '', 'history.back()');
-            $this->error('网络故障，请稍后再试！', $url);
+            $this->zbn_msg('网络故障，请稍后再试！', 1, 'true', 1500, "'".$url."'", "");
             return false;
         } else {
-            $this->success('操作成功！', $url);
+            $this->zbn_msg('操作成功！', 1, 'true', 1000, "'".$url."'", "");
             echo "<script>history.back();</script>";
         }
     }
@@ -338,7 +338,6 @@ class UserOrders extends HouseUserBase
         $user_id = $seller_user['parent_id'];
         $rest = 1;
         while (!empty($user_id)) {
-            var_dump(123);
             $user = Users::get($user_id);
             if (!in_array($user['user_role_id'], [1,3,22,23])) {
                 break;

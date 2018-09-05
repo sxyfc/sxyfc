@@ -1,0 +1,76 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="main"}
+<div class="layui-container">
+    <div class="layui-row">
+        <div class="layui-form-item">
+            {if !isset($pid) || $pid == 0}
+            <div class="header" style="font-size: 22px;text-align:center;"><strong>{$note['title']}</strong></div>
+            <div class="header" style="font-size: 14px;text-indent: 20px;text-align:left;">{$note['content']}</div>
+            {else}
+            <div class="header" style="font-size: 14px;text-indent: 20px;text-align:left;">{$note['content']}</div>
+            {/if}
+            <div class="extra">
+                <span class="mhcms-list-price is-pulled-right"><small>楼主：{$note['user_name']} 时间：{$note['create_time']}</small></span>
+            </div>
+        </div>
+        <table class="layui-table table-bordered" lay-size="sm">
+            {foreach $lists as $var}
+            <tr>
+                <td>
+                    <div class="layui-form-item">
+                        <h1><span class="mhcms-list-price is-pulled-left"><small>楼层{$var['rank']}</small></span></h1>
+                        <div style="font-size: 14px;text-indent: 10px;text-align:left;"><label>{$var['content']}</label></div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <span class="mhcms-list-price is-pulled-right"><small>{$var['user_name']} {$var['create_time']}</small>
+                                <?php
+                                $mapping = $var;
+                                ?>
+                                {volist name="sub_menu" id="menu"}
+                                {eq name="menu.user_menu_display" value="0"}
+                                {:build_back_a($menu['id'],$menu['user_menu_params'],zlang($menu['user_menu_name']),$menu['user_menu_mini'],$menu['class'],'90%','80%' , $mapping)}
+                                {/eq}
+                                {/volist}
+                            </span>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+
+            {/foreach}
+
+        </table>
+        <div>
+            {:$lists->render()}
+        </div>
+        <br>
+        <form class="layui-form form-inline" target="zbn_cms" method="post"
+              action="{:\think\\Request::instance()->url()}">
+
+            <div class="layui-form-item" id="row_content">
+                <label class="layui-form-label">回复内容</label>
+                <div class="layui-input-block">
+                    <textarea placeholder="" data-toggle="tooltip" title="" name="data[content]" id="content" class="layui-textarea" style="width:;height:"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="*">提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+    layui.use(['layer' , 'form'] , function () {
+        var form = layui.form;
+        var $ = layui.$;
+        form.render();
+    });
+
+</script>
+{/block}

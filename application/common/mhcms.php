@@ -69,6 +69,7 @@ function set_model($model_id, $init_factory = true)
                 $model_info->form_factory = $form_factory;
             }
         }
+
         $models[$model_id] = Db::name($table_name);
         $models[$model_id]->model_info = $model_info;
     }
