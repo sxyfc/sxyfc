@@ -1,6 +1,13 @@
 {extend name="admin@public/content_frame" /}
 
 {block name="main"}
+<style type="text/css">
+.line-limit-length {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; //文本不换行，这样超出一行的部分被截取，显示...
+}
+</style>
 <div class="tableBox" >
     <table class="layui-table table-bordered" lay-size="sm">
         <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
@@ -19,6 +26,8 @@
                 $users = \app\common\model\Users::get($item['user_id']);
             ?>
             <td><pre>{$users['nickname']}</pre></td>
+            {elseif $field['field_name'] == 'content'}
+            <td><pre class="line-limit-length" style="max-width: 300px;">{$item[$field['field_name']]}</pre></td>
             {else}
             <td><pre>{$item[$field['field_name']]}</pre></td>
             {/if}
