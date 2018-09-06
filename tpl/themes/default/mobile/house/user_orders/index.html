@@ -30,6 +30,9 @@
         }
     </style>
 </div>
+<?php
+$logo = $_W['share_img'] = $_W['global_config']['data']['logo'] ? render_file_id($_W['global_config']['data']['logo']) : "/statics/images/logo.png";
+php>
 <div class="ui mhcms-panel" id="rent_esf">
     <div class="ui  mhcms-panel-body">
         <div class="ui mhcms-list unstackable items" v-show="show_esf">
@@ -39,7 +42,7 @@
                 $_item= \app\common\model\Models::get_item($item['source_id'] , 'house_rent');
             ?>
             <a href="{:url('house/rent/detail' , ['id'=>$item.source_id])}" class="ui item mhcms-list-item ">
-                <div class=" image tiny ui"><img src="{$_item.thumb.0.url}"></div>
+                <div class=" image tiny ui"><img src="{$logo}"></div>
                 <div class="content">
                     <div class="header" style="font-size: 14px;"><small class="has-text-gray">租房:</small>{$_item['title']}</div>
                     <div class="extra">
@@ -57,7 +60,7 @@
                 $_item= \app\common\model\Models::get_item($item['source_id'] , 'house_esf');
             ?>
             <a href="{:url('house/esf/detail' , ['id'=>$item.source_id])}" class="ui item mhcms-list-item ">
-                <div class=" image tiny ui"><img src="{$_item.thumb.0.url}"></div>
+                <div class=" image tiny ui"><img src="{$logo}"></div>
                 <div class="content">
                     <div class="header" style="font-size: 14px;"><small class="has-text-gray">二手房:</small>{$_item['title']}</div>
                     <div class="extra">

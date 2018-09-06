@@ -141,7 +141,7 @@
                 <a data-mha href="/member/info/verify">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="iconfont icon-renzheng"></i>
-                        <p>实名认证</p>
+                        <p>经纪人申请</p>
                     </div>
                 </a>
 
@@ -248,7 +248,7 @@
                                                   style="width:20px;margin-right:5px;display:block"></i>
                     </div>
                     <div class="weui-cell__bd weui-cell_primary">
-                        <p>申请公司认证</p>
+                        <p>申请县代</p>
                     </div>
                     <span class="weui-cell__ft"></span>
                 </a>
