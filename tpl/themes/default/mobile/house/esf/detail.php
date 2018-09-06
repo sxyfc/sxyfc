@@ -31,7 +31,7 @@
 
                 <div class="column">
                     <div class="text">均价</div>
-                    <div class="em">{$detail['price']}</div>
+                    <div class="em"><?php echo round($detail['price']/$detail['size'],4)*10000;?>元</div>
                 </div>
 
                 <div class="column">
@@ -43,7 +43,7 @@
 
                 <div class="column">
                     <div class="text">建筑面积</div>
-                    <div class="em">{$detail['size']}</div>
+                    <div class="em">{$detail['size']}平米</div>
                 </div>
             </div>
 
