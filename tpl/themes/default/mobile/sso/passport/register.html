@@ -2,56 +2,79 @@
 {block name="content_header"}{/block}
 {block name="main"}
 <p style="line-height: 100px;font-size: 20px;text-align: center">
-    注册一个账号
+    注册账号
 </p>
 
-<div class="ui    container" id="new_better_form" >
-    <form action="" method="post" class="ui tall stacked red form " id="form" style="margin-top: 10px;max-width: 500px;margin: auto">
+<div class="ui    container" id="new_better_form">
+    <form action="" method="post" class="ui tall stacked red form " id="form"
+          style="margin-top: 10px;max-width: 500px;margin: auto">
 
 
         <div class=" field">
-            <input type="number" id="user_name" name="data[user_name]" pattern="[0-9]*" value="" placeholder="请输入手机号">
+            <input type="tel" id="user_name" name="data[user_name]" pattern="[0-9]*"
+                   required="required" value="" placeholder="请输入手机号">
         </div>
         <div class=" field">
-            <input type="password" id="password" name="data[password]" value=""  placeholder="登录密码">
+            <input type="password" id="password" name="data[password]" required="required" value=""
+                   placeholder="登录密码">
         </div>
         <div class=" field">
-            <input type="password" id="password1" name="data[password1]"  value="" placeholder="确认密码">
+            <input type="password" id="password1" name="data[password1]" required="required"
+                   value="" placeholder="确认密码">
         </div>
         <div class=" field">
-            <input type="tel" id="code" name="data[code]" value="" placeholder="请输入手机验证码">
+            <input type="text" id="name" name="data[name]" value="" placeholder="姓名">
+        </div>
+        <div class=" field">
+            <input type="text" id="email" name="data[email]" value="" placeholder="邮箱">
+        </div>
+        <div class=" field">
+            <input type="text" id="qq" name="data[qq]" value="" placeholder="QQ">
+        </div>
+        <div class=" field">
+            <input type="text" id="wx" name="data[wx]" value="" placeholder="微信">
+        </div>
+        <div class=" field">
+            <input type="tel" id="code" name="data[code]" value="" required="required"
+                   placeholder="请输入手机验证码">
         </div>
         <div class=" field">
             <div class="ui grid">
                 <div class="six wide column">
                     <div class="col-xs-6">
-                        <input type="button" class="ui submit button" id="send_btn"  onclick="send_verify_code(this)" value="获取验证码">
+                        <input type="button" class="ui submit button" id="send_btn"
+                               onclick="send_verify_code(this)" value="获取验证码">
                     </div>
                 </div>
                 <div class="six wide column">
                     <div class=" col-xs-6">
-                        <div class="ui submit button register" >立刻注册</div>
+                        <div class="ui submit button register">立刻注册</div>
                     </div>
                 </div>
-                <div class="five wide column"  >
-                    <a  href="{:new_better_furl(['r'=>'sso.passport.login'])}" class="green ui  button " href="javascript:" id="showTooltips">已有账号，请登录</a>
+                <div class="five wide column">
+                    <a href="{:new_better_furl(['r'=>'sso.passport.login'])}"
+                       class="green ui  button " href="javascript:" id="showTooltips">已有账号，请登录</a>
 
                 </div>
             </div>
         </div>
 
 
-
         <div class="ui error message"></div>
     </form>
-    <a class="blue ui button" href="/tpl/themes/default/mobile/sso/passport/register_deal_info.html">用户须知</a>
+
+    <div class="layui-input-block">
+        <input name="like1[write]" lay-skin="primary" title="" checked="" type="checkbox"  placeholder="同意">
+        <a class="blue ui button"
+           href="/tpl/themes/default/mobile/sso/passport/register_deal_info.html">同意用户须知</a>
+    </div>
 
 </div>
 <script>
     var mobile_sender = {
-        count : 60 ,
+        count: 60,
 
-        recount : function () {
+        recount: function () {
             var that = this;
             layui.use(['layer', 'form'], function () {
                 var $ = layui.$, layer = layui.layer, form = layui.form;
@@ -68,20 +91,20 @@
                     $("#send_btn").val("获取验证码");
                 }
             });
-        } ,
-        send_sms : function (mobile) {
+        },
+        send_sms: function (mobile) {
             var that = this;
             //初始化类型类型
-            layui.use(['layer', 'form'] , function () {
+            layui.use(['layer', 'form'], function () {
                 var url = "{:url('sso/passport/send_code')}";
-                $.get( url, { "mobile": mobile }, function (data) {
-                    if(data.code === 1){
+                $.get(url, {"mobile": mobile}, function (data) {
+                    if (data.code === 1) {
                         layer.msg("已经发送！");
                         that.recount();
-                    }else{
+                    } else {
                         layer.msg("对不起 操作失败！" + data.msg);
                     }
-                } , 'json' );
+                }, 'json');
             });
         }
     };
@@ -91,7 +114,7 @@
         mobile_sender.send_sms(mobile_number);
     }
 
-    require(['semantic'] , function (semantic) {
+    require(['semantic'], function (semantic) {
 
         $('#form')
             .form({
@@ -100,8 +123,8 @@
                         identifier: 'user_name',
                         rules: [
                             {
-                                type   : 'empty',
-                                prompt : '请输入您的手机号码'
+                                type: 'empty',
+                                prompt: '请输入您的手机号码'
                             }
                         ]
                     },
@@ -109,17 +132,17 @@
                         identifier: 'password',
                         rules: [
                             {
-                                type   : 'empty',
-                                prompt : '请输入您的密码'
+                                type: 'empty',
+                                prompt: '请输入您的密码'
                             },
                             {
-                                type   : 'minLength[6]',
-                                prompt : '密码长度最少为{ruleValue} 位数'
+                                type: 'minLength[6]',
+                                prompt: '密码长度最少为{ruleValue} 位数'
                             }
                         ]
                     }
                 },
-                onSuccess: function(e) {
+                onSuccess: function (e) {
                     //阻止表单的提交
                     e.preventDefault();
                 }
@@ -134,7 +157,7 @@
                 onFailure: function (response) {
                     // request failed, or valid response but response.success = false
                     console.log(response);
-                    show_message(response.msg );
+                    show_message(response.msg);
                 },
                 onSuccess: function (response) {
                     // valid response and response.success = true

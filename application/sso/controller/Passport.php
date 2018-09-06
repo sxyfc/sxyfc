@@ -241,9 +241,9 @@ class Passport extends ModuleBase
         $mobile = $_GET['mobile'];
         $tpl_id = config('alidayu.template_code');
         $resp = Aliyun::send($mobile, $params, $tpl_id);
-        if($resp['code'] == 1){
+        if ($resp['code'] == 1) {
             session('code', $code);
-            SmsCode::create(['code'=> $code,'mobile'=>$mobile,'time'=>time()]);
+            SmsCode::create(['code' => $code, 'mobile' => $mobile, 'time' => time()]);
         }
         echo json_encode($resp);
     }
@@ -282,9 +282,9 @@ class Passport extends ModuleBase
 
         if ($this->isPost()) {
             $data = input('param.data/a');
-           if($data['code'] != session('code')){
-               $this->zbn_msg('验证码错误');
-           }
+            if ($data['code'] != session('code')) {
+                $this->zbn_msg('验证码错误');
+            }
 
             $foreword_url = "";
             $code = 2;
@@ -295,6 +295,7 @@ class Passport extends ModuleBase
             }
             $user = new Users();
             $user_data['user_name'] = $data['user_name'];//input('param.user_name');
+            $user_data['is_mobile_verify'] = 1;
             if (!is_phone($user_data['user_name'])) {
                 $this->zbn_msg("用户名必须是手机号码", 2);
             }
@@ -306,6 +307,12 @@ class Passport extends ModuleBase
             $user_data['user_role_id'] = 2;
             $user_data['created'] = date("Y-m-d H:i:s");
             $user_data['sex'] = '保密';
+            //姓名、邮箱、qq号、微信号-信息填写
+            $user_data['nickname'] = $data['name'];
+            $user_data['mobile'] = $data['user_name'];
+            $user_data['qq'] = $data['qq'];
+            $user_data['wechat'] = $data['wx'];
+            $user_data['user_email'] = $data['email'];
 
 
             $result = $validate->check($user_data);
@@ -474,7 +481,7 @@ class Passport extends ModuleBase
     public function wx_register($uuid = 0)
     {
         global $_W, $_GPC;
-        
+
         $site_id = $_GPC['site_id'] ? $_GPC['site_id'] : $_W['site']['id'];//input('param.site_id', 0);
 
         $user_id = Session::get('user_id');
@@ -495,7 +502,7 @@ class Passport extends ModuleBase
         $new_fan = [];
         $new_fan['openid'] = $fans_info['openid'];
         $new_fan['avatar'] = $fans_info['headimgurl'];
-        $new_fan['nickname'] = $fans_info['nickname'];            
+        $new_fan['nickname'] = $fans_info['nickname'];
         $new_fan['subscribe'] = (int)$fans_info['subscribe'];
         $new_fan['province'] = $fans_info['province'];
         $new_fan['city'] = $fans_info['city'];
@@ -651,15 +658,15 @@ class Passport extends ModuleBase
         $new_fan = [];
         $new_fan['openid'] = $fans_info['openid'];
         // if ($fans_info['country']) {
-            $new_fan['avatar'] = $fans_info['headimgurl'];
-            $new_fan['nickname'] = $fans_info['nickname'];            
-            $new_fan['subscribe'] = (int)$fans_info['subscribe'];
-            $new_fan['province'] = $fans_info['province'];
-            $new_fan['city'] = $fans_info['city'];
-            $new_fan['gender'] = $fans_info['sex'];
-            $new_fan['country'] = $fans_info['country'];
-            $new_fan['follow_time'] = date("Y-m-d H:i:s", $fans_info['subscribe_time']);
-            $new_fan['site_id'] = $site_id;
+        $new_fan['avatar'] = $fans_info['headimgurl'];
+        $new_fan['nickname'] = $fans_info['nickname'];
+        $new_fan['subscribe'] = (int)$fans_info['subscribe'];
+        $new_fan['province'] = $fans_info['province'];
+        $new_fan['city'] = $fans_info['city'];
+        $new_fan['gender'] = $fans_info['sex'];
+        $new_fan['country'] = $fans_info['country'];
+        $new_fan['follow_time'] = date("Y-m-d H:i:s", $fans_info['subscribe_time']);
+        $new_fan['site_id'] = $site_id;
         // }
 
         //test($new_fan);
@@ -1104,7 +1111,8 @@ class Passport extends ModuleBase
         }
     }
 
-    public function register_deal_info(){
+    public function register_deal_info()
+    {
         $this->view->fetch();
     }
 }
