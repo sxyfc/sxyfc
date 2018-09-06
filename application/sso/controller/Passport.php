@@ -769,19 +769,24 @@ class Passport extends ModuleBase
                 test("对不起，用户注册失败 。" . $res['msg']);
             }
         }
-
-        if ($uuid) {
-            Cache::set("mhcms_wechat_login:" . $uuid, $user['id']);
-            $this->message("登录成功", 1, "/");
+        if ($user['is_mobile_verify'] == 0) {
+            //补全信息
+            $this->message("请补全信息", 1, "/sso/passport/register");
         } else {
-            if ($_W['site']['id'] == $site_id) {
-                header('location:' . urldecode($forward));
-                die();
-                $this->message("登录成功", 1, urldecode($forward));
+            if ($uuid) {
+                Cache::set("mhcms_wechat_login:" . $uuid, $user['id']);
+                $this->message("登录成功", 1, "/");
             } else {
-                $this->message("登录成功", 1, $forward);
+                if ($_W['site']['id'] == $site_id) {
+                    header('location:' . urldecode($forward));
+                    die();
+                    $this->message("登录成功", 1, urldecode($forward));
+                } else {
+                    $this->message("登录成功", 1, $forward);
+                }
             }
         }
+
     }
 
     public function mhcms_wx_subscribe_login()
