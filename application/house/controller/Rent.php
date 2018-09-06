@@ -23,7 +23,7 @@ class Rent extends HouseBase
     public function index()
     {
         $select = array();
-        $select['zhuangxiu'] = array('装修', '毛胚', '简装', '精装', '豪装');
+        $select['zhuangxiu'] = array('装修', '毛坯', '简装', '精装', '豪装');
         $select['huxing'] = array('0室', '1室', '2室', '3室', '4室', '5室');
         $select['ting'] = array('0厅', '1厅', '2厅', '3厅', '4厅', '5厅');
 
