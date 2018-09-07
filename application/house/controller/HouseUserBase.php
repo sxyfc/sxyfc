@@ -63,7 +63,7 @@ class HouseUserBase extends ModuleUserBase
         //todo mobile force
         if($_W['module_config']['force_mobile'] && !is_phone($this->user['user_name'])){
             //
-            $url = url('member/info/set_mobile');
+            $url = url('sso/passport/sso_login');
             header("location:$url");die();
         }
     }
