@@ -89,8 +89,8 @@ if (!isset($keyword)) {
             <td>{$buyer.name}</td>
             <td>{$item.order_type_name}</td>
             <td>{$item.create_time}</td>
-            <td>{$item.amount}</td>
-            <td>{$item.total_fee}</td>
+            <td>{$item.amount}{if $item.source_type == 1}元{else}{$_W['site']['config']['trade']['balance_text']}{/if}</td>
+            <td>{$item.total_fee}{$_W['site']['config']['trade']['balance_text']}</td>
             <td>{$item.status}</td>
 
             <td>{$seller.name}</td>
