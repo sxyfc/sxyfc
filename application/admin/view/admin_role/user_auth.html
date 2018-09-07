@@ -1,8 +1,54 @@
 {extend name="admin@public/content_frame" /}
 {block name="main"}
 <div class="tableBox">
+
     <table class="layui-table table-bordered" style="">
+        <tr>  <form class="layui-form form-inline" method="post" action="{:\think\\Request::instance()->url()}">
+            <td class="input-group">
+
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            昵称
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="nickname" value="{$nickname}" type="text" placeholder="用户名">
+                    </p>
+
+                </div>
+            </td>
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            登陆手机号(用户名)
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="moblie" value="{$moblie}" type="text" placeholder="手机号">
+                    </p>
+
+                </div>
+            </td>
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            用户ID
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="user_id" value="{$user_id}" type="text" placeholder="用户ID">
+                    </p>
+
+                </div>
+            </td>
+            <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
+
+        </form></tr>
         <tr bgcolor="#F5F6FA" height="35px;" style="color:#333; font-size:16px; line-height:35px;">
+
             <td>ID</td>
             {foreach $field_list as $field}
             <td>{$field['slug']}</td>
