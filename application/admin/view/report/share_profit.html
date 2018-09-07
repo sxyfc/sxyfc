@@ -17,7 +17,7 @@
             <td>本人收益：{$data['self']}</td>
             {/if}
             <td>总收益：{$data['total']}</td>
-            <form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/share_profit/user_menu_id/7010')}">
+            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/share_profit/user_menu_id/7010')}">
                 <td>
                     <p class="control">
                         <input class="input" name="nickname" value="{$nickname}" type="text" placeholder="用户昵称">
@@ -27,12 +27,12 @@
             </form>
 
             {if $user_id}
-            <form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
+            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
                 <input class="input" name="user_id" value="{$user_id}" type="hidden">
                 <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
             </form>
             {else}
-            <form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
+            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
                 <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
             </form>
             {/if}

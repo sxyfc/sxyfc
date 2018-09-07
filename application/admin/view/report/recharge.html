@@ -3,7 +3,7 @@
 {block name="table_form"}
     <table class="layui-table -group">
         <td>总充值：{$total}</td>
-        <form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/recharge/user_menu_id/7012')}">
+        <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/recharge/user_menu_id/7012')}">
             <td>
                 <p class="control">
                     <input class="input" name="nickname" value="{$nickname}" type="text" placeholder="用户昵称">
@@ -12,12 +12,12 @@
             <td><input type="submit" value="搜索" class="layui-btn btn-success"></td>
         </form>
         {if $user_id}
-        <form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/download_recharge/user_menu_id/7013')}">
+        <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_recharge/user_menu_id/7013')}">
             <input class="input" name="user_id" value="{$user_id}" type="hidden">
             <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
         </form>
         {else}
-        <form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/download_recharge/user_menu_id/7013')}">
+        <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_recharge/user_menu_id/7013')}">
             <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
         </form>
         {/if}

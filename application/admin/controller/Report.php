@@ -16,7 +16,7 @@ class Report extends AdminBase
     public function share_profit()
     {
         $data = array();
-        $nickname = trim(input('param.nickname', ' ', 'htmlspecialchars'));
+        $nickname = trim(input('param.nickname'));
         if ($nickname) {
             $where['nickname'] = array('LIKE', '%' . $nickname . '%');
             $user = db('users')->where($where)->field('id')->find();
@@ -139,7 +139,7 @@ class Report extends AdminBase
     // 分润报表下载
     public function download_profit()
     {
-        $user_id = trim(input('param.user_id', ' ', 'htmlspecialchars'));
+        $user_id = trim(input('param.user_id'));
         if ($this->super_power) {
             if ($user_id) {
                 $share = db()->query('select mhcms_distribute_orders.*,mhcms_users.user_name from mhcms_distribute_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribute_orders.user_id where mhcms_distribute_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
@@ -205,7 +205,7 @@ class Report extends AdminBase
     //充值列表
     public function recharge()
     {
-        $nickname = trim(input('param.nickname', ' ', 'htmlspecialchars'));
+        $nickname = trim(input('param.nickname'));
         if ($nickname) {
             $where['nickname'] = array('LIKE', '%' . $nickname . '%');
             $user = db('users')->where($where)->field('id')->find();
@@ -304,7 +304,7 @@ class Report extends AdminBase
     //充值列表下载
     public function download_recharge()
     {
-        $user_id = trim(input('param.user_id', ' ', 'htmlspecialchars'));
+        $user_id = trim(input('param.user_id'));
 
         if ($this->super_power) {
             if ($user_id) {
