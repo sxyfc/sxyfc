@@ -213,19 +213,19 @@ class Report extends AdminBase
         }
 
         if ($user_id) {
-            $total = db('orders')->where(['user_id' => $user_id])->sum('total_fee');
+            $total = db('orders')->where(['user_id' => $user_id,'source_type'=>1])->sum('amount');
             $this->view->assign('total', $total);
         } else {
-            $total = db('orders')->sum('total_fee');
+            $total = db('orders')->where(['source_type'=>1])->sum('amount');
             $this->view->assign('total', $total);
         }
 
         // 超级管理员
         if ($this->super_power) {
             if ($user_id) {
-                $recharge = db('orders')->where(['user_id' => $user_id])->order('id desc')->paginate(config('list_rows'));
+                $recharge = db('orders')->where(['user_id' => $user_id,'source_type'=>1])->order('id desc')->paginate(config('list_rows'));
             } else {
-                $recharge = db('orders')->order('id desc')->paginate(config('list_rows'));
+                $recharge = db('orders')->where(['source_type'=>1])->order('id desc')->paginate(config('list_rows'));
             }
             $recharges = $recharge->toArray();
             foreach ($recharges['data'] as $key => $value) {
@@ -251,6 +251,7 @@ class Report extends AdminBase
                 array_push($ids, $this->user['id']);
 
                 $where['user_id'] = array('IN', $ids);
+                $where['source_type'] = 1;
                 $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'));
 
                 $recharges = $recharge->toArray();
@@ -269,6 +270,7 @@ class Report extends AdminBase
                 array_push($ids, $this->user['id']);
 
                 $where['user_id'] = array('IN', $ids);
+                $where['source_type'] = 1;
                 $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'));
 
                 $recharges = $recharge->toArray();
@@ -279,6 +281,7 @@ class Report extends AdminBase
             } else {
                 // 普通用户
                 $where['user_id'] = $this->user['id'];
+                $where['source_type'] = 1;
                 $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'));
 
                 $recharges = $recharge->toArray();
@@ -303,9 +306,9 @@ class Report extends AdminBase
 
         if ($this->super_power) {
             if ($user_id) {
-                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id where mhcms_orders.user_id=' . $user_id . ' ORDER BY id DESC');
+                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id where mhcms_orders.source_type = 1 and  mhcms_orders.user_id=' . $user_id . ' ORDER BY id DESC');
             } else {
-                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id ORDER BY id DESC');
+                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id where mhcms_orders.source_type = 1 ORDER BY id DESC');
             }
         } else {
             // 根据角色查数据
@@ -325,9 +328,9 @@ class Report extends AdminBase
                 $idstr = '(' . $ids . ')';
 
                 if ($user_id) {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_distribute_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribute_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
                 } else {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_distribute_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribute_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
                 }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
@@ -338,13 +341,13 @@ class Report extends AdminBase
                 $ids = implode($ids, ',');
                 $idstr = '(' . $ids . ')';
                 if ($user_id) {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_distribute_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribute_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
                 } else {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_distribute_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribute_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
                 }
             } else {
                 // 普通用户
-                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_distribute_orders.user_id = ' . $this->user['id'] . ' ORDER BY id DESC');
+                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribute_orders.user_id = ' . $this->user['id'] . ' ORDER BY id DESC');
             }
         }
 
