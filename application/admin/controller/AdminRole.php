@@ -92,7 +92,23 @@ class AdminRole extends AdminBase
      */
     public function user_auth($module = "")
     {
+        $nickname = trim(input('param.nickname', ' ', 'htmlspecialchars'));
+        $moblie = trim(input('param.mobile', ' ', 'htmlspecialchars'));
+        $uid = trim(input('param.user_id', ' ', 'htmlspecialchars'));
+
         $where = [];
+        if ($nickname && isset($nickname)) {
+            $where['nickname'] = array('LIKE', '%' . $nickname . '%');
+        }
+
+        if ($moblie && isset($moblie)) {
+            $where['user_name'] = $moblie;
+        }
+
+        if ($uid && isset($uid)) {
+            $where['id'] = $uid;
+        }
+
         //获取模型信息
         $model = set_model($this->users);
         $model_info = $model->model_info;
@@ -102,7 +118,7 @@ class AdminRole extends AdminBase
         if (!$this->super_power) {
             $where['parent_id'] = ['EQ', $this->user['id']];
             $lists = $model->where($where)->order("id desc")->paginate();
-        }else{
+        } else {
             $where['user_role_id'] = ['GT', 1];
             $lists = $model->where($where)->order("id desc")->paginate();
         }
@@ -295,12 +311,12 @@ class AdminRole extends AdminBase
             $current_admin_allot = UserMenuAllot::all($where_manage);
             $result_manage = $current_admin_allot->toArray();
 
-            if(empty($result_manage)){
+            if (empty($result_manage)) {
                 $where_access['user_role_id'] = $_W['admin_info']['role_id'];
                 $current_admin_allot = UserMenuAccess::all($where_access);
             }
 
-            if($current_admin_allot){
+            if ($current_admin_allot) {
                 $formatted_admin_allot = [];
                 foreach ($current_admin_allot as $allot) {
                     $formatted_admin_allot[$allot['user_menu_id']] = $allot;
@@ -313,13 +329,13 @@ class AdminRole extends AdminBase
         $where_allot = [];
         $where_allot['user_id'] = $user_id;
         $current_target_allot = UserMenuAllot::all($where_allot);
-        $result_allot =  $current_target_allot->toArray();
-        if(empty($result_allot)){
+        $result_allot = $current_target_allot->toArray();
+        if (empty($result_allot)) {
             $where_manage['user_id'] = $user_id;
             $current_target_allot = UserMenuAllot::all($where_manage);
-            $result_manage =  $current_target_allot->toArray();
+            $result_manage = $current_target_allot->toArray();
 
-            if(empty($result_manage)){
+            if (empty($result_manage)) {
                 $is_user = 0;
                 $where_access['user_role_id'] = $_W['admin_info']['role_id'];
                 $current_target_allot = UserMenuAccess::all($where_access);
@@ -344,7 +360,7 @@ class AdminRole extends AdminBase
                     $menu = UserMenu::get(['id' => $k]);
                     if ($menu['is_admin'] == $is_admin) {
                         //delete the same group : user or admin
-                        if($is_user == 1){
+                        if ($is_user == 1) {
                             UserMenuAllot::where($v->toArray())->delete();
                         }
                     }
@@ -409,6 +425,7 @@ class AdminRole extends AdminBase
         }
 
     }
+
     /**
      * @param $role_id
      * @return string

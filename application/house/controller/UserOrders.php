@@ -90,24 +90,6 @@ class UserOrders extends HouseUserBase
          * 3.余额充足，则消费对应余额
          * 4.写入对应查看权限记录
          */
-
-        //检查权限
-        $user_role_id = $this->user['user_role_id'];
-        $user_role_ids = array(1, 3, 22, 23, 24);
-        if (!in_array($user_role_id,$user_role_ids)) {
-            $this->zbn_msg("权限不足，请先申请为经纪人！");
-        }
-
-        //检查房宝余额
-        $balance = $this->user['balance'];
-        $fb_value = config("pay.fangbao_ratio");
-
-        $left_value = $balance - $fb_value;
-        if ($balance <= 0.00 || $left_value < 0.00) {
-            $this->zbn_msg("余额不足，请先去充值");
-            return false;
-        }
-
         $model_name = "";
         $base_info['user_id'] = $this->user_id;
         if ($type == 1) {//租房
@@ -124,6 +106,22 @@ class UserOrders extends HouseUserBase
             $base_info['esf_id'] = $id;
             $source_type = 3;
             $url = url('house/esf/detail', ['id'=>$id]);
+        }
+
+        //检查权限
+        $user_role_id = $this->user['user_role_id'];
+        $user_role_ids = array(1, 3, 22, 23, 24);
+        if (!in_array($user_role_id,$user_role_ids)) {
+            return $this->zbn_msg('权限不足，请先申请为经纪人！', 2, 'true', '1000', "'".$url."'", "''");
+        }
+
+        //检查房宝余额
+        $balance = $this->user['balance'];
+        $fb_value = config("pay.fangbao_ratio");
+
+        $left_value = $balance - $fb_value;
+        if ($balance <= 0.00 || $left_value < 0.00) {
+            return $this->zbn_msg('余额不足，请先去充值！', 2, 'true', '1000', "'".$url."'", "''");
         }
 
         $info = $models->where(['id' => $id])->field('user_id')->find();

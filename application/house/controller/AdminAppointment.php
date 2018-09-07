@@ -121,7 +121,26 @@ class AdminAppointment extends AdminBase
      */
     public function match_esf($id)
     {
+        global $_W, $_GPC;
+        $model = set_model($this->house_appointment);
+        $where['id'] = $id;
+        $detail = $model->where($where)->find();
+        //小区、面积、楼层、装修
+        $content_model_id = 'house_esf';
+        $esf_model = set_model($content_model_id);
+        $where = [];
+        $where['site_id'] = $_W['site']['id'];
+        $where['xiaoqu_id'] = $detail['xiaoqu_id'];
+        $where['size'] = $detail['size'];
+        $where['floor'] = $detail['floor'];
+        $where['zhuangxiu'] = $detail['zhuangxiu'];
 
+        $model_info = $esf_model->model_info;
+        $this->view->lists = $model->where($where)->order("id desc")->paginate();
+        $this->view->field_list = $model_info->get_admin_column_fields();
+        $this->view->content_model_id = $content_model_id;
+        $this->view->mapping = $this->mapping;
+        return $this->view ->fetch();
     }
 
 

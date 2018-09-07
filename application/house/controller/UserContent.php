@@ -26,7 +26,7 @@ class UserContent extends HouseUserBase
     private $house_rent = "house_rent";
     private $house_info = "house_info";
     private $house_loupan = "house_loupan";
-    private $house_weituo="house_weituo";
+    private $house_weituo = "house_weituo";
 
 
     public function index()
@@ -595,7 +595,7 @@ class UserContent extends HouseUserBase
                 Db::commit();
                 token();
                 $to_url = url('house/index/index');
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "'$to_url'", "''");
+                return $this->zbn_msg('发布成功，稍后当地经纪人会和您取得联系', 1, 'true', 1000, "'$to_url'", "''");
             } else {
                 Db::rollback();
                 return $this->zbn_msg($spend_msg . $res['msg'] . $spend_top_msg, 2);
@@ -619,7 +619,8 @@ class UserContent extends HouseUserBase
     }
 
 
-    public function publish_weituo(){
+    public function publish_weituo()
+    {
         global $_W, $_GPC;
         $model = set_model($this->house_weituo);
         $model_info = $model->model_info;
@@ -752,7 +753,7 @@ class UserContent extends HouseUserBase
                 Db::commit();
                 token();
                 $to_url = url('house/index/index');
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "'$to_url'", "''");
+                return $this->zbn_msg('发布成功，稍后当地经纪人会和您取得联系', 1, 'true', 1000, "'$to_url'", "''");
             } else {
                 Db::rollback();
                 return $this->zbn_msg($spend_msg . $res['msg'] . $spend_top_msg, 2);
