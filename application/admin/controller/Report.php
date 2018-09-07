@@ -21,6 +21,7 @@ class Report extends AdminBase
             $where['nickname'] = array('LIKE', '%' . $nickname . '%');
             $user = db('users')->where($where)->field('id')->find();
             $user_id = $user['id'];
+            $this->view->assign('nickname', $nickname);
             $this->view->assign('user_id', $user_id);
         }
 
@@ -209,6 +210,7 @@ class Report extends AdminBase
             $where['nickname'] = array('LIKE', '%' . $nickname . '%');
             $user = db('users')->where($where)->field('id')->find();
             $user_id = $user['id'];
+            $this->view->assign('nickname', $nickname);
             $this->view->assign('user_id', $user_id);
         }
 
