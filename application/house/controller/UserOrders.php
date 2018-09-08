@@ -112,7 +112,7 @@ class UserOrders extends HouseUserBase
         $user_role_id = $this->user['user_role_id'];
         $user_role_ids = array(1, 3, 22, 23, 24);
         if (!in_array($user_role_id,$user_role_ids)) {
-            return $this->zbn_msg('权限不足，请先申请为经纪人！', 2, 'true', '100000000000', "'".$url."'", "''");
+            return $this->zbn_msg('权限不足，请先申请为经纪人！', 2, 'true', '1000', "'".$url."'", "''");
         }
 
         //检查房宝余额
