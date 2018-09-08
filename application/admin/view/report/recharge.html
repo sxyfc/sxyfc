@@ -2,12 +2,12 @@
 
 {block name="table_form"}
     <table class="layui-table -group">
-        <td>总充值：{$total}</td>
+        {if $total}
+        <td>充值总量：{$total}</td>
+        {/if}
         <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/recharge/user_menu_id/7012')}">
-            <td>
-                <p class="control">
-                    <input class="input" name="nickname" value="{$nickname}" type="text" placeholder="用户昵称">
-                </p>
+            <td style="width: 200px">
+                <input class="input" name="nickname" value="{$nickname}" type="text" placeholder="用户昵称">
             </td>
             <td><input type="submit" value="搜索" class="layui-btn btn-success"></td>
         </form>
@@ -41,7 +41,7 @@
             {foreach name="recharges" id="var"}
             <tr>
                 <td>{$var.id}</td>
-                <td>{$var.user_name}</td>
+                <td>{$var.nickname}</td>
                 <td>{$var.mobile}</td>
                 <td>{$var.note}</td>
                 <td>{$var.amount}</td>
