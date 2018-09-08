@@ -1,25 +1,38 @@
 {extend name="admin@public/content_frame" /}
 
 {block name="table_form"}
-<form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
+
     <table class="layui-table -group">
         <tr>
-            {if $data['head'] || $data['head']==0}
+            {if $data['head'] || $data['head']===0}
             <td>总部收益：{$data['head']}</td>
-            {/if}
-            {if $data['area']}
-            <td>区代收益：{$data['area']}</td>
-            {/if}
-            {if $data['house']}
-            <td>县代收益：{$data['house']}</td>
             {/if}
             {if $data['self']}
             <td>本人收益：{$data['self']}</td>
             {/if}
-            <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
+            {if $data['total'] || $data['total']===0}
+            <td>收益总量：{$data['total']}</td>
+            {/if}
+            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/share_profit/user_menu_id/7010')}">
+                <td style="width: 200px">
+                    <input class="input" name="nickname" value="{$nickname}" type="text" placeholder="用户昵称">
+                </td>
+                 <td><input type="submit" value="搜索" class="layui-btn btn-success"></td>
+            </form>
+
+            {if $user_id}
+            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
+                <input class="input" name="user_id" value="{$user_id}" type="hidden">
+                <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
+            </form>
+            {else}
+            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
+                <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
+            </form>
+            {/if}
         </tr>
     </table>
-</form>
+
 {/block}
 
 {block name="main"}
@@ -31,19 +44,15 @@
                 <td>用户名</td>
                 <td>分润金额</td>
                 <td>订单编号</td>
-                <td>支付时间</td>
-                <td>拒绝时间</td>
                 <td>创建时间</td>
             </tr>
             {foreach name="shares" id="var"}
             <tr>
                 <td>{$var.id}</td>
-                <td>{$var.user_name}</td>
+                <td>{$var.nickname}</td>
                 <td>{$var.amount}</td>
                 <td>{$var.order_id}</td>
-                <td>{$var.pay_time}</td>
-                <td>{$var.reject_time}</td>
-                <td>{$var.create_at}</td>
+                <td>{$var.create_time}</td>
             </tr>
             {/foreach}
 
