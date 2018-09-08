@@ -95,7 +95,7 @@ class Report extends AdminBase
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
 
-                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'));
+                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
                 $shares = $share->toArray();
                 foreach ($shares['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();

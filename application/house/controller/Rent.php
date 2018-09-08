@@ -82,8 +82,9 @@ class Rent extends HouseBase
         }
 
         $model = set_model('house_rent');
-        if (($_GET['huxing'] != null) || $_GET['ting'] != null || $_GET['tag'] || $_GET['area'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
+        if (($_GET['huxing'] != null) || $_GET['ting'] != null || $_GET['tag'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
+            $query = array('huxing'=>$_GET['huxing'],'tag'=>$_GET['tag'],'xiaoqu'=>$_GET['xiaoqu'],'size'=>$_GET['size'],'jiage'=>$_GET['jiage'],'ting'=>$_GET['ting']);
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate(config('list_rows'),false, ['query' => $query]);
         } else {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
         }
