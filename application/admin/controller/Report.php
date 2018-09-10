@@ -12,6 +12,91 @@ use think\Log;
 
 class Report extends AdminBase
 {
+    //分润查询
+    public function search_share()
+    {
+        if ($_GET['area_province'] != null) {
+            $area_id = 0;
+            if ($_GET['area_province'] != null) $area_id = $_GET['area_province'];
+            if ($_GET['area_city'] != null) $area_id = $_GET['area_city'];
+            if ($_GET['area_area'] != null) $area_id = $_GET['area_area'];
+
+            //返回省市区筛选出的用户数据
+            $where = [];
+            $where['area_id'] = $area_id;
+            $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->toArray();
+            $user_array = array();
+            $html_tag = "";
+            foreach ($role_address as $ra_item) {
+                $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
+                $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
+//                Log::error($user_data);
+//                Log::error($power_data);
+                $user_data['role_name'] = $power_data['role_name'];
+                array_push($user_array, $user_data);
+                $html_tag . "<tr><td>" . $user_data['nickname'] . "</td>
+                            <td>" . $user_data['user_name'] . "</td>
+                            <td>" . $power_data['role_name'] . "</td></tr>";
+            }
+//            Log::error($user_array);
+            $this->assign('user_array', $html_tag);
+        }
+        //设置筛选数据
+        $area_data = set_model('area')->order(['parent_id' => 'asc'])->field('id,area_name,parent_id')->select()->toArray();
+        $area_province = array();
+        foreach ($area_data as $area_item) {
+            if ($area_item['parent_id'] == 0) {
+                array_push($area_province, $area_item);//省
+                $key = array_search($area_item, $area_data);
+                array_splice($area_data, $key, 1);
+            }
+        }
+
+        $this->assign('area_data', json_encode($area_data));
+        $this->assign('area_province', json_encode($area_province));
+        $this->view->mapping = $this->mapping;
+        return $this->view->fetch();
+    }
+
+    //充值查询
+    public function search_rechange()
+    {
+        //设置筛选数据
+        $area_data = set_model('area')->order(['parent_id' => 'asc'])->field('id,area_name,parent_id')->select()->toArray();
+        $area_province = array();
+        foreach ($area_data as $area_item) {
+            if ($area_item['parent_id'] == 0) {
+                array_push($area_province, $area_item);//省
+                $key = array_search($area_item, $area_data);
+                array_splice($area_data, $key, 1);
+            }
+        }
+
+        $this->assign('area_data', json_encode($area_data));
+        $this->assign('area_province', json_encode($area_province));
+
+        if ($_GET['area_province'] != null) {
+            $area_id = 0;
+            if ($_GET['area_province'] != null) $area_id = $_GET['area_province'];
+            if ($_GET['area_city'] != null) $area_id = $_GET['area_city'];
+            if ($_GET['area_area'] != null) $area_id = $_GET['area_area'];
+
+            //返回省市区筛选出的用户数据
+            $where = [];
+            $where['area_id'] = $area_id;
+            $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->order(['id' => 'asc'])->toArray();
+            $user_array = array();
+            foreach ($role_address as $ra_item) {
+                $user_data = set_model('users')->field(['user_id' => $ra_item['user_id']])->find();
+                $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
+                $user_data['role_name'] = $power_data;
+                array_push($user_array, $user_data);
+            }
+            $this->assign('user_data', $user_data);
+        }
+        return $this->view->fetch();
+    }
+
     // 分润报表
     public function share_profit()
     {
@@ -28,10 +113,10 @@ class Report extends AdminBase
         // 超级管理员
         if ($this->super_power) {
             if ($user_id) {
-                $share = db('distribution_orders')->where(['status' => 1, 'user_id' => $user_id])->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $share = db('distribution_orders')->where(['status' => 1, 'user_id' => $user_id])->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
                 $data['total'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $user_id])->sum('amount');
             } else {
-                $share = db('distribution_orders')->where(['status' => 1])->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $share = db('distribution_orders')->where(['status' => 1])->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
                 $data['total'] = db('distribution_orders')->where(['status' => 1])->sum('amount');
             }
             $shares = $share->toArray();
@@ -72,7 +157,7 @@ class Report extends AdminBase
                 array_push($ids, $this->user['id']);
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
-                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
 
                 $shares = $share->toArray();
                 foreach ($shares['data'] as $key => $value) {
@@ -95,7 +180,7 @@ class Report extends AdminBase
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
 
-                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
                 $shares = $share->toArray();
                 foreach ($shares['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();
@@ -108,7 +193,7 @@ class Report extends AdminBase
                 // 普通用户
                 $where['status'] = 1;
                 $where['user_id'] = $this->user['id'];
-                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
 
                 $shares = $share->toArray();
                 foreach ($shares['data'] as $key => $value) {
@@ -144,13 +229,13 @@ class Report extends AdminBase
         // 超级管理员
         if ($this->super_power) {
             if ($user_id) {
-                $total = db('orders')->where(['user_id' => $user_id,'source_type'=>1])->sum('amount');
+                $total = db('orders')->where(['user_id' => $user_id, 'source_type' => 1])->sum('amount');
                 $this->view->assign('total', $total);
-                $recharge = db('orders')->where(['user_id' => $user_id,'source_type'=>1])->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $recharge = db('orders')->where(['user_id' => $user_id, 'source_type' => 1])->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
             } else {
-                $total = db('orders')->where(['source_type'=>1])->sum('amount');
+                $total = db('orders')->where(['source_type' => 1])->sum('amount');
                 $this->view->assign('total', $total);
-                $recharge = db('orders')->where(['source_type'=>1])->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $recharge = db('orders')->where(['source_type' => 1])->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
             }
             $recharges = $recharge->toArray();
             foreach ($recharges['data'] as $key => $value) {
@@ -177,7 +262,7 @@ class Report extends AdminBase
 
                 $where['user_id'] = array('IN', $ids);
                 $where['source_type'] = 1;
-                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
 
                 $recharges = $recharge->toArray();
                 foreach ($recharges['data'] as $key => $value) {
@@ -196,7 +281,7 @@ class Report extends AdminBase
 
                 $where['user_id'] = array('IN', $ids);
                 $where['source_type'] = 1;
-                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
 
                 $recharges = $recharge->toArray();
                 foreach ($recharges['data'] as $key => $value) {
@@ -207,7 +292,7 @@ class Report extends AdminBase
                 // 普通用户
                 $where['user_id'] = $this->user['id'];
                 $where['source_type'] = 1;
-                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'),false, ['query' => array('nickname' => $nickname)]);
+                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
 
                 $recharges = $recharge->toArray();
                 foreach ($recharges['data'] as $key => $value) {

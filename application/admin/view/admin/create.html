@@ -1,69 +1,112 @@
-{block name="jquery"}{/block}
 <div class="layui-container">
     <div class="layui-row">
-        <form class="layui-form form-inline" target="zbn_cms" method="post"
+        <form class="form-inline" target="zbn_cms" method="post"
               action="{:\think\\Request::instance()->url()}">
             <br>
-            {volist name="list" id="item"}
+            <!--{volist name="list" id="item"}-->
+            <!--<div class="layui-form-item">-->
+            <!--<label class="layui-form-label">{$item['slug']}</label>-->
+            <!--<div class="layui-input-block">-->
+            <!--{$item['form_str']}-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--{/volist}-->
+
+
             <div class="layui-form-item">
-                <label class="layui-form-label">{$item['slug']}</label>
+                <label class="layui-form-label">用户账户</label>
                 <div class="layui-input-block">
-                    {$item['form_str']}
+                    <div id="user_id"
+                         class="SEMANTIC_AJAX_INPUT ui fluid  search normal selection dropdown">
+                        <input value="" name="data[user_id]" type="hidden">
+                        <i class="dropdown icon"></i>
+                        <input class="search" autocomplete="off" tabindex="0">
+                        <div class="text"></div>
+                        <div class="menu" tabindex="-1"></div>
+                    </div>
+                    <script type="text/javascript">
+                        require(['jquery', 'semantic', 'layui'], function ($, semantic, layui) {
+                            layui.use(['layer'], function () {
+                                var $ = layui.$;
+                                $(document).ready(function () {
+                                    $('#user_id').dropdown({
+                                        apiSettings: {
+                                            // this url parses query server side and returns filtered results
+                                            url: '/core/service/list_item/model_id/users.html' + '?q={query}',
+                                            data: {
+                                                f: 'sematic_drop_down',
+                                                _rnd: Math.random()
+                                            },
+                                            cache: false
+                                        },
+                                    });
+                                });
+
+                            });
+                        });
+
+                    </script>
                 </div>
             </div>
-            {/volist}
-            <label class="layui-form-label">代理地区</label>
-            <select name="area_province" class="init_select" id="province"
-                    data-value="{$area_province}">
-                <option value="">---省份---</option>
-            </select>
-            <select name="area_city" class="init_select" id="city" data-value="{$area_data}">
-                <option value="">---城市---</option>
-            </select>
-            <select name="area_area" class="init_select" id="country" data-value="{$area_data}">
-                <option value="">---区县---</option>
-            </select>
-            <script type="text/javascript"> var num1;
-            var num2;
-            var area_province = {$area_province};
-            var area_data = {$area_data};
-            var provinces = [];
-            var cities = [];
-            var countires = [];
-            $(function () {
-                //筛选三级联动成分  省／市／区县
-                provinces = eval(area_province);
-                area_data = eval(area_data);
+            <label class="layui-form-label">所属角色</label>
 
-                for (var i = 0; i < provinces.length; i++) {
-                    $("#province").append("<option value=" + provinces[i].id + ">" + provinces[i].area_name + "</option>");
-                }
-                $("#province").change(function () {
-                    $("#city").children().not(":eq(0)").remove();
-                    num1 = $(this).children('option:selected').val();
-                    if (cities.length > 0) {
-                        cities.removeAll();//清理市级数据
-                    }
-                    for (var j = 0; j < area_data.length; j++) {
-                        if (area_data[j].parent_id == num1) {
-                            $("#city").append("<option value=" + area_data[j].id + ">" + area_data[j].area_name + "</option>");
-                        }
-                    }
-                    $("#city").change(function () {
-                        $("#country").children().not(":eq(0)").remove();
-                        num2 = $(this).children("option:selected").val();
-                        if (countires.length > 0) {
-                            countires.removeAll();
-                        }
-                        for (var z = 0; z < area_data.length; z++) {
-                            if (area_data[z].parent_id == num2) {
-                                $("#country").append("<option value=" + area_data[z].id + ">" + area_data[z].area_name + "</option>");
-                            }
-                        }
-                    });
-                });
-            });</script>
+            <div class="layui-input-block">
+                <label class="helper_label"><input name="data[role_id]" data-id="data_1" value="1"
+                                                   title="administrator" type="radio">
+                    <div class="layui-unselect layui-form-radio">
+                        <div>administrator</div>
+                    </div>
+                </label><label class="helper_label"><input name="data[role_id]" data-id="data_2"
+                                                           value="2" title="注册会员" type="radio">
+                <div class="layui-unselect layui-form-radio">
+                    <div>注册会员</div>
+                </div>
+            </label><label class="helper_label"><input name="data[role_id]" data-id="data_3"
+                                                       value="3" title="分站管理员" type="radio">
+                <div class="layui-unselect layui-form-radio">
+                    <div>分站管理员</div>
+                </div>
+            </label><label class="helper_label"><input name="data[role_id]" data-id="data_4"
+                                                       value="4" title="普通用户" type="radio">
+                <div class="layui-unselect layui-form-radio">
+                    <div>普通用户</div>
+                </div>
+            </label><label class="helper_label"><input name="data[role_id]" data-id="data_22"
+                                                       value="22" title="市代" type="radio">
+                <div class="layui-unselect layui-form-radio">
+                    <div>市代</div>
+                </div>
+            </label><label class="helper_label"><input name="data[role_id]" data-id="data_23"
+                                                       checked="" value="23" title="县代"
+                                                       type="radio">
+                <div class="layui-unselect layui-form-radio layui-form-radio">
+                    <div>县代</div>
+                </div>
+            </label><label class="helper_label"><input name="data[role_id]" data-id="data_24"
+                                                       value="24" title="经纪人" type="radio">
+                <div class="layui-unselect layui-form-radio">
+                    <div>经纪人</div>
+                </div>
+            </label></div>
 
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">代理地区</label>
+                <div class="layui-input-block">
+                    <select name="area_province" class="init_select" id="province"
+                            data-value="{$area_province}" lay-filter="province">
+                        <option value="">---省份---</option>
+                    </select>
+                    <select name="area_city" class="init_select" id="city" data-value=""
+                            lay-filter="city">
+                        <option value="">---城市---</option>
+                    </select>
+                    <select name="area_area" class="init_select" id="country" data-value=""
+                            lay-filter="country">
+                        <option value="">---区县---</option>
+                    </select>
+                </div>
+            </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
                     <button class="layui-btn" lay-submit lay-filter="*">立即提交</button>
@@ -78,4 +121,47 @@
         var form = layui.form;
         form.render();
     });
+</script>
+<script type="text/javascript">
+    var num1;
+    var num2;
+    var area_province = {$area_province};
+    var area_data = {$area_data};
+    var provinces = [];
+    var cities = [];
+    var countires = [];
+    $(function () {
+        //筛选三级联动成分  省／市／区县
+        provinces = eval(area_province);
+        area_data = eval(area_data);
+
+        for (var i = 0; i < provinces.length; i++) {
+            $("#province").append("<option value=" + provinces[i].id + ">" + provinces[i].area_name + "</option>");
+        }
+        $("#province").change(function () {
+            $("#city").children().not(":eq(0)").remove();
+            num1 = $(this).children('option:selected').val();
+            if (cities.length > 0) {
+                cities.removeAll();//清理市级数据
+            }
+            for (var j = 0; j < area_data.length; j++) {
+                if (area_data[j].parent_id == num1) {
+                    $("#city").append("<option value=" + area_data[j].id + ">" + area_data[j].area_name + "</option>");
+                }
+            }
+            $("#city").change(function () {
+                $("#country").children().not(":eq(0)").remove();
+                num2 = $(this).children("option:selected").val();
+                if (countires.length > 0) {
+                    countires.removeAll();
+                }
+                for (var z = 0; z < area_data.length; z++) {
+                    if (area_data[z].parent_id == num2) {
+                        $("#country").append("<option value=" + area_data[z].id + ">" + area_data[z].area_name + "</option>");
+                    }
+                }
+            });
+        });
+    });
+
 </script>

@@ -1,37 +1,42 @@
 {extend name="admin@public/content_frame" /}
 
 {block name="table_form"}
+<table class="layui-table -group">
+    <tr>
+        {if $data['head'] || $data['head']===0}
+        <td>总部收益：{$data['head']}</td>
+        {/if}
+        {if $data['self']}
+        <td>本人收益：{$data['self']}</td>
+        {/if}
+        {if $data['total'] || $data['total']===0}
+        <td>收益总量：{$data['total']}</td>
+        {/if}
+        <form class="layui-form form-inline" method="get"
+              action="{:\think\\Url::build('/admin/report/share_profit/user_menu_id/7010')}">
+            <td style="width: 200px">
+                <input class="input" name="nickname" value="{$nickname}" type="text"
+                       placeholder="用户昵称">
+            </td>
+            <td><input type="submit" value="搜索" class="layui-btn btn-success"></td>
+        </form>
 
-    <table class="layui-table -group">
-        <tr>
-            {if $data['head'] || $data['head']===0}
-            <td>总部收益：{$data['head']}</td>
-            {/if}
-            {if $data['self']}
-            <td>本人收益：{$data['self']}</td>
-            {/if}
-            {if $data['total'] || $data['total']===0}
-            <td>收益总量：{$data['total']}</td>
-            {/if}
-            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/share_profit/user_menu_id/7010')}">
-                <td style="width: 200px">
-                    <input class="input" name="nickname" value="{$nickname}" type="text" placeholder="用户昵称">
-                </td>
-                 <td><input type="submit" value="搜索" class="layui-btn btn-success"></td>
-            </form>
-
-            {if $user_id}
-            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
-                <input class="input" name="user_id" value="{$user_id}" type="hidden">
-                <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
-            </form>
-            {else}
-            <form class="layui-form form-inline" method="get" action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
-                <td><input type="submit" value="报表下载" class="layui-btn btn-success" style="float: right"/></td>
-            </form>
-            {/if}
-        </tr>
-    </table>
+        {if $user_id}
+        <form class="layui-form form-inline" method="get"
+              action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
+            <input class="input" name="user_id" value="{$user_id}" type="hidden">
+            <td><input type="submit" value="报表下载" class="layui-btn btn-success"
+                       style="float: right"/></td>
+        </form>
+        {else}
+        <form class="layui-form form-inline" method="get"
+              action="{:\think\\Url::build('/admin/report/download_profit/user_menu_id/7011')}">
+            <td><input type="submit" value="报表下载" class="layui-btn btn-success"
+                       style="float: right"/></td>
+        </form>
+        {/if}
+    </tr>
+</table>
 
 {/block}
 
