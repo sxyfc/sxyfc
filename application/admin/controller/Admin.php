@@ -103,7 +103,9 @@ class Admin extends AdminBase
 
             /** @var Models $model_info */
             $res = $model_info->add_content($base_info);
-            Log::error($area);
+//            Log::error($area);
+            if ($area == 0) return $this->zbn_msg("必须选择代理地区", 2);
+
             if ($res['code'] == 1) {
                 $address_info['area_id'] = $area;
                 $address_info['user_id'] = $base_info['user_id'];
