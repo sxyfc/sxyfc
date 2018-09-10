@@ -61,6 +61,32 @@ class Report extends AdminBase
     //充值查询
     public function search_rechange()
     {
+        if ($_GET['area_province'] != null) {
+            $area_id = 0;
+            if ($_GET['area_province'] != null) $area_id = $_GET['area_province'];
+            if ($_GET['area_city'] != null) $area_id = $_GET['area_city'];
+            if ($_GET['area_area'] != null) $area_id = $_GET['area_area'];
+
+            //返回省市区筛选出的用户数据
+            $where = [];
+            $where['area_id'] = $area_id;
+            $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->toArray();
+            $user_array = array();
+            $html_tag = "";
+            foreach ($role_address as $ra_item) {
+                $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
+                $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
+//                Log::error($user_data);
+//                Log::error($power_data);
+                $user_data['role_name'] = $power_data['role_name'];
+                array_push($user_array, $user_data);
+                $html_tag . "<tr><td>" . $user_data['nickname'] . "</td>
+                            <td>" . $user_data['user_name'] . "</td>
+                            <td>" . $power_data['role_name'] . "</td></tr>";
+            }
+//            Log::error($user_array);
+            $this->assign('user_array', $html_tag);
+        }
         //设置筛选数据
         $area_data = set_model('area')->order(['parent_id' => 'asc'])->field('id,area_name,parent_id')->select()->toArray();
         $area_province = array();
@@ -74,26 +100,7 @@ class Report extends AdminBase
 
         $this->assign('area_data', json_encode($area_data));
         $this->assign('area_province', json_encode($area_province));
-
-        if ($_GET['area_province'] != null) {
-            $area_id = 0;
-            if ($_GET['area_province'] != null) $area_id = $_GET['area_province'];
-            if ($_GET['area_city'] != null) $area_id = $_GET['area_city'];
-            if ($_GET['area_area'] != null) $area_id = $_GET['area_area'];
-
-            //返回省市区筛选出的用户数据
-            $where = [];
-            $where['area_id'] = $area_id;
-            $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->order(['id' => 'asc'])->toArray();
-            $user_array = array();
-            foreach ($role_address as $ra_item) {
-                $user_data = set_model('users')->field(['user_id' => $ra_item['user_id']])->find();
-                $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
-                $user_data['role_name'] = $power_data;
-                array_push($user_array, $user_data);
-            }
-            $this->assign('user_data', $user_data);
-        }
+        $this->view->mapping = $this->mapping;
         return $this->view->fetch();
     }
 
