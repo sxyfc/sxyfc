@@ -1,30 +1,20 @@
 {extend name="admin@public/content_frame" /}
 
 {block name="table_form"}
-<form target="zbn_cms" method="get" action="">
-    <div class="layui-form-item">
-        <label class="layui-form-label">代理地区</label>
-        <div class="layui-input-block">
-            <select name="area_province" class="init_select" id="province"
-                    data-value="{$area_province}" lay-filter="province">
-                <option value="">---省份---</option>
-            </select>
-            <select name="area_city" class="init_select" id="city" data-value=""
-                    lay-filter="city">
-                <option value="">---城市---</option>
-            </select>
-            <select name="area_area" class="init_select" id="country" data-value=""
-                    lay-filter="country">
-                <option value="">---区县---</option>
-            </select>
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <div class="layui-input-block">
-            <input type="submit" value="搜索" class="layui-btn btn-success"></td>
-        </div>
-    </div>
+<form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/search_rechange/user_menu_id/7027')}">
+    <label class="layui-form-label">代理地区</label>
+    <select name="area_province" class="layui-select" id="province" lay-ignore="">
+        <option value="">---省份---</option>
+    </select>
+    <select name="area_city" class="layui-select" id="city" data-value="" lay-ignore="">
+        <option value="">---城市---</option>
+    </select>
+    <select name="area_area" class="layui-select" id="country" data-value="" lay-ignore="">
+        <option value="">---区县---</option>
+    </select>
+    <input type="submit" value="搜索" class="layui-btn btn-success"></td>
 </form>
+
 <script type="text/javascript">
     var num1;
     var num2;
@@ -75,6 +65,21 @@
 {block name="main"}
 <!-- 根据省市区查询出可以分润的用户list-->
 <form target="zbn_cms" method="post" action="">
-
+    <table class="layui-table">
+        <tr>
+            <td>用户名</td>
+            <td>手机号</td>
+            <td>角色权限</td>
+            <td>操作</td>
+        </tr>
+        {foreach $user_array as $var}
+        <tr>
+            <td>{$var['nickname']}</td>
+            <td>{$var['user_name']}</td>
+            <td>{$var['role_name']}</td>
+            <td><a href="/admin/report/recharge/user_menu_id/7012/nickname/{$var['nickname']}" class="layui-btn layui-btn-sm " width="90%" height="80%">充值明细</a></td>
+        </tr>
+        {/foreach}
+    </table>
 </form>
 {/block}
