@@ -101,6 +101,10 @@ class AdminEsf extends AdminBase
                 if ($find_data) {
                     return $this->zbn_msg("不可添加重复房源", 2);
                 }
+
+                if(!is_int($base_info['mobile'])){
+                    return $this->zbn_msg("手机号必须为数字", 2);
+                }
             }
             if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
 

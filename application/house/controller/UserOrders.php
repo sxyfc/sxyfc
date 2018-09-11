@@ -32,6 +32,11 @@ class UserOrders extends HouseUserBase
     private $house_esf = "house_esf";
     private $house_appointment = "house_appointment";
 
+    public function _initialize()
+    {
+        parent::_initialize();
+        $this->view->no_check_area = 1;
+    }
 
     public function index($status = 0)
     {
@@ -112,7 +117,7 @@ class UserOrders extends HouseUserBase
         $user_role_id = $this->user['user_role_id'];
         $user_role_ids = array(1, 3, 22, 23, 24);
         if (!in_array($user_role_id,$user_role_ids)) {
-            return $this->zbn_msg('权限不足，请先申请为经纪人！', 2, 'true', '1000', "'".$url."'", "''");
+            $this->zbn_msg('权限不足，请先申请为经纪人！', 2, 'true', '1000', "'".$url."'", "''");
         }
 
         //检查房宝余额
@@ -121,7 +126,7 @@ class UserOrders extends HouseUserBase
 
         $left_value = $balance - $fb_value;
         if ($balance <= 0.00 || $left_value < 0.00) {
-            return $this->zbn_msg('余额不足，请先去充值！', 2, 'true', '1000', "'".$url."'", "''");
+            $this->zbn_msg('余额不足，请先去充值！', 2, 'true', '1000', "'".$url."'", "''");
         }
 
         $info = $models->where(['id' => $id])->field('user_id')->find();
