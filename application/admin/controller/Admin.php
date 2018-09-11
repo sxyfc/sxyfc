@@ -96,10 +96,14 @@ class Admin extends AdminBase
             $base_info['site_id'] = $user_info['site_id'];
             $base_info['user_name'] = $user_info['user_name'];
 
-//            // 修改用户is_admin状态
-//            if (!$result = Db::name('users')->where(['id' => $base_info['user_id']])->update(['is_admin' => 1])) {
-//                return $this->zbn_msg('网络出错，请稍后再试！', 2);
-//            }
+            if ($result = Db::name('admin')->where(['user_id' => $base_info['user_id']])->find()) {
+                return $this->zbn_msg('请勿重复添加！', 2);
+            }
+
+            // 修改用户角色
+            if (!$result = Db::name('users')->where(['id' => $base_info['user_id']])->update(['user_role_id' => $base_info['role_id']])) {
+                return $this->zbn_msg('网络出错，请稍后再试！', 2);
+            }
 
             /** @var Models $model_info */
             $res = $model_info->add_content($base_info);
