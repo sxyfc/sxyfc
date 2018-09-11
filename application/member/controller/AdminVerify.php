@@ -79,11 +79,12 @@ class AdminVerify extends AdminBase
             }
             $res = $model_info->edit_content($update, $where);
             if ($res['code'] == 1) {
+                Db::name('users')->where(['id' => $user_id])->update(['parent_id' => $this->user['id']]);
                 $user->is_verify = 1;
                 if ($user['user_role_id'] == 2 || $user['user_role_id'] == 4)
                     $user->user_role_id = 24;
                 $user->save();
-                $area_id = set_model('role_address')->where(['user_id' => $this->user_id])->field('area_id')->find();
+                $area_id = set_model('role_address')->where(['user_id' => $this->user['id']])->field('area_id')->find();
                 if (!isset($area_id)) $area_id = 26;
                 $address_info['area_id'] = $area_id;
                 $address_info['user_id'] = $user_id;
