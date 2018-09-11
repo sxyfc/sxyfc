@@ -19,19 +19,20 @@ class Report extends AdminBase
         $province = trim(input('param.area_province', ' ', 'htmlspecialchars'));
         $city = trim(input('param.area_city', ' ', 'htmlspecialchars'));
         $area = trim(input('param.area_area', ' ', 'htmlspecialchars'));
-        if ($province){
+        $area_id = 26;
+        if ($province) {
             $area_id = $province;
         }
-        if ($city){
+        if ($city) {
             $area_id = $city;
         }
-        if ($area){
+        if ($area) {
             $area_id = $area;
         }
 
         //返回省市区筛选出的用户数据
         $where = [];
-        if ($area_id){
+        if ($area_id) {
             $where['area_id'] = $area_id;
             $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->toArray();
 
@@ -67,19 +68,20 @@ class Report extends AdminBase
         $province = trim(input('param.area_province', ' ', 'htmlspecialchars'));
         $city = trim(input('param.area_city', ' ', 'htmlspecialchars'));
         $area = trim(input('param.area_area', ' ', 'htmlspecialchars'));
-        if ($province){
+        $area_id = 26;
+        if ($province) {
             $area_id = $province;
         }
-        if ($city){
+        if ($city) {
             $area_id = $city;
         }
-        if ($area){
+        if ($area) {
             $area_id = $area;
         }
 
         //返回省市区筛选出的用户数据
         $where = [];
-        if ($area_id){
+        if ($area_id) {
             $where['area_id'] = $area_id;
             $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->toArray();
 
@@ -89,6 +91,8 @@ class Report extends AdminBase
                 $user_data['role_name'] = $power_data['role_name'];
                 array_push($user_array, $user_data);
             }
+        } else {
+            //根据用户权限选择对应展示对数据
         }
 
         //设置筛选数据

@@ -195,7 +195,7 @@ $is_ipad = (strpos($agent, 'ipad')) ? true : false;
                             <div class="swiper-slide  swiper-slide-prev">
                                 <div><a href='{$ad[' link']}' ><img :data-src='"{$url}"'
                                                                     class='ui swiper-lazy image'
-                                                                    style='width: 100%'/></a></div>
+                                                                    style='width: 50%;margin: 0 auto;'/></a></div>
                             </div>
                             {/foreach}
                         </div>
@@ -495,7 +495,7 @@ $is_ipad = (strpos($agent, 'ipad')) ? true : false;
 
             new Swiper('#index_ad_h', {
                 autoplay: true,
-                slidesPerView: 2
+                slidesPerView: 1
             });
 
             var swiper = new Swiper('#index_agent', {
