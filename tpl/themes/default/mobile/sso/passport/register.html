@@ -38,6 +38,11 @@
             <input type="tel" id="code" name="data[code]" value="" required="required"
                    placeholder="请输入手机验证码">
         </div>
+        <div class="layui-input-block">
+            <input name="like1[write]" lay-skin="primary" title="" checked="" type="checkbox"  placeholder="同意">
+            <a class="blue ui button"
+               href="/tpl/themes/default/mobile/sso/passport/register_deal_info.html">同意用户须知</a>
+        </div>
         <div class=" field">
             <div class="ui grid">
                 <div class="six wide column">
@@ -48,13 +53,16 @@
                 </div>
                 <div class="six wide column">
                     <div class=" col-xs-6">
-                        <div class="ui submit button register">立刻注册</div>
+                        <div class="ui submit button register">注册</div>
                     </div>
                 </div>
+            </div>
+            <div class="ui grid">
                 <div class="five wide column">
-                    <a href="{:new_better_furl(['r'=>'sso.passport.sso_login'])}"
-                       class="green ui  button " href="javascript:" id="showTooltips">已有账号，请登录</a>
-
+                    <div class="col-xs-6">
+                        <a href="{:new_better_furl(['r'=>'sso.passport.sso_login'])}"
+                       class="green ui  button " href="javascript:" id="showTooltips">立即登录</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -63,11 +71,6 @@
         <div class="ui error message"></div>
     </form>
 
-    <div class="layui-input-block">
-        <input name="like1[write]" lay-skin="primary" title="" checked="" type="checkbox"  placeholder="同意">
-        <a class="blue ui button"
-           href="/tpl/themes/default/mobile/sso/passport/register_deal_info.html">同意用户须知</a>
-    </div>
 
 </div>
 <script>
@@ -138,6 +141,37 @@
                             {
                                 type: 'minLength[6]',
                                 prompt: '密码长度最少为{ruleValue} 位数'
+                            }
+                        ]
+                    },
+                    password1: {
+                        identifier: 'password1',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: '请输入您的密码'
+                            },
+                            {
+                                type: 'minLength[6]',
+                                prompt: '密码长度最少为{ruleValue} 位数'
+                            }
+                        ]
+                    },
+                    name: {
+                        identifier: 'name',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: '请输入您的名字'
+                            }
+                        ]
+                    },
+                    code: {
+                        identifier: 'code',
+                        rules: [
+                            {
+                                type: 'empty',
+                                prompt: '请输入手机验证码'
                             }
                         ]
                     }
