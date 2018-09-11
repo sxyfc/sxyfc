@@ -27,6 +27,7 @@ class AdminVerify extends AdminBase
         $this->view->lists = $lists;
         return $this->view->fetch();
     }
+
     public function edit($user_id)
     {
         global $_GPC;
@@ -54,6 +55,7 @@ class AdminVerify extends AdminBase
             return $this->view->fetch();
         }
     }
+
     public function pass($user_id, $type)
     {
         global $_GPC;
@@ -77,7 +79,16 @@ class AdminVerify extends AdminBase
             }
             $res = $model_info->edit_content($update, $where);
             if ($res['code'] == 1) {
-                $user->is_verify= 1;$user->save();
+                $user->is_verify = 1;
+                if ($user['user_role_id'] == 2 || $user['user_role_id'] == 4)
+                    $user->user_role_id = 24;
+                $user->save();
+                $area_id = set_model('role_address')->where(['user_id' => $this->user_id])->field('area_id')->find();
+                if (!isset($area_id)) $area_id = 26;
+                $address_info['area_id'] = $area_id;
+                $address_info['user_id'] = $user_id;
+                $address_info['role_id'] = 24;
+                Db::name('role_address')->insertGetId($address_info);
             }
             return $res;
             $this->zbn_msg("审核成功", 1);
@@ -85,6 +96,7 @@ class AdminVerify extends AdminBase
             $this->zbn_msg("对不起，用不户存在", 2);
         }
     }
+
     public function cancle($user_id)
     {
         global $_GPC;
@@ -102,7 +114,7 @@ class AdminVerify extends AdminBase
             $update['company_verify'] = 0;
             $res = $model_info->edit_content($update, $where);
             if ($res['code'] == 1) {
-                $user->is_verify= 0;
+                $user->is_verify = 0;
                 $user->save();
                 $this->zbn_msg("操作成功", 1);
             } else {

@@ -1,0 +1,84 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<form class="layui-form form-inline" method="post" action="{:\think\\Url::build('/admin/report/search_share/user_menu_id/7026')}">
+    <label class="layui-form-label">代理地区</label>
+    <select name="area_province" class="layui-select" id="province" lay-ignore="">
+        <option value="">---省份---</option>
+    </select>
+    <select name="area_city" class="layui-select" id="city" data-value="" lay-ignore="">
+        <option value="">---城市---</option>
+    </select>
+    <select name="area_area" class="layui-select" id="country" data-value="" lay-ignore="">
+        <option value="">---区县---</option>
+    </select>
+    <input type="submit" value="搜索" class="layui-btn btn-success"></td>
+</form>
+<script type="text/javascript">
+    var num1;
+    var num2;
+    var area_province = {$area_province};
+    var area_data = {$area_data};
+    var provinces = [];
+    var cities = [];
+    var countires = [];
+    $(function () {
+        //筛选三级联动成分  省／市／区县
+        provinces = eval(area_province);
+        area_data = eval(area_data);
+
+        for (var i = 0; i < provinces.length; i++) {
+            $("#province").append("<option value=" + provinces[i].id + ">" + provinces[i].area_name + "</option>");
+        }
+        $("#province").change(function () {
+            $("#city").children().not(":eq(0)").remove();
+            num1 = $(this).children('option:selected').val();
+            if (cities.length > 0) {
+                cities.removeAll();//清理市级数据
+            }
+            for (var j = 0; j < area_data.length; j++) {
+                if (area_data[j].parent_id == num1) {
+                    $("#city").append("<option value=" + area_data[j].id + ">" + area_data[j].area_name + "</option>");
+                }
+            }
+            $("#city").change(function () {
+                $("#country").children().not(":eq(0)").remove();
+                num2 = $(this).children("option:selected").val();
+                if (countires.length > 0) {
+                    countires.removeAll();
+                }
+                for (var z = 0; z < area_data.length; z++) {
+                    if (area_data[z].parent_id == num2) {
+                        $("#country").append("<option value=" + area_data[z].id + ">" + area_data[z].area_name + "</option>");
+                    }
+                }
+            });
+        });
+    });
+
+</script>
+
+{/block}
+
+
+{block name="main"}
+<!-- 根据省市区查询出可以分润的用户list-->
+<form target="zbn_cms" method="post" action="">
+    <table class="layui-table">
+        <tr>
+            <td>用户名</td>
+            <td>手机号</td>
+            <td>角色权限</td>
+            <td>操作</td>
+        </tr>
+        {foreach $user_array as $var}
+        <tr>
+            <td>{$var['nickname']}</td>
+            <td>{$var['user_name']}</td>
+            <td>{$var['role_name']}</td>
+            <td><a href="/admin/report/share_profit/user_menu_id/7010/nickname/{$var['nickname']}" mini="iframe" class="layui-btn layui-btn-sm " width="90%" height="80%">分润明细</a></td>
+        </tr>
+        {/foreach}
+    </table>
+</form>
+{/block}
