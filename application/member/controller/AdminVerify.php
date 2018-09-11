@@ -80,11 +80,14 @@ class AdminVerify extends AdminBase
             $res = $model_info->edit_content($update, $where);
             if ($res['code'] == 1) {
                 $userInfo = Db::name('users')->where(['id' => $user_id])->find();
-                $admin_info['site_id'] = $_W['site']['id'];
-                $admin_info['role_id'] = 24;
-                $admin_info['user_id'] = $user_id;
-                $admin_info['user_name'] = $userInfo['user_name'];
-                set_model('admin')->insert($admin_info);
+
+                if (!$result = Db::name('admin')->where(['user_id' => $user_id])->find()){
+                    $admin_info['site_id'] = $_W['site']['id'];
+                    $admin_info['role_id'] = 24;
+                    $admin_info['user_id'] = $user_id;
+                    $admin_info['user_name'] = $userInfo['user_name'];
+                    set_model('admin')->insert($admin_info);
+                }
 
                 Db::name('users')->where(['id' => $user_id])->update(['parent_id' => $this->user['id']]);
                 $user->is_verify = 1;
