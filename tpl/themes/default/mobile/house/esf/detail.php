@@ -153,12 +153,6 @@
         </div>
         {/if}
         {/foreach}
-        <div class="column is-full">
-            <div class="columns option is-mobile is-marginless">
-                <div class="column is-narrow">经纪人电话:</div>
-                <div class="column"><a href="tel:{$mobile}">{$mobile}</a></div>
-            </div>
-        </div>
     </div>
     <?php
     $agent = \app\common\model\Models::get_item_by(['user_id' => $detail['user_id']], 'house_agent');
