@@ -153,6 +153,12 @@
         </div>
         {/if}
         {/foreach}
+        <div class="column is-full">
+            <div class="columns option is-mobile is-marginless">
+                <div class="column is-narrow">经纪人电话:</div>
+                <div class="column"><a href="tel:{$mobile}">{$mobile}</a></div>
+            </div>
+        </div>
     </div>
     <?php
     $agent = \app\common\model\Models::get_item_by(['user_id' => $detail['user_id']], 'house_agent');
@@ -244,7 +250,7 @@
         <!-- 这里改为 支付查看信息，支付后展示 一键导入和查看房东电话-->
         {if $show_power}
         {if $pay_result}
-        <a class="weui-navbar__item" href="tel:{$mobile}">
+        <a class="weui-navbar__item" href="tel:{$detail['mobile']}">
             一键拨号
         </a>
 
@@ -254,7 +260,7 @@
 
         {else}
         <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/2">
-            支付查看信息
+            获取房东电话
         </a>
         </form>
         {/if}
