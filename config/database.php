@@ -12,11 +12,11 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '122.114.222.71',
+    'hostname'        => '122.114.222.71',//生产服务器: 122.114.222.71     测试:47.94.83.227
     // 数据库名
     'database'        => 'fangchan_main',//fangchan_main  ->生产测试环境
     // 用户名
-    'username'        => 'fangchan_main',
+    'username'        => 'fangchan_main',//生产账户 fangchan_main  测试:root
     // 密码
     'password'        => 'seven7fly',
     // 端口
