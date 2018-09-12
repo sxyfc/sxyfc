@@ -154,16 +154,16 @@ class Esf extends HouseBase
             $pay_result = false;
         }
 
-//        $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
-//
-//        if ($agent['user_id']) {
-//            $user_info = Db::table('mhcms_users')->where(['id' => $agent['user_id']])->find();
-//            $mobile = $user_info['mobile'];
-//        } else {
-//            $mobile = '';
-//        }
-//
-//        $this->assign("mobile", $mobile);
+        $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
+
+        if ($agent['user_id']) {
+            $user_info = Db::table('mhcms_users')->where(['id' => $agent['user_id']])->find();
+            $mobile = $user_info['mobile'];
+        } else {
+            $mobile = '';
+        }
+
+        $this->assign("mobile", $mobile);
         //查询对应表，通过esf_id和user_id
         $this->assign("pay_result", $pay_result);
         $this->assign("show_power", $show_power);
