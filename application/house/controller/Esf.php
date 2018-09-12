@@ -13,6 +13,7 @@ namespace app\house\controller;
 use app\common\controller\HomeBase;
 use app\common\model\Hits;
 use app\common\model\Models;
+use app\common\model\Users;
 use app\core\util\ContentTag;
 use think\Db;
 use think\Log;
@@ -154,6 +155,19 @@ class Esf extends HouseBase
             $pay_result = false;
         }
 
+        $where = ['id' => $user_id];
+        $current_user = Users::get($where);
+
+        if ($res_access = Db::table('mhcms_user_menu_access')->where(['user_role_id' => $current_user['user_role_id'], 'user_menu_id' => '7028'])->find()) {
+            $power_result = true;
+        } else {
+            if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $user_id, 'user_menu_id' => '7028'])->find()){
+                $power_result = true;
+            }else{
+                $power_result = false;
+            }
+        }
+
         $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
 
         if ($agent['user_id']) {
@@ -167,6 +181,7 @@ class Esf extends HouseBase
         //查询对应表，通过esf_id和user_id
         $this->assign("pay_result", $pay_result);
         $this->assign("show_power", $show_power);
+        $this->assign("power_result", $power_result);
         return $this->view->fetch();
     }
 

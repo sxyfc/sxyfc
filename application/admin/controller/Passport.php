@@ -44,9 +44,12 @@ class Passport extends Base
             $where = ['nickname' => $data['admin_user_name']];
             $current_admin = Users::get($where);
             if (!$current_admin) {
-                $current_admin = Users::get(['mobile' => $data['admin_user_name']]);
+                if (!$current_admin = Users::get(['mobile' => $data['admin_user_name']])){
+                    $where_admin = ['user_name' => $data['admin_user_name']];
+                    $current_admin = Users::get($where_admin);
+                }
             }
-        
+
             if ($current_admin['id'] != 1) {
 
                 if ($current_admin['status'] != 99) {

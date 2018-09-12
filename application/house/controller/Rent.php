@@ -15,6 +15,7 @@ use app\common\model\Hits;
 use app\common\model\Models;
 use app\core\util\ContentTag;
 use think\Db;
+use app\common\model\Users;
 
 class Rent extends HouseBase
 {
@@ -138,6 +139,19 @@ class Rent extends HouseBase
         $user_id = $this->user_id;
         $rent_id = $id;
 
+        $where = ['id' => $user_id];
+        $current_user = Users::get($where);
+
+        if ($res_access = Db::table('mhcms_user_menu_access')->where(['user_role_id' => $current_user['user_role_id'], 'user_menu_id' => '7028'])->find()) {
+            $power_result = true;
+        } else {
+            if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $user_id, 'user_menu_id' => '7028'])->find()){
+                $power_result = true;
+            }else{
+                $power_result = false;
+            }
+        }
+
         //设置支付查看交易结果
         if ($result = Db::table('mhcms_house_rent_order')->where(['user_id' => $user_id, 'rent_id' => $rent_id])->find()) {
             $pay_result = true;
@@ -155,6 +169,7 @@ class Rent extends HouseBase
 
         $this->assign("mobile", $mobile);
         $this->assign("pay_result", $pay_result);
+        $this->assign("power_result", $power_result);
         return $this->view->fetch();
     }
 

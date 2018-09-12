@@ -125,7 +125,11 @@
                 <div class="column is-full">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">经纪人电话 :</div>
+                        {if $power_result}
                         <div class="column">{$detail['mobile']}</div>
+                        {else}
+                        <div class="column">无权查看</div>
+                        {/if}
                     </div>
                 </div>
                 {/if}
