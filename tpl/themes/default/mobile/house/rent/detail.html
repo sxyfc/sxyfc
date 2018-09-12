@@ -10,11 +10,13 @@
 {block name="layui_js"}{/block}
 {block name="layui_css"}{/block}
 {block name="main"}
-<div style="height: 260px" class="swiper-container swiper-container-horizontal new-better-swiper-container" id="detail_ad">
-    <div  class="swiper-wrapper">
+<div style="height: 260px"
+     class="swiper-container swiper-container-horizontal new-better-swiper-container"
+     id="detail_ad">
+    <div class="swiper-wrapper">
         {foreach $detail.thumbs as $image}
         <div class="swiper-slide swiper-slide-prev">
-            <img src="{$image.url}" class="image ui"  style="max-height: 260px;margin: auto">
+            <img src="{$image.url}" class="image ui" style="max-height: 260px;margin: auto">
         </div>
         {/foreach}
     </div><!-- Add Pagination -->
@@ -25,9 +27,12 @@
 </div>
 
 
-
 <div class="ui top attached mhcms-panel" id="intro">
-    <div class="ui  mhcms-panel-header"><h2>{$detail['title']} <small class="has-text-grey">({$detail['pay_cycle']})</small></h2></div>
+    <div class="ui  mhcms-panel-header">
+        <h2>{$detail['title']}
+            <small class="has-text-grey">({$detail['pay_cycle']})</small>
+        </h2>
+    </div>
     <div class="ui column mhcms-panel-body" style="    margin-bottom: 10px;padding-top: 0;">
 
         <div class=" cells columns is-mobile is-marginless">
@@ -39,7 +44,9 @@
 
             <div class="column">
                 <div class="text">户型</div>
-                <div class="em">{$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫</div>
+                <div class="em">
+                    {$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫
+                </div>
             </div>
 
             <div class="column">
@@ -47,7 +54,6 @@
                 <div class="em">{$detail['size']} 平方米</div>
             </div>
         </div>
-
 
 
         <div class="columns is-mobile is-marginless is-multiline">
@@ -104,10 +110,10 @@
 
 
             <!--<div class="column is-half">-->
-                <!--<div class="columns option is-mobile is-marginless">-->
-                    <!--<div class="column is-narrow">电话 :</div>-->
-                    <!--<div class="column">{$detail['mobile']}</div>-->
-                <!--</div>-->
+            <!--<div class="columns option is-mobile is-marginless">-->
+            <!--<div class="column is-narrow">电话 :</div>-->
+            <!--<div class="column">{$detail['mobile']}</div>-->
+            <!--</div>-->
             <!--</div>-->
             <div class="column is-full">
                 <div class="columns option is-mobile is-marginless">
@@ -141,16 +147,12 @@
                     <div class="column">{$detail['description']}</div>
                 </div>
             </div>
-            {if $show_power}
-            {if $pay_result}
             <div class="column is-full">
                 <div class="columns option is-mobile is-marginless">
                     <div class="column is-narrow">经纪人电话 :</div>
-                    <div class="column">{$detail['mobile']}</div>
+                    <div class="column"><a href="tel:{$mobile}">一键拨号</a></div>
                 </div>
             </div>
-            {/if}
-            {/if}
             {foreach $field_list as $k=>$field}
             {if $field['field_name'] == 'baidu_map'}
             <div class="column is-full">
@@ -174,21 +176,26 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
 
 <div class="ui top attached mhcms-panel">
     <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
-        <a class="weui-cell weui-cell_access" href="{:url('house/agent/detail' , ['user_id'=>$detail['user_id']])}">
+        <a class="weui-cell weui-cell_access"
+           href="{:url('house/agent/detail' , ['user_id'=>$detail['user_id']])}">
             <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">
-                <img class=" is-rounded" src="{$agent['avatar'][0]['url']}" style="width: 50px;height:50px;display: block;border-radius: 50%">
+                <img class=" is-rounded" src="{$agent['avatar'][0]['url']}"
+                     style="width: 50px;height:50px;display: block;border-radius: 50%">
             </div>
             <div class="weui-cell__bd">
                 <p>{$agent.person_name}
-                    {if $user_verify.personal_verify==99}<i class="has-text-success iconfont icon-renzheng"></i>{/if}
+                    {if $user_verify.personal_verify==99}<i
+                            class="has-text-success iconfont icon-renzheng"></i>{/if}
 
-                    {if $user_verify.company_verify==99}<i class="has-text-success iconfont icon-renzhengpeizhi"></i>{/if}
+                    {if $user_verify.company_verify==99}<i
+                            class="has-text-success iconfont icon-renzhengpeizhi"></i>{/if}
                 </p>
                 <p style="font-size: 13px;color: #888888;">{$agent.mobile}
 
 
                 </p>
-            </div><div class="weui-cell__ft"></div>
+            </div>
+            <div class="weui-cell__ft"></div>
         </a>
     </div>
 </div>
@@ -200,27 +207,27 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
 
 {block name="footer"}
 <div class="mhcms-navbar weui-navbar" style="">
-    <a class="weui-navbar__item is-narrow"  href="/house">
+    <a class="weui-navbar__item is-narrow" href="/house">
         <i class="icon home"></i> <span>首页</span>
     </a>
 
     <!-- 这里改为 支付查看信息，支付后展示 一键导入和查看房东电话-->
     {if $show_power}
 
-        {if $pay_result}
-            <a class="weui-navbar__item" href="tel:{$mobile}">
-                一键拨号
-            </a>
+    {if $pay_result}
+    <a class="weui-navbar__item" href="tel:{$detail['mobile']}">
+        一键拨号
+    </a>
 
-            <a class="weui-navbar__item" href="/house/rent/autoAdd/id/{$detail['id']}">
-                一键导入
-            </a>
+    <a class="weui-navbar__item" href="/house/rent/autoAdd/id/{$detail['id']}">
+        一键导入
+    </a>
 
-        {else}
-            <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/1">
-                支付查看信息
-            </a>
-        {/if}
+    {else}
+    <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/1">
+        获取房东电话
+    </a>
+    {/if}
     {/if}
 </div>
 {/block}
@@ -229,21 +236,23 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
 {block name="vue_mine_js"}
 <style>
 
-    .column{
+    .column {
         color: #0C0C0C;
         font-size: 1.4rem;
         position: relative;
         line-height: 2.3rem;
     }
-    .column.is-narrow{
+
+    .column.is-narrow {
         color: #999;
     }
-    .column.is-full,.column.is-half{
+
+    .column.is-full, .column.is-half {
         padding: 0;
 
     }
 
-    .column .em{
+    .column .em {
         color: orangered;
         font-size: 15px;
     }
@@ -254,9 +263,9 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
 
 </style>
 <script>
-    require(['jquery' , 'swiper4' ] , function ($ , Swiper) {
+    require(['jquery', 'swiper4'], function ($, Swiper) {
         $(document).ready(function () {
-            var swiper = new Swiper('#detail_ad',  {
+            var swiper = new Swiper('#detail_ad', {
                 navigation: {
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev',
@@ -273,15 +282,25 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
             });
         });
     });
-    require([ 'mhcms'], function (mhcms) {
+    require(['mhcms'], function (mhcms) {
         //todo set title bar
         // {if is_weixin()}
 
 
-        mhcms.init_wechat_share( {:json_encode($seo)}  , '{$_W.current_url}');
+        mhcms.init_wechat_share({
+    :
+        json_encode($seo)
+    }  ,
+        '{$_W.current_url}'
+    )
+        ;
         // {/if}
 
-        mhcms.init_seo("{$seo.seo_key}" , {:json_encode($seo)});
+        mhcms.init_seo("{$seo.seo_key}", {
+    :
+        json_encode($seo)
+    })
+        ;
     });
 </script>
 {/block}
