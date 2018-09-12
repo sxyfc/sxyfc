@@ -259,7 +259,7 @@
         </a>
 
         {else}
-        <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/2">
+        <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/2" onclick="if(confirm('确认支付房宝获取？')==false)return false;">
             获取房东电话
         </a>
         </form>
