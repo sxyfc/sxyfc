@@ -92,6 +92,10 @@ class AdminRent extends AdminBase
                 if ($find_data) {
                     return $this->zbn_msg("不可添加重复房源", 2);
                 }
+
+                if(!is_int(intval($base_info['mobile']))){
+                    return $this->zbn_msg("手机号必须为数字", 2);
+                }
             }
             $base_info['user_id'] = $this->user['id'];
             $res = $model_info->add_content($base_info);

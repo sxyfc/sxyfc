@@ -102,7 +102,7 @@ class AdminEsf extends AdminBase
                     return $this->zbn_msg("不可添加重复房源", 2);
                 }
 
-                if(!is_int($base_info['mobile'])){
+                if(!is_int(intval($base_info['mobile']))){
                     return $this->zbn_msg("手机号必须为数字", 2);
                 }
             }
