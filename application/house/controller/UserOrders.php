@@ -117,7 +117,7 @@ class UserOrders extends HouseUserBase
         $user_role_id = $this->user['user_role_id'];
         $user_role_ids = array(1, 3, 22, 23, 24);
         if (!in_array($user_role_id,$user_role_ids)) {
-            $this->zbn_msg('权限不足，请先申请为经纪人！', 2, 'true', '1000', "'".$url."'", "''");
+            $this->error("权限不足，请先申请为经纪人！");
         }
 
         //检查房宝余额
@@ -126,7 +126,7 @@ class UserOrders extends HouseUserBase
 
         $left_value = $balance - $fb_value;
         if ($balance <= 0.00 || $left_value < 0.00) {
-            $this->zbn_msg('余额不足，请先去充值！', 2, 'true', '1000', "'".$url."'", "''");
+            $this->error("余额不足，请先去充值！");
         }
 
         $info = $models->where(['id' => $id])->field('user_id')->find();
@@ -143,8 +143,7 @@ class UserOrders extends HouseUserBase
         if ($result_json['result'] == 0) {
             $fb_order_id = $result_json['data']['order_id'];
         } else {
-            $this->zbn_msg($result_json['reason'], 1, 'true', 1500, "'".$url."'", "");
-            return false;
+            $this->error($result_json['reason']);
         }
 
         $base_info['order_id'] = $fb_order_id;
@@ -155,12 +154,9 @@ class UserOrders extends HouseUserBase
         }
 
         if (!$res) {
-            // $this->zbn_msg('网络故障，请稍后再试！', 2, '', 'history.back()');
-            $this->zbn_msg('网络故障，请稍后再试！', 1, 'true', 1500, "'".$url."'", "");
-            return false;
+            $this->error('网络故障，请稍后再试！');
         } else {
-            $this->zbn_msg('操作成功！', 1, 'true', 1000, "'".$url."'", "");
-            echo "<script>history.back();</script>";
+            $this->error('操作成功！');
         }
     }
 
