@@ -307,7 +307,7 @@
                     <span class="weui-cell__ft"></span>
                 </a>
 
-                <a class="weui-cell weui-cell_access" href="/house/user_orders/index">
+                <a class="weui-cell weui-cell_access" href="/house/weituo/index">
                     <div class="weui-cell__hd"><i class="iconfont icon-zufang"
                                                   style="width:20px;margin-right:5px;display:block"></i>
                     </div>
