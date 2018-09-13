@@ -141,40 +141,49 @@ class AdminOrders extends AdminBase
         global $_W;
 
         if ($this->isPost()) {
-            $data = input('param.data/a');
-            $orders = Orders::get(['id' => $order_id]);
-            $audit_res = $data['pass'] == 1 ? '同意' : '不同意';
+            try {
+                $data = input('param.data/a');
+                $orders = Orders::get(['id' => $order_id]);
+                $audit_res = $data['pass'] == 1 ? '同意' : '不同意';
 
-            if (!$orders) {
-                $this->zbn_msg('查询不到订单');
-            }
-            if (!$this->super_power) {
-                $this->zbn_msg('没有权限');
-            }
-            if ($orders['status'] !== '退款中') {
-                $this->zbn_msg('订单尚未申请退款');
-            }
-            if ((time() - strtotime($orders['refund_time'])) > 24 * 60 * 60) {
+                if (!$orders) {
+                    $this->zbn_msg('查询不到订单');
+                }
+                if (!$this->super_power) {
+                    $this->zbn_msg('没有权限');
+                }
+                if ($orders['status'] !== '退款中') {
+                    $this->zbn_msg('订单尚未申请退款');
+                }
+                if ((time() - strtotime($orders['refund_time'])) > 24 * 60 * 60) {
+                    $order_data = array();
+                    $order_data['status'] = '已完成';
+                    $order_data['audit_desc'] = '订单审核超时';
+                    $order_data['audit_time'] = date('Y-m-d H:i:s', time());
+                    $order_data['audit_user_id'] = $this->user['id'];
+                    set_model('orders')->where(['id'=>$order_id])->update($order_data);
+                    Orders::log_add($order_id, $this->user['id'], '[审核退款]'.$data['description']);
+                    $this->zbn_msg('订单申请退款已经超过24小时');
+                }
                 $order_data = array();
-                $order_data['status'] = '已完成';
-                $order_data['audit_desc'] = '订单审核超时';
+                $order_data['status'] = $data['pass'] == 1 ? '已关闭' : '已完成';
+                $order_data['audit_desc'] = $data['description'];
                 $order_data['audit_time'] = date('Y-m-d H:i:s', time());
                 $order_data['audit_user_id'] = $this->user['id'];
                 set_model('orders')->where(['id'=>$order_id])->update($order_data);
-                Orders::log_add($order_id, $this->user['id'], '[审核退款]'.$data['description']);
-                $this->zbn_msg('订单申请退款已经超过24小时');
+                Orders::log_add($order_id, $this->user['id'], '[审核退款:'.$audit_res.']'.$data['description']);
+                if ($data['pass'] == 1) {
+                    $this->refund_order($orders);
+                }
+                $res = array('result'=>0, 'reason'=> '操作成功');
+            } catch (Exception $e) {
+                $res = $this->ajaxJson($e);
             }
-            $order_data = array();
-            $order_data['status'] = $data['pass'] == 1 ? '已关闭' : '已完成';
-            $order_data['audit_desc'] = $data['description'];
-            $order_data['audit_time'] = date('Y-m-d H:i:s', time());
-            $order_data['audit_user_id'] = $this->user['id'];
-            set_model('orders')->where(['id'=>$order_id])->update($order_data);
-            Orders::log_add($order_id, $this->user['id'], '[审核退款:'.$audit_res.']'.$data['description']);
-            if ($data['pass'] == 1) {
-                $this->refund_order($orders);
+            if ($res['result'] == 0) {
+                $this->zbn_msg($res['reason'], 1, 'true', 1000, "''", "'reload_parent_page()'");
+            } else {
+                $this->zbn_msg($res['reason']);
             }
-            $this->zbn_msg("操作成功", 1, 'true', 1000, "''", "'reload_parent_page()'");
         } else {
             $this->view->orders = Orders::get(['id' => $order_id]);
             return $this->view->fetch();

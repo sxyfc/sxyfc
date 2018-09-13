@@ -70,6 +70,7 @@ class Fund extends AdminBase
             //1 消费;2 充值
             if ($data['operate'] == 1) {
                 if (!Money::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
+                    Log::error('【user:'.$user['id'].'】Money::spend->'.json_encode($data));
                     throw new Exception("余额不足", 1);
                 }
             } else if ($data['operate'] == 2) {
@@ -79,6 +80,7 @@ class Fund extends AdminBase
             //1 消费;2 充值
             if ($data['operate'] == 1) {
                 if (!Point::spend($user, $data['amount'], $data['pay_type'], $data['note'])) {
+                    Log::error('【user:'.$user['id'].'Point::spend->'.json_encode($data));
                     throw new Exception("余额不足", 1);
                 }
             } else if ($data['operate'] == 2) {
