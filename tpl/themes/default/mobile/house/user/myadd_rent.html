@@ -10,27 +10,9 @@
 
 {block name="mhcms_module_js"}{/block}
 {block name="main"}
-<div class="weui-navbar filter" :class="fixed ? 'fixed' : ''">
-    <div class="weui-navbar__item">
-        <area_filter :multi="false" :field_name="'area_id'" :area_id="params.area_id" :show_filter="current_filter=='area_id' ? true : false" :text="names.area_id || '地区'" @post_area_name="set_names" @applied="change_options" @show_filter="show_filter" ></area_filter>
-    </div>
-
-    <div class="weui-navbar__item">
-        <comp_filter_option :multi="true" :model_id="'house_rent'" :field_name="'zhuangxiu'" :text="names.zhuangxiu || '装修'" :ids="params.zhuangxiu" :show_filter="current_filter=='zhuangxiu' ? true : false" @post_name="set_names" @applied="change_options" @show_filter="show_filter"></comp_filter_option>
-    </div>
-
-
-    <div class="weui-navbar__item">
-        <comp_filter_option :multi="false" :current_option_id="params.shi" :model_id="'house_rent'" :field_name="'shi'" :text="names.shi || '房型'" :show_filter="current_filter=='shi' ? true : false" @show_filter="show_filter" @applied="change_options" @post_name="set_names" ></comp_filter_option>
-    </div>
-
-    <div class="weui-navbar__item">
-        更多
-    </div>
-</div>
 
 <div>
-    <div  class="esf rent weui-panel" :class="fixed ? 'noscroll' :''">
+    <div  class="esf rent weui-panel" :class="fixed ? 'noscroll' :''" style="padding-top: 0px;margin-top: 10px;">
         <div class="weui-panel__bd">
             <item_rent v-for="(item, index) in items"  :item="item" ></item_rent>
         </div>

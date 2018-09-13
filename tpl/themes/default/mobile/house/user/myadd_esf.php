@@ -7,128 +7,13 @@
 <!-- */-->
 
 <!--mhcms.net  content start {php} global $_W; {/php}-->
+<div class="weui-panel__ft has-text-centered" id="show_img"><a class=" button is-light is-mobile-loading is-loading"><img src="/statics/images/logo.png" class="loading_icon"></a></div>
 <div id="app_mhcms">
     <div class="weui-flex filter has-text-centered" id="filter_list">
-        <div class="weui-flex__item" onclick="toggle_filter('area')">
-            <div class="placeholder" id="area" data-val="请选择">地区 <i class="iconfont icon-dropdown"></i></div>
-        </div>
-        <div class="weui-flex__item" onclick="toggle_filter('loupan_type')">
-            <div class="placeholder">类型 <i class="iconfont icon-dropdown"></i></div>
-        </div>
-        <div class="weui-flex__item" onclick="toggle_filter('price')" >
-            <div class="placeholder">价格 <i class="iconfont icon-dropdown"></i></div>
-        </div>
-        <div class="weui-flex__item"  onclick="toggle_filter('tags')" >
-            <div class="placeholder">特色 <i class="iconfont icon-dropdown"></i></div>
-        </div>
-
-
-        <div class="weui-flex__item"  onclick="toggle_filter('zhuangxiu')" >
-            <div class="placeholder">装修 <i class="iconfont icon-dropdown"></i></div>
-        </div>
-
-
-    </div>
-    <div style="margin-top: -10px;">
-        <div class="is-marginless columns filter_panel is-mobile mhcms_simple_tab" id="filter_area" style="display: none">
-            <div class="column is-marginless is-paddingless " style="background-color: rgb(255, 255, 255);">
-                <div  style="height: 50vh;">
-                    <ul class="menu-list tab-header weui-cells weui-cells_checkbox is-marginless">
-                        <li class="change_options" data-field_name="area_id"  data-value="0"><a>不限</a></li>
-                        {foreach $areas as $area}
-                        <li data-target="{$area.id}" data-cate_id="top_cate.id"><a>{$area.area_name}</a></li>
-                        {/foreach}
-                    </ul>
-                </div>
-            </div>
-            <div class="column is-marginless is-paddingless" style="height: 50vh;background: #fff">
-                {foreach $areas as $area}
-                <ul  class="group_{$area.id} area menu-list tab-body weui-cells weui-cells_checkbox is-marginless" style="display: none">
-                    <li class="change_options" data-field_name="area_id"  data-value="{$area.id}"><a>不限</a></li>
-                    {if $area.children}
-                    {foreach $area.children as $_sub}
-                    <li class="change_options" data-field_name="area_id" data-value="{$_sub.id}"><a class="">{$_sub.area_name}</a></li>
-                    {/foreach}
-                    {/if}
-                </ul>
-                {/foreach}
-            </div>
-            <div class="is-clearfix"></div>
-            <div class="modal-background" style="z-index: -1;top:50px; height: 100%; position: fixed; opacity: 0.5;"></div>
-
-        </div>
-
-
-        <div class="is-marginless columns filter_panel is-mobile " id="filter_loupan_type" style="display: none">
-
-            <div class="column is-marginless is-paddingless" style="height: 50vh;background: #fff">
-                <ul  class="group_0 area menu-list tab-body weui-cells weui-cells_checkbox is-marginless"  >
-                    <li class="change_options" data-field_name="loupan_type"  data-value="0"><a>不限</a></li>
-
-                    {foreach $loupan_type_options  as $loupan_type}
-                    <li class="change_options" data-field_name="loupan_type" data-value="{$loupan_type.id}"><a class="">{$loupan_type.name}</a></li>
-                    {/foreach}
-                </ul>
-            </div>
-            <div class="is-clearfix"></div>
-            <div class="modal-background" style="z-index: -1;top:50px; height: 100%; position: fixed; opacity: 0.5;"></div>
-
-        </div>
-
-        <div class="is-marginless columns filter_panel is-mobile " id="filter_price" style="display: none">
-
-            <div class="column is-marginless is-paddingless" style="height: 50vh;background: #fff">
-                <ul  class="group_0 area menu-list tab-body weui-cells weui-cells_checkbox is-marginless"  >
-                    <li class="change_options" data-field_name="price_qujian"  data-value="0"><a>不限</a></li>
-
-                    {foreach $price_options  as $price}
-                    <li class="change_options" data-field_name="price_qujian" data-value="{$price.id}"><a class="">{$price.name}</a></li>
-                    {/foreach}
-                </ul>
-            </div>
-            <div class="is-clearfix"></div>
-            <div class="modal-background" style="z-index: -1;top:50px; height: 100%; position: fixed; opacity: 0.5;"></div>
-
-        </div>
-
-        <div class="is-marginless columns filter_panel is-mobile " id="filter_tags" style="display: none">
-
-            <div class="column is-marginless is-paddingless" style="height: 50vh;background: #fff">
-                <ul  class="group_0 area menu-list tab-body weui-cells weui-cells_checkbox is-marginless"  >
-                    <li class="change_options" data-field_name="tags"  data-value="0"><a>不限</a></li>
-
-                    {foreach $tags_options  as $tag}
-                    <li class="change_options" data-field_name="tags" data-value="{$tag.id}"><a class="">{$tag.name}</a></li>
-                    {/foreach}
-                </ul>
-            </div>
-            <div class="is-clearfix"></div>
-            <div class="modal-background" style="z-index: -1;top:50px; height: 100%; position: fixed; opacity: 0.5;"></div>
-
-        </div>
-        <div class="is-marginless columns filter_panel is-mobile " id="filter_zhuangxiu" style="display: none">
-
-            <div class="column is-marginless is-paddingless" style="height: 50vh;background: #fff">
-                <ul  class="group_0 area menu-list tab-body weui-cells weui-cells_checkbox is-marginless"  >
-                    <li class="change_options" data-field_name="zhuangxiu"  data-value="0"><a>不限</a></li>
-
-                    {foreach $zhuangxiu_options  as $zhuangxiu}
-                    <li class="change_options" data-field_name="zhuangxiu" data-value="{$zhuangxiu.id}"><a class="">{$zhuangxiu.name}</a></li>
-                    {/foreach}
-                </ul>
-            </div>
-            <div class="is-clearfix"></div>
-            <div class="modal-background" style="z-index: -1;top:50px; height: 100%; position: fixed; opacity: 0.5;"></div>
-
-        </div>
-
     </div>
 
     <div class="infinite weui-panel"  >
-
-
         <div class="mhcms-lists weui-panel__bd"  id="index_content"></div>
-
     </div>
 
     <div class="weui-panel__ft has-text-centered" style="display: none">
@@ -142,7 +27,6 @@
     </div>
 
     <input type="hidden" id="page" value="1" >
-
     <div style="height: 45px"></div>
 </div>
 
@@ -198,6 +82,7 @@
                 if(data.html!==""){
                     pager.val(parseInt( pager.val()) + 1);
                     $("#index_content").append(data.html);
+                    $("#show_img").hide();
                 }else{
                     loader.options.has_more = false;
                     $("#no_data").show();
