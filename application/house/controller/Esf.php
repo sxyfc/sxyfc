@@ -155,19 +155,6 @@ class Esf extends HouseBase
             $pay_result = false;
         }
 
-        $where = ['id' => $user_id];
-        $current_user = Users::get($where);
-
-        if ($res_access = Db::table('mhcms_user_menu_access')->where(['user_role_id' => $current_user['user_role_id'], 'user_menu_id' => '7028'])->find()) {
-            $power_result = true;
-        } else {
-            if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $user_id, 'user_menu_id' => '7028'])->find()){
-                $power_result = true;
-            }else{
-                $power_result = false;
-            }
-        }
-
         $agent = Db::table('mhcms_house_esf')->where(['id' => $id])->find();
 
         if ($agent['user_id']) {
@@ -175,6 +162,12 @@ class Esf extends HouseBase
             $mobile = $user_info['mobile'];
         } else {
             $mobile = '';
+        }
+
+        if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $agent['user_id'], 'user_menu_id' => '7028'])->find()){
+            $power_result = true;
+        }else{
+            $power_result = false;
         }
 
         $this->assign("mobile", $mobile);

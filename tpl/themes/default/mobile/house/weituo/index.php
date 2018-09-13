@@ -1,60 +1,100 @@
-
 <div id="app_mhcms">
-    <div class="weui-navbar" style="position: static;top: 0;left: 0">
-        <a @click="change_options(1 , 1 , 'offer')" class="weui-navbar__item make_call " :class="active ===1 ? 'weui-bar__item_on' : '' ">
-            出售
-        </a>
-        <a @click="change_options(2 , 2 , 'offer')" class="weui-navbar__item make_call" :class="active ===2 ? 'weui-bar__item_on' : '' ">
-            出租
-        </a>
-
-        <a @click="change_options(3 , 1 , 'request')" class="weui-navbar__item make_call" :class="active ===3 ? 'weui-bar__item_on' : '' ">
-            求购
-        </a>
-
-        <a @click="change_options(4 , 2 , 'request')" class="weui-navbar__item make_call" :class="active ===4 ? 'weui-bar__item_on' : '' ">
-            求租
-        </a>
+    <div class="weui-panel__hd">
+        <form class="submit-form" action="/house/weituo/index" method="post">
+            <select name="type" class="weui-select">
+                <option class="weui-cell_select" selected value="0">发布类型</option>
+                <option class="weui-cell_select" value="1">出租</option>
+                <option class="weui-cell_select" value="2">出售</option>
+                <option class="weui-cell_select" value="3">求租</option>
+                <option class="weui-cell_select" value="4">求购</option>
+            </select>
+            <input type="submit" class="weui-btn weui-btn_primary search_btn" value="搜索">
+        </form>
     </div>
 
-    <div class="weui-cells">
-
-        <div v-if="weituo_model=='request'">
-            <div  class="weui-cell weui-cell_swiped" v-for="(item ,index_1) in items">
-                <div class="weui-cell__bd ">
-                    <div class="weui-cell">
-                        <div class="weui-cell__bd">
-                            <p>委托编号：{{item.id}} /  {{item.create_at}} / {{item.status}}</p>
-                        </div>
-                        <div class="weui-cell__ft">{{item.shangquan}}</div>
+    <div class="ui mhcms-panel">
+        {if $type==1 || $type==2}
+        {foreach $list as $item}
+        <div class="ui column mhcms-panel-body" style="    margin-bottom: 10px;padding-top: 0;">
+            <div class=" cells columns is-mobile is-marginless">
+                <div class="column">
+                    <div class="text">小区名称： {$item['xiaoqu_name']}</div>
+                </div>
+                <div class="column">
+                    <div class="text">地址信息： {$item['address']}</div>
+                </div>
+            </div>
+            <div class=" cells columns is-mobile is-marginless">
+                <div class="column">
+                    <div class="text">联系手机： {$item['mobile']}
                     </div>
                 </div>
-
-
-                <div class="weui-cell__ft">
-                    <a class="weui-swiped-btn weui-swiped-btn_warn" href="javascript:">删除</a>
+                <div class="column">
+                    <div class="text">委托类型： {if $item['type']==1}出售{else}出租{/if}
+                    </div>
+                </div>
+            </div>
+            <div class=" cells columns is-mobile is-marginless">
+                <div class="column">
+                    <div class="text">期望价格： {$item['price']} 万元</div>
+                </div>
+                <div class="column">
+                    <div class="text">期望面积： {$item['size']} 平米</div>
+                </div>
+                <div class="column">
+                    <div class="text">户型描述： {$item['huxing']}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="text">审核状态： {if $item['status']==0}审核中{else}通过{/if}
+                    </div>
                 </div>
             </div>
         </div>
-        <div v-if="weituo_model=='offer'">
-            <div  class="weui-cell weui-cell_swiped" v-for="(item,index_2) in items" >
-                <div class="weui-cell__bd ">
-                    <div class="weui-cell">
-                        <div class="weui-cell__bd">
-                            <p>{{item.loupan_name}}</p>
-                        </div>
-                        <div class="weui-cell__ft">{{item.address}}</div>
+        {/foreach}
+        {else}
+        {foreach $list as $item}
+        <div class="ui column mhcms-panel-body" style="    margin-bottom: 10px;padding-top: 0;">
+            <div class=" cells columns is-mobile is-marginless">
+                <div class="column">
+                    <div class="text">标题： {$item['title']}</div>
+                </div>
+            </div>
+            <div class=" cells columns is-mobile is-marginless">
+                <div class="column">
+                    <div class="text">内容： {$item['content']}</div>
+                </div>
+            </div>
+            <div class=" cells columns is-mobile is-marginless">
+                <div class="column">
+                    <div class="text">联系手机： {$item['mobile']}
                     </div>
                 </div>
-
-                <div class="weui-cell__ft">
-                    <a class="weui-swiped-btn weui-swiped-btn_warn" href="javascript:">删除</a>
+                <div class="column">
+                    <div class="text">委托类型： {if $item['type']==1}求购{else}求租{/if}
+                    </div>
                 </div>
-            </div></div>
+            </div>
+            <div class=" cells columns is-mobile is-marginless">
+                <div class="column">
+                    <div class="text">意向价格： {$item['price']} 万元</div>
+                </div>
+                <div class="column">
+                    <div class="text">意向面积： {$item['size']} 平米</div>
+                </div>
+                <div class="column">
+                    <div class="text">意向户型： {$item['huxing']}
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="text">审核状态： {if $item['status']==0}审核中{else}通过{/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/foreach}
+        {/if}
     </div>
-
-
-    <mhui_bottom_loading :has_more="has_more" :is_loading="is_loading"></mhui_bottom_loading>
 </div>
 <script>
     require(['Vue', 'axios', 'vue!mhcms_ui', 'vue!mhcms_filters', 'vue!house'], function (Vue, axios) {
@@ -65,19 +105,17 @@
                 page: 1,
                 has_more: true,
                 is_loading: false,
-                active : 1 ,
+                active: 1,
                 customer_type: 1,
                 weituo_model: 'offer',
-                items : [] ,
-                params : {
-
-                }
+                items: [],
+                params: {}
             },
 
             methods: {
                 load_list(init) {
                     let that = this;
-                    if(init === 1){
+                    if (init === 1) {
                         that.items = [];
                         that.page = 1;
                     }
@@ -98,10 +136,10 @@
                     that.has_more = true;
 
 
-                    let promise = that.$http.get(api , {
-                        params :{
-                            site_id : "{$_W.site.id}",
-                            query : this.params
+                    let promise = that.$http.get(api, {
+                        params: {
+                            site_id: "{$_W.site.id}",
+                            query: this.params
                         }
                     }).then((ret) => {
                         ret = ret.data;
@@ -119,7 +157,7 @@
                             }
                             that.is_loading = false;
                         }
-                    } , (error)=>{
+                    }, (error) => {
 
                         console.log(error);
 
@@ -127,7 +165,7 @@
                     });
 
                 },
-                change_options(tab_id , customer_type, weituo_model) {
+                change_options(tab_id, customer_type, weituo_model) {
                     this.active = tab_id;
                     this.customer_type = customer_type;
                     this.weituo_model = weituo_model;

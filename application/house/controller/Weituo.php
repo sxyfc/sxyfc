@@ -13,6 +13,7 @@ namespace app\house\controller;
 use app\common\controller\HomeBase;
 use app\common\controller\ModuleBase;
 use app\core\util\ContentTag;
+use think\Log;
 
 class Weituo extends HouseBase
 {
@@ -23,7 +24,7 @@ class Weituo extends HouseBase
         $model_info = $model->model_info;
         if ($this->isPost(true)) {
 
-        }else{
+        } else {
             $ext['title'] = $type == 1 ? "我要出售" : "我要出租";
             $this->mapping = array_merge($this->mapping, $ext);
             $this->view->seo = $this->seo($this->mapping);
@@ -69,11 +70,37 @@ class Weituo extends HouseBase
     }
 
 
-    public function index()
+    public function index()//默认求租
     {
-        $ext['title'] = "我的委托管理";
-        $this->mapping = array_merge($this->mapping, $ext);
-        $this->view->seo = $this->seo($this->mapping);
+        //求租\求购
+        $house_info = 'house_info';
+        //出租出售
+        $house_weituo = 'house_weituo';
+
+        $type = $_POST['type'];
+        $model = set_model($house_info);
+        $where = [];
+        $where['type'] = 2;
+        $where['user_id'] = $this->user['id'];
+        Log::error($where['user_id']);
+        if ($type == 1) {//出租
+            $model = set_model($house_weituo);
+            $where['type'] = 2;
+        } elseif ($type == 2) {//出售
+            $model = set_model($house_weituo);
+            $where['type'] = 1;
+        } elseif ($type == 3) {//求租
+            $model = set_model($house_info);
+            $where['type'] = 2;
+        } elseif ($type == 4) {//求购
+            $model = set_model($house_info);
+            $where['type'] = 1;
+        }
+
+        $list = $model->where($where)->select()->toArray();
+        $this->assign("list", $list);
+        Log::error($list);
+        $this->assign("type", $type);
         return $this->view->fetch();
     }
 }

@@ -241,7 +241,6 @@ ORDER BY distance LIMIT 0 , 20;";
                 }
                 $where['zhuangxiu'] = ['IN', $_zhuangxiu_ids];
             }
-
         }
         $shi = $query['shi'];
         if ($shi) {
@@ -256,6 +255,19 @@ ORDER BY distance LIMIT 0 , 20;";
                 $where['size'] = ['between', [$_size_data[0], $_size_data[1]]];
             }
         }
+
+        $user_esf = "user_rent";
+        $user_id = $this->user['id'];
+        $where_rent['user_id'] = $user_id;
+        $rent_list_model = set_model($user_esf)->where($where_rent)->select()->toArray();
+        if (!empty($rent_list_model)){
+            $rent_ids = array_column($rent_list_model, 'rent_id');
+            $where['id'] = ['IN', $rent_ids];
+        }else{
+            $where['id'] = 0;
+        }
+
+
         $where['status'] = 99;
         $res = $model->field('id')->where($where)->order($order)->paginate(null, true, ['page' => $query['page']])->toArray();
 
@@ -443,6 +455,16 @@ ORDER BY distance LIMIT 0 , 20;";
 
         }
 
+        $user_esf = "user_esf";
+        $user_id = $this->user['id'];
+        $where_esf['user_id'] = $user_id;
+        $esf_list_model = set_model($user_esf)->where($where_esf)->select()->toArray();
+        if (!empty($esf_list_model)){
+            $esf_ids = array_column($esf_list_model, 'esf_id');
+            $where['id'] = ['IN', $esf_ids];
+        }else{
+            $where['id'] = 0;
+        }
 
         $size = isset($query['size']) ? $query['size'] : "";
         if ($size) {

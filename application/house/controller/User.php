@@ -64,11 +64,10 @@ class User extends HouseUserBase
 
 
         global $_W;
-//        //渲染筛选条件-地区
+        //渲染筛选条件-地区
         $this->view->areas = ContentTag::model_tree_tow('area', '', 'area_name', 'id', $user_esf);
 
         $this->view->loupan_type_options = ContentTag::load_options_two("house_esf", 'loupan_type', $esf_list_model, "erf_id");
-        //$this->view->price_options = ContentTag::load_options("house_esf", 'price_qujian');
         $this->view->tags_options = ContentTag::load_options_two("house_esf", 'tags', $esf_list_model, "erf_id");
         $this->view->zhuangxiu_options = ContentTag::load_options_two("house_esf", 'zhuangxiu', $esf_list_model, "erf_id");
 
@@ -113,6 +112,17 @@ class User extends HouseUserBase
         $where['site_id'] = $_W['site']['id'];
 
         $simple_page = is_mobile() ? true : false;
+
+        $user_esf = "user_rent";
+        $user_id = $this->user['id'];
+        $where_rent['user_id'] = $user_id;
+        $esf_list_model = set_model($user_esf)->where($where_rent)->select()->toArray();
+        if (!empty($esf_list_model)){
+            $rent_ids = array_column($esf_list_model, 'esf_id');
+            $where['id'] = ['IN', $rent_ids];
+        }else{
+            $where['id'] = 0;
+        }
 
         $this->view->lists = $lists = $model->where($where)->order("id desc")->paginate(null, $simple_page, ['query' => $filter_info['query']]);
 

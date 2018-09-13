@@ -149,10 +149,10 @@ $is_ipad = (strpos($agent, 'ipad')) ? true : false;
                                     <?php
                                     $_icon = render_file_id($nav['image']);
                                     ?>
-                                    <div class="is-one-fifth  column" style="width: 33%;">
+                                    <div class="is-one-fifth  column" style="width: 50%;">
                                         <a {$nav.property} class="nav_item" href="{$nav.url}">
                                             {if $nav['image']}
-                                            <i>
+                                            <i style="width: 70px;height: 70px;">
                                                 <img class="lazy-img" :data-src="'{$_icon}'"/>
                                             </i>
 
