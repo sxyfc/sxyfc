@@ -86,18 +86,19 @@ class AdminRent extends AdminBase
                 $where['area_id'] = $base_info['area_id'];
                 $where['site_id'] = $_W['site']['id'];
                 $where['title'] = $base_info['title'];
-                $find_data=set_model($this->house_rent);
+                $find_data = set_model($this->house_rent);
                 $find_data = $find_data->where($where)->find();
 //                Log::error("where==" . json_encode($where)."====".$model_info);
                 if ($find_data) {
                     return $this->zbn_msg("不可添加重复房源", 2);
                 }
 
-                if(!is_int(intval($base_info['mobile']))){
+                if (!is_int(intval($base_info['mobile']))) {
                     return $this->zbn_msg("手机号必须为数字", 2);
                 }
             }
             $base_info['user_id'] = $this->user['id'];
+            $base_info['status']=0;
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
@@ -162,5 +163,24 @@ class AdminRent extends AdminBase
         }
 
         return ['code' => 1, 'msg' => 'ok'];
+    }
+
+    public function check($id)
+    {
+        global $_W, $_GPC;
+        $model = set_model($this->house_rent);
+        $model_info = $model->model_info;
+        $where['id'] = $id;
+        $where['site_id'] = $_W['site']['id'];
+        $detail = $model->where($where)->find();
+        if ($detail) {
+            if ($detail['status'] == 99) {
+                $detail['status'] = 0;
+                return $this->zbn_msg('审核取消', 1, 'true', 1000, "''", "window.location.reload()");
+            } else {
+                $detail['status'] = 99;
+                return $this->zbn_msg('审核通过', 1, 'true', 1000, "''", "window.location.reload()");
+            }
+        }
     }
 }
