@@ -313,6 +313,7 @@ class Passport extends ModuleBase
             $user_data['qq'] = $data['qq'];
             $user_data['wechat'] = $data['wx'];
             $user_data['user_email'] = $data['email'];
+            //
 
 
             $result = $validate->check($user_data);
@@ -478,6 +479,12 @@ class Passport extends ModuleBase
 
     }
 
+    /**
+     * 前台微信静默注册逻辑
+     * @param int $uuid
+     * @throws \think\exception\DbException
+     */
+
     public function wx_register($uuid = 0)
     {
         global $_W, $_GPC;
@@ -581,7 +588,7 @@ class Passport extends ModuleBase
 
             $user_data['avatar'] = $fans_info['headimgurl'];
             $user_data['nickname'] = $fans_info['nickname'];
-
+            $user_data['openid'] = $fans_info['openid'];
             $user_data['pass'] = "NOTSET"; //crypt_pass($user_data['password'], $user_data['user_crypt']);
 
             //默认用户状态
