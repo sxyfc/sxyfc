@@ -97,6 +97,7 @@ class Esf extends HouseBase
             $this->assign('size', $_GET['size']);
         }
 
+        $where['status'] = 99;
         $model = set_model('house_esf');
         if (($_GET['huxing'] != null) || $_GET['tag'] || $_GET['zhuangxiu'] || $_GET['yongtu'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage'] || ($_GET['ting'] != null)) {
             $query = array('huxing'=>$_GET['huxing'],'tag'=>$_GET['tag'],'zhuangxiu'=>$_GET['zhuangxiu'],'yongtu'=>$_GET['yongtu'],'xiaoqu'=>$_GET['xiaoqu'],'size'=>$_GET['size'],'jiage'=>$_GET['jiage'],'ting'=>$_GET['ting']);

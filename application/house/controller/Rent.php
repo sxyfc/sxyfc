@@ -82,6 +82,7 @@ class Rent extends HouseBase
             $this->assign('size', $_GET['size']);
         }
 
+        $where['status'] = 99;
         $model = set_model('house_rent');
         if (($_GET['huxing'] != null) || $_GET['ting'] != null || $_GET['tag'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
             $query = array('huxing'=>$_GET['huxing'],'tag'=>$_GET['tag'],'xiaoqu'=>$_GET['xiaoqu'],'size'=>$_GET['size'],'jiage'=>$_GET['jiage'],'ting'=>$_GET['ting']);
