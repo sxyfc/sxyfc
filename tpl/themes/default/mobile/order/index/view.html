@@ -170,7 +170,7 @@
                                     //     window.location.href= '/member/wallet';
                                     // });
                                 } else {
-                                    layer.msg("您取消了支付！");
+                                    alert(("您取消了支付！");
                                 }
 
                             });
@@ -194,11 +194,10 @@
             function(res){
                 WeixinJSBridge.log(res.err_msg);
                 if(res.err_msg == "get_brand_wcpay_request:ok"){
-                    layer.msg('支付成功' ,function () {
-                        window.location.href= '/member/wallet';
-                    });
+                    alert('支付成功');
+                    window.location.href= '/member/wallet';
                 }else{
-                    layer.msg(  "您取消了支付！");
+                    alert("您取消了支付！");
                 }
             }
         );
