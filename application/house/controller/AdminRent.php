@@ -134,6 +134,7 @@ class AdminRent extends AdminBase
             }
 
 
+            $base_info['status']=$detail['status'];
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
