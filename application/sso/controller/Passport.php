@@ -773,6 +773,12 @@ class Passport extends ModuleBase
 //            //补全信息
 //            $this->message("请补全信息", 1, "/sso/passport/register");
 //        } else {
+
+
+        if (!$user['is_mobile_verify']) {
+            $url = url('member/info/set_mobile').'?forward='.urlencode('/house/index');
+            $this->message("请绑定手机号!", 1, $url);
+        }
         if ($uuid) {
             Cache::set("mhcms_wechat_login:" . $uuid, $user['id']);
             $this->message("登录成功", 1, "/");

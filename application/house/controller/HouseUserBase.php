@@ -61,10 +61,11 @@ class HouseUserBase extends ModuleUserBase
 
 
         //todo mobile force
-        if($_W['module_config']['force_mobile'] && !is_phone($this->user['user_name'])){
-            //
-            $url = url('sso/passport/sso_login');
-            header("location:$url");die();
-        }
+        //微信注册的user_name不是手机号
+        // if($_W['module_config']['force_mobile'] && !is_phone($this->user['user_name'])){
+        //     //
+        //     $url = url('sso/passport/sso_login');
+        //     header("location:$url");die();
+        // }
     }
 }

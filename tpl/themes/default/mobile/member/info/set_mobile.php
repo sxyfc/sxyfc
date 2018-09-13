@@ -1,7 +1,7 @@
 <div id="app_mhcms">
     <div class="mhcms-panel">
         <div class="mhcms-panel-body">
-            {if !is_phone($user.user_name) ||  !$user.is_mobile_verify || $change}
+            {if !$user.is_mobile_verify || $change}
 
                     <form class="layui-form" action="" method="post" style="padding:10px 0">
                         <div class="weui-cells__title">
@@ -16,7 +16,7 @@
                                     <input class="weui-input"  id="mobile" type="tel"  required lay-verify="phone" name="mobile" value="{$user.mobile}" placeholder="请输入手机号">
                                 </div>
                                 <div class="weui-cell__ft">
-                                    <div class="weui-vcode-btn"  onclick="send_verify_code()">获取验证码</div>
+                                    <div class="weui-vcode-btn"  id="send_btn" onclick="send_verify_code()">获取验证码</div>
                                 </div>
                             </div>
 
@@ -41,29 +41,29 @@
                         var mobile_sender = {
                             count : 60 ,
 
-                            recount : function () {
+                            recount: function () {
                                 var that = this;
-                                layui.use(['layer', 'form'] , function () {
+                                layui.use(['layer', 'form'], function () {
                                     var $ = layui.$, layer = layui.layer, form = layui.form;
-
-
                                     if (that.count > 0) {
                                         setTimeout(function () {
                                             that.count--;
                                             that.recount()
                                         }, 1000);
-                                        $("#send_btn").html(that.count);
+                                        $("#send_btn").attr("disabled", true);
+                                        $("#send_btn").val(that.count);
                                     } else {
                                         that.count = 60;
-                                        $("#send_btn").html("获取验证码");
+                                        $("#send_btn").attr("disabled", false);
+                                        $("#send_btn").val("获取验证码");
                                     }
                                 });
-                            } ,
+                            },
                             send_sms : function (mobile) {
                                 var that = this;
                                 //初始化类型类型
                                 layui.use(['layer', 'form'] , function () {
-                                    var url = "{:url('sms/api/send_code')}";
+                                    var url = "{:url('sso/passport/send_code')}";
                                     $.get( url, { "mobile": mobile }, function (data) {
                                         if(data.code === 1){
                                             layer.msg("已经发送！");

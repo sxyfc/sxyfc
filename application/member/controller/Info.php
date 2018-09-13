@@ -118,54 +118,16 @@ class Info extends ModuleUserBase
                 ];
             }
             if ($input['mobile']) {
-                if ($code) {
-                    // verify code
-                    $data_sms = SmsReport::where(['type' => 'sms', 'target' => $input['mobile'], 'status' => 0])->order('id desc ')->find();
-                    //$data_sms = Db::name('sms_report')->where()->order("id desc")->find();
 
-                    //todo update code
-                    if ($data_sms && $code == $data_sms['content']['code']['value']) {
-                        $data_sms->status = 1;
-                        $data_sms->save();
-                        //Db::name('sms_report')->where(['id' => $data_sms['id'], 'status' => 0])->update($data_sms);
-                    } else {
-                        $ret = [
-                            'code' => 1,
-                            'msg' => "手机验证码不正确！"
-                        ];
-                        return $ret;
-                    }
-                } else {
-                    $ret = [
+                if ($input['code'] != session('code')) {
+                    return [
                         'code' => 1,
-                        'msg' => "手机验证码不正确！"
+                        'msg' => "验证码输入有误"
                     ];
-                    return $ret;
                 }
 
-
-                if ($input['passport_id']) {
-                    $this->user->passport_id = $input['passport_id'];
-                }
-
-                if ($input['real_name']) {
-                    $this->user->real_name = $input['real_name'];
-                }
-
-                if ($input['mobile']) {
-                    $this->user->mobile = $input['mobile'];
-                    $this->user->user_name = $input['mobile'];
-                }
-
-
-                //
-                if ($input['mobile']) {
-                    $this->user->is_mobile_verify = 1;
-                }
-
-                if ($input['real_name']) {
-                    $this->user->is_verify = 2;
-                }
+                $this->user->mobile = $input['mobile'];
+                $this->user->is_mobile_verify = 1;
 
                 //do mobile
 
@@ -173,8 +135,8 @@ class Info extends ModuleUserBase
                     $code = 1;
                     $msg = "认证成功";
                 } else {
-                    $code = 1;;
-                    $msg = "认证成功";
+                    $code = 0;
+                    $msg = "认证失败";
                 }
 
 

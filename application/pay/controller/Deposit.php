@@ -21,8 +21,13 @@ class Deposit extends ModuleUserBase
         global $_W, $_GPC;
 
 
+        if (!$this->user['is_mobile_verify']) {
+            $url = url('member/info/set_mobile').'?forward='.urlencode('/pay/deposit/do_deposit');
+            $this->message("请先绑定手机号!", 1, $url);
+        }
         if ($this->isPost(true)) {
             $data = $_GPC['data'];
+
             if ($data['note']) {
                 $data['note'] = "用户备注: " . $data['note'];
             }
