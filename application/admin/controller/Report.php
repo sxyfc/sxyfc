@@ -138,6 +138,7 @@ class Report extends AdminBase
             foreach ($shares['data'] as $key => $value) {
                 $user_info = db('users')->where(['id' => $value['user_id']])->find();
                 $shares['data'][$key]['user_name'] = $user_info['user_name'];
+                $shares['data'][$key]['nickname'] = $user_info['nickname'];
             }
 
             $area_agents = db('users')->where(['user_role_id' => 22])->field('id')->select()->toArray();
@@ -178,6 +179,7 @@ class Report extends AdminBase
                 foreach ($shares['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();
                     $shares['data'][$key]['user_name'] = $user_info['user_name'];
+                    $shares['data'][$key]['nickname'] = $user_info['nickname'];
                 }
 
                 $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
@@ -200,6 +202,7 @@ class Report extends AdminBase
                 foreach ($shares['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();
                     $shares['data'][$key]['user_name'] = $user_info['user_name'];
+                    $shares['data'][$key]['nickname'] = $user_info['nickname'];
                 }
 
                 $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
@@ -214,6 +217,7 @@ class Report extends AdminBase
                 foreach ($shares['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();
                     $shares['data'][$key]['user_name'] = $user_info['user_name'];
+                    $shares['data'][$key]['nickname'] = $user_info['nickname'];
                 }
 
                 $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
@@ -256,6 +260,7 @@ class Report extends AdminBase
             foreach ($recharges['data'] as $key => $value) {
                 $user_info = db('users')->where(['id' => $value['user_id']])->find();
                 $recharges['data'][$key]['user_name'] = $user_info['user_name'];
+                $recharges['data'][$key]['nickname'] = $user_info['nickname'];
             }
         } else {
             // 根据角色查数据
@@ -283,6 +288,7 @@ class Report extends AdminBase
                 foreach ($recharges['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();
                     $recharges['data'][$key]['user_name'] = $user_info['user_name'];
+                    $recharges['data'][$key]['nickname'] = $user_info['nickname'];
                 }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
@@ -302,6 +308,7 @@ class Report extends AdminBase
                 foreach ($recharges['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();
                     $recharges['data'][$key]['user_name'] = $user_info['user_name'];
+                    $recharges['data'][$key]['nickname'] = $user_info['nickname'];
                 }
             } else {
                 // 普通用户
@@ -313,6 +320,7 @@ class Report extends AdminBase
                 foreach ($recharges['data'] as $key => $value) {
                     $user_info = db('users')->where(['id' => $value['user_id']])->find();
                     $recharges['data'][$key]['user_name'] = $user_info['user_name'];
+                    $recharges['data'][$key]['nickname'] = $user_info['nickname'];
                 }
             }
         }
