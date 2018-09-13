@@ -693,7 +693,6 @@ class UserContent extends HouseUserBase
 
         if ($this->isPost(true) && $model_info) {
             $base_info = input('post.data/a');//get the base info
-
             Db::startTrans();
 
             $is_top = 0;
