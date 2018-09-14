@@ -49,7 +49,7 @@ function mhcms_json_decode($data)
 function set_model($model_id, $init_factory = true)
 {
     global $_W;
-    static $models = [] , $form_factory;
+    static $models = [], $form_factory;
     if (!isset($models[$model_id])) {
         if (is_numeric($model_id)) {
             $model_info = Models::get(['id' => $model_id]);
@@ -65,7 +65,7 @@ function set_model($model_id, $init_factory = true)
         if ($model_info && $init_factory) {
             if (isset($_W['site']) && !$form_factory) {
                 $model_info->form_factory = new \app\common\util\forms\FormFactory($_W['site']['id']);
-            }else{
+            } else {
                 $model_info->form_factory = $form_factory;
             }
         }
@@ -266,14 +266,15 @@ function nb_url($querys, $domain = "", $options = [])
             }
         }
         if (config('app_debug')) {
-            $domain = empty($sites[$domain]['site_domain']) ? 'www' : $sites[$domain]['site_domain'];
+            $domain = $sites[$domain]['site_d_domain'];
+//            $domain = empty($sites[$domain]['site_domain']) ? 'www' : $sites[$domain]['site_domain'];
         } else {
             $domain = $sites[$domain]['site_domain'];
         }
 
     }
 
-    if($_W['global_config']['groups_mode'] == 2){
+    if ($_W['global_config']['groups_mode'] == 2) {
         $domain = "";
     }
     $url = new_better_furl($querys, "", $domain, $options);
@@ -337,8 +338,8 @@ function new_better_furl($querys = array(), $module_name = "", $domain = "", $op
 
         $route = str_replace(".", "/", $querys['r']);
         unset($querys['r']);
-        $querys = array_merge($querys , $options);
-         $url = url($route, $querys, true, $domain);
+        $querys = array_merge($querys, $options);
+        $url = url($route, $querys, true, $domain);
         return $url;
     }
 }
@@ -454,11 +455,12 @@ function is_weixin()
 {
     return strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger');
 }
+
 function is_weixin_mini()
 {
     $isweix = false;
     test($_SERVER['HTTP_USER_AGENT']);
-    if(is_weixin() && strstr($_SERVER['HTTP_USER_AGENT'],'mini')){
+    if (is_weixin() && strstr($_SERVER['HTTP_USER_AGENT'], 'mini')) {
         // $payment_where['code'] = 'miniAppPay';
         $isweix = true;
     }
@@ -792,22 +794,22 @@ function build_layer_link($admin_menu_id, $title = "", $trigger = "onclick", $fu
 function build_back_a($admin_menu_id, $vars, $title = '', $mini = "", $class = "", $width = '', $height = '', $mapping = [])
 {
     global $_W;
-    static $access ,$allot, $menus;
+    static $access, $allot, $menus;
     if (!isset($_W['super_power']) || $_W['super_power'] != 1) {
         // 先获取用户菜单，不存在的话获取角色菜单
         $where_allot['user_id'] = $_W['admin_info']['user_id'];
         $where_allot['user_menu_id'] = $admin_menu_id;
-        if(isset($allot[$admin_menu_id]) and $allot[$admin_menu_id]==false){
+        if (isset($allot[$admin_menu_id]) and $allot[$admin_menu_id] == false) {
             return " - ";
-        }else{
-            $allot[$admin_menu_id]= UserMenuAllot::get($where_allot);
+        } else {
+            $allot[$admin_menu_id] = UserMenuAllot::get($where_allot);
             if (!$allot[$admin_menu_id]) {
                 $where['user_role_id'] = $_W['admin_info']['role_id'];
                 $where['user_menu_id'] = $admin_menu_id;
-                if(isset($access[$admin_menu_id]) and $access[$admin_menu_id]==false){
+                if (isset($access[$admin_menu_id]) and $access[$admin_menu_id] == false) {
                     return " - ";
-                }else{
-                    $access[$admin_menu_id]= UserMenuAccess::get($where);
+                } else {
+                    $access[$admin_menu_id] = UserMenuAccess::get($where);
                     if (!$access[$admin_menu_id]) {
                         return " - ";
                     }
@@ -831,9 +833,9 @@ function build_back_a($admin_menu_id, $vars, $title = '', $mini = "", $class = "
     if (!is_numeric($admin_menu_id)) {
         $url = $admin_menu_id;
     } else {
-        if(isset($menus[$admin_menu_id])){
+        if (isset($menus[$admin_menu_id])) {
             $menu = $menus[$admin_menu_id];
-        }else{
+        } else {
             $menus[$admin_menu_id] = $menu = \app\common\model\UserMenu::get($admin_menu_id);
         }
         $url = nb_url(['r' => $menu['user_menu_module'] . '/' . $menu['user_menu_controller'] . '/' . $menu['user_menu_action'], $vars]);
@@ -1381,7 +1383,7 @@ function sendmail($toemail, $subject, $message, $cfg = array())
 function remove_xss($string)
 {
     $string = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+/S', '', $string);
-    $parm1 = Array('javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound' , 'base');
+    $parm1 = Array('javascript', 'vbscript', 'expression', 'applet', 'meta', 'xml', 'blink', 'link', 'script', 'embed', 'object', 'iframe', 'frame', 'frameset', 'ilayer', 'layer', 'bgsound', 'base');
     $parm2 = Array('onabort', 'onactivate', 'onafterprint', 'onafterupdate', 'onbeforeactivate', 'onbeforecopy', 'onbeforecut', 'onbeforedeactivate', 'onbeforeeditfocus', 'onbeforepaste', 'onbeforeprint', 'onbeforeunload', 'onbeforeupdate', 'onblur', 'onbounce', 'oncellchange', 'onchange', 'onclick', 'oncontextmenu', 'oncontrolselect', 'oncopy', 'oncut', 'ondataavailable', 'ondatasetchanged', 'ondatasetcomplete', 'ondblclick', 'ondeactivate', 'ondrag', 'ondragend', 'ondragenter', 'ondragleave', 'ondragover', 'ondragstart', 'ondrop', 'onerror', 'onerrorupdate', 'onfilterchange', 'onfinish', 'onfocus', 'onfocusin', 'onfocusout', 'onhelp', 'onkeydown', 'onkeypress', 'onkeyup', 'onlayoutcomplete', 'onload', 'onlosecapture', 'onmousedown', 'onmouseenter', 'onmouseleave', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'onmousewheel', 'onmove', 'onmoveend', 'onmovestart', 'onpaste', 'onpropertychange', 'onreadystatechange', 'onreset', 'onresize', 'onresizeend', 'onresizestart', 'onrowenter', 'onrowexit', 'onrowsdelete', 'onrowsinserted', 'onscroll', 'onselect', 'onselectionchange', 'onselectstart', 'onstart', 'onstop', 'onsubmit', 'onunload');
     $parm = array_merge($parm1, $parm2);
     for ($i = 0; $i < sizeof($parm); $i++) {
@@ -1411,7 +1413,7 @@ function load_seo()
 
     $seo_key = strtolower(ROUTE_M . "_" . ROUTE_C . "_" . ROUTE_A);  // strtolower(MODULE_NAME . CONTROLLER_NAME . ACTION_NAME);
 
-    if (!preg_match('/^[_0-9a-z]{6,50}$/i',$seo_key)){
+    if (!preg_match('/^[_0-9a-z]{6,50}$/i', $seo_key)) {
         die();
     }
     $where = ['seo_key' => $seo_key];
@@ -2096,8 +2098,8 @@ if (!function_exists('tomedia')) {
     {
         global $_W;
         $storge = \app\common\model\AttachConfig::get(['attach_sign' => $file['type']]);
-        $storge_config = set_model("attach_config_site")->where(['storge_id' =>$storge['id'] ])->find();
-        if($storge_config){
+        $storge_config = set_model("attach_config_site")->where(['storge_id' => $storge['id']])->find();
+        if ($storge_config) {
             $storge_config['config'] = mhcms_json_decode($storge_config['config']);
         }
         $url = $storge_config['config']['url'];
@@ -2183,7 +2185,7 @@ if (!function_exists('sql_split')) {
         $num = 0;
         //$queries_array = explode(";<br />", trim($sql));
 
-        $queries_array = preg_split ('/;\R+^/m', trim($sql));
+        $queries_array = preg_split('/;\R+^/m', trim($sql));
         unset($sql);
         foreach ($queries_array as $query) {
             $ret[$num] = '';
@@ -2347,7 +2349,8 @@ if (!function_exists('aes_decode')) {
         return $content;
     }
 
-    function aes_decode($message, $encodingaeskey = '', $appid = ''){
+    function aes_decode($message, $encodingaeskey = '', $appid = '')
+    {
         $packet = array();
         if (!empty($message)) {
             $obj = isimplexml_load_string($message, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -2362,7 +2365,7 @@ if (!function_exists('aes_decode')) {
         $key = base64_decode($encodingaeskey . '=');
         try {
             $iv = substr($key, 0, 16);
-            $decrypted = openssl_decrypt($packet['encrypt'],'AES-256-CBC',substr($key, 0, 32),OPENSSL_ZERO_PADDING,$iv);
+            $decrypted = openssl_decrypt($packet['encrypt'], 'AES-256-CBC', substr($key, 0, 32), OPENSSL_ZERO_PADDING, $iv);
         } catch (Exception $e) {
             return array(-40002, null);
         }
@@ -2400,9 +2403,10 @@ if (!function_exists('aes_encode')) {
         $iv = substr($key, 0, 16);
         $pkc_encoder = new PKCS7Encoder();
         $text = $pkc_encoder->encode($text);
-        $encrypted = openssl_encrypt($text,'AES-256-CBC',substr($key, 0, 32),OPENSSL_ZERO_PADDING,$iv);
+        $encrypted = openssl_encrypt($text, 'AES-256-CBC', substr($key, 0, 32), OPENSSL_ZERO_PADDING, $iv);
         return $encrypted;
     }
+
     function aes_encode2($message, $encodingaeskey = '', $appid = '')
     {
         $key = base64_decode($encodingaeskey . '=');

@@ -239,7 +239,7 @@
         {if $show_power}
         {if $pay_result}
         <a class="weui-navbar__item" href="tel:{$detail['mobile']}">
-            一键拨号
+            房东电话
         </a>
 
         <a class="weui-navbar__item" href="/house/esf/autoAdd/id/{$detail['id']}">

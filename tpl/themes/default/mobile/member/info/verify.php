@@ -14,7 +14,7 @@ $detail = \app\common\model\Models::get_item_by( ['user_id' => $_W['user']['id']
                 <span class="attrValue column is-narrow"><a> {$detail.personal_name}</a></span>
             </li>
 
-            <li class="columns  is-mobile">
+            <li class="columns  is-mobile">1
                 <span class="attrName column is-narrow">身份证：</span>
                 <span class="attrValue column is-narrow"><a> {$detail.personal_passport} </a></span>
             </li>
@@ -22,12 +22,22 @@ $detail = \app\common\model\Models::get_item_by( ['user_id' => $_W['user']['id']
                 <span class="attrName column is-narrow">个人照片：</span>
                 <span class="attrValue column is-narrow"><a><img class="image is-64x64" :data-src="'{$detail.personal_passport_pic.0.url}'">  </a></span>
             </li>
+            <li class="columns  is-mobile">
+                <span class="attrName column is-narrow">联系电话：</span>
+                <span class="attrValue column is-narrow"><a>{$detail.mobile}</a></span>
+            </li>
             {if $type=='company'}
 
             <li class="columns  is-mobile">
                 <span class="attrName column is-narrow">营业执照：</span>
                 <span class="attrValue column is-narrow"><a><img class="image is-64x64" :data-src="'{$detail.company_passport.0.url}'">  </a></span>
             </li>
+
+            <li class="columns  is-mobile">
+                <span class="attrName column is-narrow">公司名称：</span>
+                <span class="attrValue column is-narrow"><a>{$detail.company_name}</a></span>
+            </li>
+
             {/if}
         </ul>
     </div>

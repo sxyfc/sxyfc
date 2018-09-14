@@ -63,7 +63,7 @@ if (!isset($keyword)) {
                 <td>手机号</td>
                 <td>房源标题</td>
                 <td>房源价格</td>
-                <td>房源电话</td>
+                <!--<td>房源电话</td>-->
                 <td>房源地址</td>
                 <td>房东姓名</td>
                 <td>房源类型</td>
@@ -89,7 +89,7 @@ if (!isset($keyword)) {
                 <td>{if $user.mobile}{$user.mobile}{else}未绑定{/if}</td>
                 <td>{$fang.title}</td>
                 <td>{if $fang.price}{$fang.price}{else}N/A{/if}{if $var.model_id == 649}万{else}元{/if}</td>
-                <td>{$fang.mobile}</td>
+                <!--<td>{$fang.mobile}</td>-->
                 <td>{$fang.address}</td>
                 <td>{$fang.fang_user_name}</td>
                 <td>{if $var.model_id == 649}二手房{else}租房{/if}</td>
