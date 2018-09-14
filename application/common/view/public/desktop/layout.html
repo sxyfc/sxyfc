@@ -121,11 +121,19 @@ global $_W,$_GPC;
 {block name="mhcms_module_css"}
 <link href="/tpl/themes/{$_W['theme']}/desktop/{:ROUTE_M}/static/css/{:ROUTE_M}.css{if $_W['debug']}?v={:time()}{/if}" rel="stylesheet" />
 {/block}
-
+<script type="text/javascript">
+    var ua = navigator.userAgent.toLowerCase();
+    var screenwidth = window.screen.width;
+    if(!/iphone|ipad|ipod/.test(ua)){
+        $("#iosiframe").attr("scrolling","auto");
+    }else{
+        $('#iosiframe').width(screenwidth + 'px');
+    }
+</script>
 
 {block name="header_extra"}{/block}
 </head>
-<body>
+<body id="iosiframe">
 <iframe name="mhcms" id="鸣鹤CMS"  style="display: none"></iframe>
 <iframe name="zbn_cms" id="鸣鹤CMS"  style="display: none"></iframe>
 

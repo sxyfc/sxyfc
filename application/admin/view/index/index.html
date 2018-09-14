@@ -26,8 +26,17 @@ global $_W;
     <script>
         var menu_api= "{:url('admin/service/load_menu')}";
     </script>
+    <script type="text/javascript">
+        var ua = navigator.userAgent.toLowerCase();
+        var screenwidth = window.screen.width;
+        if(!/iphone|ipad|ipod/.test(ua)){
+            $("#iosiframe").attr("scrolling","auto");
+        }else{
+            $('#iosiframe').width(screenwidth + 'px');
+        }
+    </script>
 </head>
-<body>
+<body id="iosiframe">
 <iframe name="zbn_cms" id="zbn_cms" class="hidden" style="display: none"></iframe>
 <div class="layui-layout layui-layout-admin larrycms-admin" id="larry_admin_out">
     <!-- 顶部导航 -->

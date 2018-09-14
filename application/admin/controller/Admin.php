@@ -159,14 +159,19 @@ class Admin extends AdminBase
             }
 
             $res = $model_info->add_content($base_info);
+//            Log::error($area);
             if ($area == 0) return $this->zbn_msg("必须选择代理地区", 2);
 
             if ($res['code'] == 1) {
                 $address_info['area_id'] = $area;
                 $address_info['user_id'] = $base_info['user_id'];
                 $address_info['role_id'] = $base_info['role_id'];
-                Db::name('role_address')->insertGetId($address_info);
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
+                if (!Db::name('role_address')->where(['user_id' => $base_info['user_id']])->find()) {
+                    Db::name('role_address')->insertGetId($address_info);
+                } else {
+                    Db::name('role_address')->where(['user_id' => $base_info['user_id']])->update($address_info);
+                }
+                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
             } else {
                 return $this->zbn_msg($res['msg'], 2, 'true', 3000, "''", "'reload_parent_page()'");
             }

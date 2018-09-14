@@ -147,7 +147,7 @@ class Info extends ModuleUserBase
                 $ret = [
                     'code' => $code,
                     'msg' => $msg
-                    , 'url' => $forward? $forward : nb_url(['r' => 'home/index/index'])
+                    , 'url' => $forward ? $forward : nb_url(['r' => 'home/index/index'])
                 ];
 
                 return $ret;
@@ -306,8 +306,7 @@ class Info extends ModuleUserBase
         } else {
             //模板数据
             if ($type == 'personal') {
-                $hide_fields = ['company_passport'];
-
+                $hide_fields = ['company_passport', 'company_name'];
                 $this->view->wait = $detail['personal_verify'];
             }
             if ($type == 'company') {
