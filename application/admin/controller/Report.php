@@ -39,29 +39,34 @@ class Report extends AdminBase
                 $users = db('users')->where(['id' => $this->user['id']])->find();
                 if ($users['user_role_id'] == 22) {
                     // 区域管理
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                    $ids = array_column($user_ids, 'id');
-
-                    $where_child['id'] = array('IN', $ids);
-                    $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
-                    $child_ids = array_column($user_child_ids, 'id');
-                    $ids = array_merge($ids, $child_ids);
-
+                    $ids = $this->map_city_childs($this->user['id']);
                     array_push($ids, $this->user['id']);
                 } elseif ($users['user_role_id'] == 23) {
                     // 县级代理
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                    $ids = array_column($user_ids, 'id');
+                    $ids = $this->map_county_childs($this->user['id']);
+                    array_push($ids, $this->user['id']);
+                } elseif ($users['user_role_id'] == 25) {
+                    $ids = $this->map_area_childs($this->user['id']);
+                    array_push($ids, $this->user['id']);
+                } elseif ($users['user_role_id'] == 26) {
+                    $ids = $this->map_province_childs($this->user['id']);
                     array_push($ids, $this->user['id']);
                 }
             }
 
             foreach ($role_address as $ra_item) {
-                if (in_array($ra_item['user_id'], $ids)) {
+                if ($this->super_power) {
                     $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
                     $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
                     $user_data['role_name'] = $power_data['role_name'];
                     array_push($user_array, $user_data);
+                } else {
+                    if (in_array($ra_item['user_id'], $ids)) {
+                        $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
+                        $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
+                        $user_data['role_name'] = $power_data['role_name'];
+                        array_push($user_array, $user_data);
+                    }
                 }
             }
         }
@@ -110,29 +115,34 @@ class Report extends AdminBase
                 $users = db('users')->where(['id' => $this->user['id']])->find();
                 if ($users['user_role_id'] == 22) {
                     // 区域管理
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                    $ids = array_column($user_ids, 'id');
-
-                    $where_child['id'] = array('IN', $ids);
-                    $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
-                    $child_ids = array_column($user_child_ids, 'id');
-                    $ids = array_merge($ids, $child_ids);
-
+                    $ids = $this->map_city_childs($this->user['id']);
                     array_push($ids, $this->user['id']);
                 } elseif ($users['user_role_id'] == 23) {
                     // 县级代理
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                    $ids = array_column($user_ids, 'id');
+                    $ids = $this->map_county_childs($this->user['id']);
+                    array_push($ids, $this->user['id']);
+                } elseif ($users['user_role_id'] == 25) {
+                    $ids = $this->map_area_childs($this->user['id']);
+                    array_push($ids, $this->user['id']);
+                } elseif ($users['user_role_id'] == 26) {
+                    $ids = $this->map_province_childs($this->user['id']);
                     array_push($ids, $this->user['id']);
                 }
             }
 
             foreach ($role_address as $ra_item) {
-                if (in_array($ra_item['user_id'], $ids)) {
+                if ($this->super_power) {
                     $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
                     $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
                     $user_data['role_name'] = $power_data['role_name'];
                     array_push($user_array, $user_data);
+                } else {
+                    if (in_array($ra_item['user_id'], $ids)) {
+                        $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
+                        $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
+                        $user_data['role_name'] = $power_data['role_name'];
+                        array_push($user_array, $user_data);
+                    }
                 }
             }
         }
@@ -201,70 +211,65 @@ class Report extends AdminBase
             if ($users['user_role_id'] == 22) {
                 // 区域管理
                 if ($user_id) {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id'], 'id' => $user_id])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_city_childs($this->user['id'], $user_id);
                 } else {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_city_childs($this->user['id']);
                 }
-                $ids = array_column($user_ids, 'id');
-
-                $where_child['id'] = array('IN', $ids);
-                $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
-                $child_ids = array_column($user_child_ids, 'id');
-                $ids = array_merge($ids, $child_ids);
 
                 array_push($ids, $this->user['id']);
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
-                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
-
-                $shares = $share->toArray();
-                foreach ($shares['data'] as $key => $value) {
-                    $user_info = db('users')->where(['id' => $value['user_id']])->find();
-                    $shares['data'][$key]['user_name'] = $user_info['user_name'];
-                    $shares['data'][$key]['nickname'] = $user_info['nickname'];
-                }
-
-                $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
-                $this->view->assign('data', $data);
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
                 if ($user_id) {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id'], 'id' => $user_id])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_county_childs($this->user['id'], $user_id);
                 } else {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_county_childs($this->user['id']);
                 }
-                $ids = array_column($user_ids, 'id');
+
                 array_push($ids, $this->user['id']);
 
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
-
-                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
-                $shares = $share->toArray();
-                foreach ($shares['data'] as $key => $value) {
-                    $user_info = db('users')->where(['id' => $value['user_id']])->find();
-                    $shares['data'][$key]['user_name'] = $user_info['user_name'];
-                    $shares['data'][$key]['nickname'] = $user_info['nickname'];
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO区域管理
+                if ($user_id) {
+                    $ids = $this->map_area_childs($this->user['id'], $user_id);
+                } else {
+                    $ids = $this->map_area_childs($this->user['id']);
                 }
 
-                $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
-                $this->view->assign('data', $data);
+                array_push($ids, $this->user['id']);
+                $where['status'] = 1;
+                $where['user_id'] = array('IN', $ids);
+            } elseif ($users['user_role_id'] == 26) {
+                //省级代理
+                if ($user_id) {
+                    $ids = $this->map_province_childs($this->user['id'], $user_id);
+                } else {
+                    $ids = $this->map_province_childs($this->user['id']);
+                }
+
+                array_push($ids, $this->user['id']);
+                $where['status'] = 1;
+                $where['user_id'] = array('IN', $ids);
             } else {
                 // 普通用户
                 $where['status'] = 1;
                 $where['user_id'] = $this->user['id'];
-                $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
-
-                $shares = $share->toArray();
-                foreach ($shares['data'] as $key => $value) {
-                    $user_info = db('users')->where(['id' => $value['user_id']])->find();
-                    $shares['data'][$key]['user_name'] = $user_info['user_name'];
-                    $shares['data'][$key]['nickname'] = $user_info['nickname'];
-                }
-
-                $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
-                $this->view->assign('data', $data);
             }
+
+            $share = db('distribution_orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
+
+            $shares = $share->toArray();
+            foreach ($shares['data'] as $key => $value) {
+                $user_info = db('users')->where(['id' => $value['user_id']])->find();
+                $shares['data'][$key]['user_name'] = $user_info['user_name'];
+                $shares['data'][$key]['nickname'] = $user_info['nickname'];
+            }
+
+            $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
+            $this->view->assign('data', $data);
         }
 
         $pages = $share->render();
@@ -310,60 +315,56 @@ class Report extends AdminBase
             if ($users['user_role_id'] == 22) {
                 // 区域管理
                 if ($user_id) {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id'], 'id' => $user_id])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_city_childs($this->user['id'], $user_id);
                 } else {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_city_childs($this->user['id']);
                 }
-                $ids = array_column($user_ids, 'id');
-
-                $where_child['id'] = array('IN', $ids);
-                $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
-                $child_ids = array_column($user_child_ids, 'id');
-                $ids = array_merge($ids, $child_ids);
                 array_push($ids, $this->user['id']);
-
                 $where['user_id'] = array('IN', $ids);
                 $where['source_type'] = 1;
-                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
-
-                $recharges = $recharge->toArray();
-                foreach ($recharges['data'] as $key => $value) {
-                    $user_info = db('users')->where(['id' => $value['user_id']])->find();
-                    $recharges['data'][$key]['user_name'] = $user_info['user_name'];
-                    $recharges['data'][$key]['nickname'] = $user_info['nickname'];
-                }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
                 if ($user_id) {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id'], 'id' => $user_id])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_county_childs($this->user['id'], $user_id);
                 } else {
-                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = $this->map_county_childs($this->user['id']);
                 }
-                $ids = array_column($user_ids, 'id');
                 array_push($ids, $this->user['id']);
 
                 $where['user_id'] = array('IN', $ids);
                 $where['source_type'] = 1;
-                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
-
-                $recharges = $recharge->toArray();
-                foreach ($recharges['data'] as $key => $value) {
-                    $user_info = db('users')->where(['id' => $value['user_id']])->find();
-                    $recharges['data'][$key]['user_name'] = $user_info['user_name'];
-                    $recharges['data'][$key]['nickname'] = $user_info['nickname'];
+            } elseif ($users['user_role_id'] == 25) {
+                if ($user_id) {
+                    $ids = $this->map_area_childs($this->user['id'], $user_id);
+                } else {
+                    $ids = $this->map_area_childs($this->user['id']);
                 }
+                array_push($ids, $this->user['id']);
+
+                $where['user_id'] = array('IN', $ids);
+                $where['source_type'] = 1;
+            } elseif ($users['user_role_id'] == 26) {
+                if ($user_id) {
+                    $ids = $this->map_province_childs($this->user['id'], $user_id);
+                } else {
+                    $ids = $this->map_province_childs($this->user['id']);
+                }
+                array_push($ids, $this->user['id']);
+
+                $where['user_id'] = array('IN', $ids);
+                $where['source_type'] = 1;
             } else {
                 // 普通用户
                 $where['user_id'] = $this->user['id'];
                 $where['source_type'] = 1;
-                $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
+            }
 
-                $recharges = $recharge->toArray();
-                foreach ($recharges['data'] as $key => $value) {
-                    $user_info = db('users')->where(['id' => $value['user_id']])->find();
-                    $recharges['data'][$key]['user_name'] = $user_info['user_name'];
-                    $recharges['data'][$key]['nickname'] = $user_info['nickname'];
-                }
+            $recharge = db('orders')->where($where)->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
+            $recharges = $recharge->toArray();
+            foreach ($recharges['data'] as $key => $value) {
+                $user_info = db('users')->where(['id' => $value['user_id']])->find();
+                $recharges['data'][$key]['user_name'] = $user_info['user_name'];
+                $recharges['data'][$key]['nickname'] = $user_info['nickname'];
             }
         }
 

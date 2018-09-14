@@ -55,6 +55,31 @@ class User extends AdminBase
             $where['user_role_id'] = $roleId;
         }
 
+        if (!$this->super_power) {
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                $where_role['id'] = array('IN', [23, 24, 27]);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                $where_role['id'] = array('IN', [24, 27]);
+            } elseif ($users['user_role_id'] == 25) {
+                $ids = $this->map_area_childs($this->user['id']);
+                $where_role['id'] = array('IN', [22, 23, 24, 26, 27]);
+            } elseif ($users['user_role_id'] == 26) {
+                $ids = $this->map_province_childs($this->user['id']);
+                $where_role['id'] = array('IN', [22, 23, 24, 27]);
+            } else {
+                $ids = $this->user['id'];
+            }
+
+            $where['id'] = array('IN', $ids);
+        } else {
+            $where_role['id'] = array('>', 1);
+        }
+
         $where = $this->map_fenzhan($where);
         $list = Users::where($where)->order('id desc')->paginate(config('list_rows'));
 
@@ -64,7 +89,6 @@ class User extends AdminBase
             $val['last_ip_area'] = IpToArea($val['last_login_ip']);
         }
 
-        $where_role['id'] = array('>', 1);
         $roles = Db::table('mhcms_user_roles')->where($where_role)->select()->toArray();
 
         $this->view->assign('roles', $roles);
@@ -98,7 +122,7 @@ class User extends AdminBase
             return $this->zbn_msg("对不起，暂时不支持此操作，请不要增加另外的超级管理员！", 2);
         }
 
-        if(!$role_id){
+        if (!$role_id) {
             return $this->zbn_msg("对不起，缺少用户分组信息！", 2);
         }
 
@@ -331,13 +355,14 @@ class User extends AdminBase
         $data['msg'] = '操作成功！' . $user_role['model_id'];
         return $data;
     }
+
     public function hit_log($user_id = 0)
     {
         $user_id = (int)$user_id;
         $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
         $mobile = trim(input('param.mobile', ' ', 'htmlspecialchars'));
         if ($user_name) {
-            $user_name_query = sprintf("user_name like '%s' OR nickname like '%s'", '%'.$user_name.'%', '%'.$user_name.'%');
+            $user_name_query = sprintf("user_name like '%s' OR nickname like '%s'", '%' . $user_name . '%', '%' . $user_name . '%');
         }
         $where = [];
         if ($mobile) {
@@ -362,7 +387,7 @@ class User extends AdminBase
         }
 
         $sub_query = set_model('hits_log')->alias('a')->where($where)->group('user_id,model_id,item_id')->field('user_id,model_id,item_id,COUNT(1) cnt')->buildSql();
-        $list = set_model('hits_log')->alias('a')->join($sub_query.' b', 'a.user_id = b.user_id AND a.model_id = b.model_id AND a.item_id = b.item_id')->where($where)->order('a.create_at DESC')->field('a.*,b.cnt')->paginate(config('list_rows'));
+        $list = set_model('hits_log')->alias('a')->join($sub_query . ' b', 'a.user_id = b.user_id AND a.model_id = b.model_id AND a.item_id = b.item_id')->where($where)->order('a.create_at DESC')->field('a.*,b.cnt')->paginate(config('list_rows'));
 
         $pages = $list->render();
 
@@ -373,13 +398,14 @@ class User extends AdminBase
 
         return $this->view->fetch();
     }
+
     public function wx_login_log($user_id = 0)
     {
         $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
         $mobile = trim(input('param.mobile', ' ', 'htmlspecialchars'));
         $where = [];
         if ($user_name) {
-            $where['nickname'] = array('LIKE', '%'.$user_name.'%');
+            $where['nickname'] = array('LIKE', '%' . $user_name . '%');
         }
         if ($mobile) {
             $where['a.mobile'] = $mobile;
@@ -388,7 +414,7 @@ class User extends AdminBase
         if (!$this->current_admin_role) {
             $where['a.user_id'] = $this->user->id;
         }
-        $list = set_model('users')->alias('a')->join(config("database.prefix").'sites_wechat_fans b', 'a.id = b.user_id', 'INNER')->where($where)->field('a.id,b.openid,a.avatar,a.user_name,a.nickname,a.mobile,a.login_cnt,a.last_login')->paginate(config('list_rows'));
+        $list = set_model('users')->alias('a')->join(config("database.prefix") . 'sites_wechat_fans b', 'a.id = b.user_id', 'INNER')->where($where)->field('a.id,b.openid,a.avatar,a.user_name,a.nickname,a.mobile,a.login_cnt,a.last_login')->paginate(config('list_rows'));
 
         $pages = $list->render();
 
@@ -400,5 +426,5 @@ class User extends AdminBase
 
         return $this->view->fetch();
     }
-    
+
 }
