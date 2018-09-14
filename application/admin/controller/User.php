@@ -358,36 +358,60 @@ class User extends AdminBase
 
     public function hit_log($user_id = 0)
     {
-        $user_id = (int)$user_id;
         $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
         $mobile = trim(input('param.mobile', ' ', 'htmlspecialchars'));
         if ($user_name) {
             $user_name_query = sprintf("user_name like '%s' OR nickname like '%s'", '%' . $user_name . '%', '%' . $user_name . '%');
         }
         $where = [];
+        $where_hit = [];
         if ($mobile) {
             $where['mobile'] = $mobile;
         }
+//        $user_id = (int)$user_id;
+//        if ($this->current_admin_role) {
+//            if (!empty($user_id)) {
+//                $where['id'] = $user_id;
+//            }
+//        } else {
+//            $where['id'] = $this->user->id;
+//        }
 
-        if ($this->current_admin_role) {
-            if (!empty($user_id)) {
-                $where['id'] = $user_id;
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
             }
-        } else {
-            $where['id'] = $this->user->id;
+
+            $where['id'] = array('IN', $ids);
         }
+
         if ($where || $user_name_query) {
             if ($user_name_query) {
                 $userids = set_model('users')->where($where)->whereExp('', $user_name_query)->field('id')->select()->column('id');
             } else {
                 $userids = set_model('users')->where($where)->field('id')->select()->column('id');
             }
-            $where = [];
-            $where['a.user_id'] = ['IN', $userids];
+
+            $where_hit['a.user_id'] = ['IN', $userids];
         }
 
-        $sub_query = set_model('hits_log')->alias('a')->where($where)->group('user_id,model_id,item_id')->field('user_id,model_id,item_id,COUNT(1) cnt')->buildSql();
-        $list = set_model('hits_log')->alias('a')->join($sub_query . ' b', 'a.user_id = b.user_id AND a.model_id = b.model_id AND a.item_id = b.item_id')->where($where)->order('a.create_at DESC')->field('a.*,b.cnt')->paginate(config('list_rows'));
+        $sub_query = set_model('hits_log')->alias('a')->where($where_hit)->group('user_id,model_id,item_id')->field('user_id,model_id,item_id,COUNT(1) cnt')->buildSql();
+        $list = set_model('hits_log')->alias('a')->join($sub_query . ' b', 'a.user_id = b.user_id AND a.model_id = b.model_id AND a.item_id = b.item_id')->where($where_hit)->order('a.create_at DESC')->field('a.*,b.cnt')->paginate(config('list_rows'));
 
         $pages = $list->render();
 
