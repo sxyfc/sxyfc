@@ -30,31 +30,35 @@ class Info extends ModuleUserBase
     public function set_info()
     {
         if ($this->isPost()) {
-            $allow_fields = ["sex", "real_name", "email", "description", "nickname", 'mobile', 'hangye', 'mobile'];
+            $allow_fields = ["nickname", "user_email", "wechat", "qq", "sex"];
 
             $data = input('param.data/a');
-            $data['sex'] = input('param.sex');
             //User Process
             $data = clean_data($data, $allow_fields);
+            // $data['sex'] = input('param.sex');
             //Sys Process
-            if (is_phone($data['mobile'])) {
-                $test = Users::get(['user_name' => $data['mobile']]);
-                if ($test && $test['id'] != $this->user['id']) {
-                    $this->zbn_msg("手机号码已经被使用！无法更新资料");
-                } else {
-                    $data['is_verify'] = 1;
+            // if (is_phone($data['mobile'])) {
+            //     $test = Users::get(['user_name' => $data['mobile']]);
+            //     if ($test && $test['id'] != $this->user['id']) {
+            //         $this->zbn_msg("手机号码已经被使用！无法更新资料");
+            //     } else {
+            //         $data['is_verify'] = 1;
+            //     }
+
+            // } else {
+            //     $this->error("手机号码不正确");
+            // }
+
+            // if (!is_phone($this->user['user_name'])) {
+            //     $data['user_name'] = $data['mobile'];
+            // }
+            if ($this->user->save($data)) {
+                foreach ($allow_fields as $v) {
+                    $this->user->$v = $data[$v];
                 }
-
-            } else {
-                $this->error("手机号码不正确");
+                return $this->zbn_msg('操作成功', 1, 'true', 1000, "''", "'reload_page()'");
             }
-
-            if (!is_phone($this->user['user_name'])) {
-                $data['user_name'] = $data['mobile'];
-            }
-
-            $this->user->save($data);
-            $this->success("操作成功 , 您的手机号码已经通过检测", "/");
+            return $this->zbn_msg('操作失败', 1, 'true', 1000);
         } else {
             return $this->view->fetch();
         }

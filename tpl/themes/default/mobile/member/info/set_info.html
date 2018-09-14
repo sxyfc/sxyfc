@@ -13,7 +13,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">邮箱</label>
             <div class="layui-input-block">
-                <input  type="email" value="{$user.user_email}" pattern="[0-9]*" name="data[user_email]" required  lay-verify="email"  autocomplete="off" class="layui-input">
+                <input  type="email" value="{$user.user_email}" name="data[user_email]" required  lay-verify="email"  autocomplete="off" class="layui-input">
             </div>
         </div>
 
@@ -24,12 +24,26 @@
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <label class="layui-form-label">qq</label>
+            <div class="layui-input-block">
+                <input  type="text" value="{$user.qq}" name="data[qq]"   autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机号</label>
+            <div class="layui-input-block">
+                <input  type="text" value="{$user.mobile}" name="data[mobile]"  disabled="true"  autocomplete="off" class="layui-input">
+            </div>
+        </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">性别</label>
             <div class="layui-input-block">
-                <input type="radio" name="sex" value="男" {if $user['sex']=='男' } checked {/if} title="男">
-                <input type="radio" name="sex" value="女" {if $user['sex']=='女' } checked {/if}  title="女" >
+                <input type="radio" name="data[sex]" value="男" {if $user['sex']=='男' } checked {/if} title="男">
+                <input type="radio" name="data[sex]" value="女" {if $user['sex']=='女' } checked {/if}  title="女" >
+                <input type="radio" name="data[sex]" value="保密" {if $user['sex']=='保密' } checked {/if}  title="保密" >
             </div>
         </div>
 

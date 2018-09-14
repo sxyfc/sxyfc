@@ -18,7 +18,9 @@
                     </div>
 
                     <div class="member-nickname has-text-centered">
+                        <a data-mha href="/member/info/set_info">
                         <p>{$user.nickname|default=$user.user_name}</p>
+                        </a>
                     </div>
                     <div class="is-clearfix  "></div>
 
@@ -36,21 +38,6 @@
                             <a>
                                 <i class="iconfont icon-shoucang"></i>
                                 <span>收藏夹</span>
-                            </a>
-                        </div>
-
-
-                        <div class="column">
-                            <a>
-                                <i class="iconfont icon-jifen3"></i>
-                                <span>金币: {$user.point}</span>
-                            </a>
-                        </div>
-
-                        <div class="column">
-                            <a>
-                                <i class="iconfont icon-daikuan"></i>
-                                <span>房宝: {$user.balance}</span>
                             </a>
                         </div>
                     </div>
@@ -121,7 +108,7 @@
                 </a>
 
             </div>
-            <div class="  column">
+            <div class="  column" style="display: none;">
                 <a href="parent.show_message('暂未开放')">
                     <div class="weui-cell__bd weui-cell_primary">
                         <i class="iconfont icon-qi"></i>
