@@ -117,6 +117,13 @@
                 </div>
 
                 <div class="layui-form-item">
+                    <label class="layui-form-label">支付扣除房宝数</label>
+                    <div class="layui-input-block">
+                        <input type="number" name="trade[balance_pay_fb]"  value="{$config.trade.balance_pay_fb|default="10"}"  placeholder="支付扣除房宝数" autocomplete="off" class="layui-input" step="1" min="0">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
                     <label class="layui-form-label">充值服务费比例(%)</label>
                     <div class="layui-input-block">
                         <input type="number" name="trade[fund_rate]"  value="{$config.trade.fund_rate|default="0.1"}"  placeholder="充值服务费比例" autocomplete="off" class="layui-input" step="0.01" min="0">
