@@ -122,7 +122,7 @@ class UserOrders extends HouseUserBase
 
         //检查房宝余额
         $balance = $this->user['balance'];
-        $fb_value = config("pay.fangbao_ratio");
+        $fb_value = isset($_W['site']['config']['trade']['balance_pay_fb']) ? $_W['site']['config']['trade']['balance_pay_fb'] : config("pay.fangbao_ratio");
 
         $left_value = $balance - $fb_value;
         if ($balance <= 0.00 || $left_value < 0.00) {
