@@ -58,7 +58,7 @@ class AdminVerify extends AdminBase
 
     public function pass($user_id, $type)
     {
-        global $_GPC,$_W;
+        global $_GPC, $_W;
         $user = Users::get($user_id);
         $model = set_model("users_verify");
         /** @var Models $model_info */
@@ -81,9 +81,16 @@ class AdminVerify extends AdminBase
             if ($res['code'] == 1) {
                 $userInfo = Db::name('users')->where(['id' => $user_id])->find();
 
-                if (!$result = Db::name('admin')->where(['user_id' => $user_id])->find()){
+                if (!$result = Db::name('admin')->where(['user_id' => $user_id])->find()) {
                     $admin_info['site_id'] = $_W['site']['id'];
-                    $admin_info['role_id'] = 24;
+                    switch ($type) {
+                        case "personal":
+                            $admin_info['role_id'] = 24;
+                            break;
+                        case "company":
+                            $admin_info['role_id'] = 23;
+                            break;
+                    }
                     $admin_info['user_id'] = $user_id;
                     $admin_info['user_name'] = $userInfo['user_name'];
                     set_model('admin')->insert($admin_info);
@@ -98,8 +105,19 @@ class AdminVerify extends AdminBase
                 if (!isset($area_id)) $area_id = 26;
                 $address_info['area_id'] = $area_id;
                 $address_info['user_id'] = $user_id;
-                $address_info['role_id'] = 24;
-                Db::name('role_address')->insertGetId($address_info);
+                switch ($type) {
+                    case "personal":
+                        $admin_info['role_id'] = 24;
+                        break;
+                    case "company":
+                        $admin_info['role_id'] = 23;
+                        break;
+                }
+                if (!Db::name('role_address')->where(['user_id' => $user_id])->find()) {
+                    Db::name('role_address')->insertGetId($address_info);
+                } else {
+                    Db::name('role_address')->where(['user_id' => $user_id])->update($address_info);
+                }
             }
             return $res;
             $this->zbn_msg("审核成功", 1);
