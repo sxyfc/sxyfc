@@ -22,6 +22,29 @@ class InfoSearch extends AdminBase
             $where['user_name'] = array('LIKE', '%' . $user_name . '%');
         }
 
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['id'] = array('IN', $ids);
+        }
+
         $list = Users::where($where)->order('id desc')->paginate(config('list_rows'));
         $pages = $list->render();
         foreach ($list as $k => $val) {
@@ -71,6 +94,29 @@ class InfoSearch extends AdminBase
         $user_name = trim(input('param.user_name', ' ', 'htmlspecialchars'));
         if ($user_name) {
             $where['user_name'] = array('LIKE', '%' . $user_name . '%');
+        }
+
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['id'] = array('IN', $ids);
         }
 
         $list = Users::where($where)->order('id desc')->paginate(config('list_rows'));

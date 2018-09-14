@@ -60,17 +60,17 @@ class User extends AdminBase
             if ($users['user_role_id'] == 22) {
                 // 区域管理
                 $ids = $this->map_city_childs($this->user['id']);
-                $where_role['id'] = array('IN', [23, 24, 27]);
+                $where_role['id'] = array('IN', [2, 4, 23, 24, 27]);
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
                 $ids = $this->map_county_childs($this->user['id']);
-                $where_role['id'] = array('IN', [24, 27]);
+                $where_role['id'] = array('IN', [2, 4, 24, 27]);
             } elseif ($users['user_role_id'] == 25) {
                 $ids = $this->map_area_childs($this->user['id']);
-                $where_role['id'] = array('IN', [22, 23, 24, 26, 27]);
+                $where_role['id'] = array('IN', [2, 4, 22, 23, 24, 26, 27]);
             } elseif ($users['user_role_id'] == 26) {
                 $ids = $this->map_province_childs($this->user['id']);
-                $where_role['id'] = array('IN', [22, 23, 24, 27]);
+                $where_role['id'] = array('IN', [2, 4, 22, 23, 24, 27]);
             } else {
                 $ids = $this->user['id'];
             }

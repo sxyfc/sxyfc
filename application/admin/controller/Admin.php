@@ -36,6 +36,25 @@ class Admin extends AdminBase
             $where['site_id'] = $this->site['id'];
         }
 
+        if (!$this->super_power) {
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
+
         $lists = $model->where($where)->order("id desc")->paginate();
         //列表数据
         $this->view->lists = $lists;
@@ -66,12 +85,11 @@ class Admin extends AdminBase
         global $_GPC;
         //后去模型信息
         $model = set_model($this->admin);
-        /** @var Models $model_info */
         $model_info = $model->model_info;
 
-        if (!$this->super_power) {
-            return $this->zbn_msg('无权操作！', 2);
-        }
+//        if (!$this->super_power) {
+//            return $this->zbn_msg('无权操作！', 2);
+//        }
 
         //手动处理类型的模型
         if ($this->isPost() && $model_info) {
@@ -89,6 +107,36 @@ class Admin extends AdminBase
                 }
             }
 
+            if (!$this->super_power) {
+                $users = db('users')->where(['id' => $this->user['id']])->find();
+                if ($users['user_role_id'] == 22) {
+                    // 市级代理
+                    if (!in_array($base_info['role_id'], [2, 4, 23, 24, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } elseif ($users['user_role_id'] == 23) {
+                    // 县级代理
+                    if (!in_array($base_info['role_id'], [2, 4, 24, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } elseif ($users['user_role_id'] == 25) {
+                    // CEO（区域经理）
+                    if (!in_array($base_info['role_id'], [2, 4, 22, 23, 24, 26, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } elseif ($users['user_role_id'] == 26) {
+                    // 省级代理
+                    if (!in_array($base_info['role_id'], [2, 4, 22, 23, 24, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } else {
+                    //经纪人及其他
+                    if (!in_array($base_info['role_id'], [2, 4])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                }
+            }
+
             // 查询用户信息
             if (!$user_info = Db::name('users')->where(['id' => $base_info['user_id']])->find()) {
                 return $this->zbn_msg('用户不存在', 2);
@@ -96,18 +144,21 @@ class Admin extends AdminBase
             $base_info['site_id'] = $user_info['site_id'];
             $base_info['user_name'] = $user_info['user_name'];
 
-            if ($result = Db::name('admin')->where(['user_id' => $base_info['user_id']])->find()) {
+            if ($result_find = Db::name('admin')->where(['user_id' => $base_info['user_id']])->find()) {
                 return $this->zbn_msg('请勿重复添加！', 2);
             }
 
             // 修改用户角色
-            if (!$result = Db::name('users')->where(['id' => $base_info['user_id']])->update(['user_role_id' => $base_info['role_id']])) {
+            if (!$result_update = Db::name('users')->where(['id' => $base_info['user_id']])->update(['user_role_id' => $base_info['role_id']])) {
                 return $this->zbn_msg('网络出错，请稍后再试！', 2);
             }
 
-            /** @var Models $model_info */
+            // 绑定父级
+            if (!$update = Db::name('users')->where(['id' => $base_info['user_id']])->update(['parent_id' => $this->user['id']])) {
+                return $this->zbn_msg('网络出错，请稍后再试！!', 2);
+            }
+
             $res = $model_info->add_content($base_info);
-//            Log::error($area);
             if ($area == 0) return $this->zbn_msg("必须选择代理地区", 2);
 
             if ($res['code'] == 1) {
@@ -115,9 +166,9 @@ class Admin extends AdminBase
                 $address_info['user_id'] = $base_info['user_id'];
                 $address_info['role_id'] = $base_info['role_id'];
                 Db::name('role_address')->insertGetId($address_info);
-                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
+                return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
             } else {
-                return $this->zbn_msg($res['msg'], 2);
+                return $this->zbn_msg($res['msg'], 2, 'true', 3000, "''", "'reload_parent_page()'");
             }
         } else {
             //设置筛选数据
@@ -152,10 +203,8 @@ class Admin extends AdminBase
      */
     public function edit($id)
     {
-
         global $_GPC;
         $id = (int)$id;
-//        $area = 0;
         $model = set_model($this->admin);
         /** @var Models $model_info */
         $model_info = $model->model_info;
@@ -169,25 +218,41 @@ class Admin extends AdminBase
             } else {
                 //自动获取data分组数据
                 $data = input('post.data/a');//get the base info
-//                if ($_POST['area_province'] != null) {
-//                    if ($_POST['area_province'] != null) $area = $_POST['area_province'];
-//                    if ($_POST['area_city'] != null) $area = $_POST['area_city'];
-//                    if ($_POST['area_area'] != null) $area = $_POST['area_area'];
-//                }
             }
-//            $role_address = set_model('role_address');
-//            $address_info['area_id'] = $area;
-//            $address_info['user_id'] = $data['user_id'];
-//            $address_info['role_id'] = $data['role_id'];
-//            $info_res = $role_address->add_content($address_info);
-//            if ($info_res['code'] == 1) {
-//                return $this->zbn_msg($info_res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
-//            } else {
-//                return $this->zbn_msg($info_res['msg'], 2);
-//            }
+
+            if (!$this->super_power) {
+                $users = db('users')->where(['id' => $this->user['id']])->find();
+                if ($users['user_role_id'] == 22) {
+                    // 市级代理
+                    if (!in_array($data['role_id'], [2, 4, 23, 24, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } elseif ($users['user_role_id'] == 23) {
+                    // 县级代理
+                    if (!in_array($data['role_id'], [2, 4, 24, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } elseif ($users['user_role_id'] == 25) {
+                    // CEO（区域经理）
+                    if (!in_array($data['role_id'], [2, 4, 22, 23, 24, 26, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } elseif ($users['user_role_id'] == 26) {
+                    // 省级代理
+                    if (!in_array($data['role_id'], [2, 4, 22, 23, 24, 27])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                } else {
+                    //经纪人及其他
+                    if (!in_array($data['role_id'], [2, 4])) {
+                        return $this->zbn_msg('无权创建此角色用户', 2);
+                    }
+                }
+            }
+
             // todo  process data input
             Db::name($model_info['table_name'])->where($where)->update($data);
-            $this->zbn_msg("ok");
+            $this->zbn_msg("修改成功",1, 'true', 1000, "''", "'reload_page()'");
         } else {
             //设置筛选数据
             $area_data = set_model('area')->order(['parent_id' => 'asc'])->field('id,area_name,parent_id')->select()->toArray();

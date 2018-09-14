@@ -106,6 +106,30 @@ class AdminFund extends AdminBase
         if ($user_id) {
             $where['user_id'] = $user_id;
         }
+
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
+
         $list = PaymentLogs::where($where)->order('log_id desc')->paginate(20, false, ['query' => array('keyword' => $keyword),]);
         $this->view->list = $list;
         return $this->view->fetch();
@@ -142,6 +166,30 @@ class AdminFund extends AdminBase
         if ($user_id) {
             $where['user_id'] = $user_id;
         }
+
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
+
         $where['status'] = 0;
         $where['site_id'] = $_W['site']['id'];
         $list =  set_model('draw')->where($where)->order('id desc')->paginate(10);
@@ -154,6 +202,30 @@ class AdminFund extends AdminBase
         if ($user_id) {
             $where['user_id'] = $user_id;
         }
+
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
+
         $where['status'] = 1;
         $list = Draw::where($where)->order('id desc')->paginate(10);
         $this->view->list = $list;

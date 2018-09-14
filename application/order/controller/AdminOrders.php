@@ -44,6 +44,29 @@ class AdminOrders extends AdminBase
             $where['trade_sn'] = $trade_sn;
         }
 
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
+
         $this->view->lists = set_model('orders')->where($where)->order('id desc')->paginate();
         $this->view->assign('buyer_name', $buyer_name);
         $this->view->assign('trade_sn', $trade_sn);
@@ -81,6 +104,29 @@ class AdminOrders extends AdminBase
             $where['trade_sn'] = $trade_sn;
         }
         $where['status'] = '退款中';
+
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
 
         $this->view->lists = set_model('orders')->where($where)->order('id desc')->paginate();
         $this->view->assign('buyer_name', $buyer_name);
