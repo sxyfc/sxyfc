@@ -429,7 +429,7 @@ class User extends AdminBase
         $mobile = trim(input('param.mobile', ' ', 'htmlspecialchars'));
         $where = [];
         if ($user_name) {
-            $where['nickname'] = array('LIKE', '%' . $user_name . '%');
+            $where['a.nickname'] = array('LIKE', '%' . $user_name . '%');
         }
         if ($mobile) {
             $where['a.mobile'] = $mobile;

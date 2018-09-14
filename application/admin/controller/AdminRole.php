@@ -102,7 +102,7 @@ class AdminRole extends AdminBase
         }
 
         if ($moblie && isset($moblie)) {
-            $where['user_name'] = $moblie;
+            $where['user_name'] = array('LIKE', '%' . $moblie . '%');
         }
 
         if ($uid && isset($uid)) {
