@@ -19,7 +19,6 @@ class Report extends AdminBase
         $province = trim(input('param.area_province', ' ', 'htmlspecialchars'));
         $city = trim(input('param.area_city', ' ', 'htmlspecialchars'));
         $area = trim(input('param.area_area', ' ', 'htmlspecialchars'));
-        $area_id = 26;
         if ($province) {
             $area_id = $province;
         }
@@ -36,11 +35,34 @@ class Report extends AdminBase
             $where['area_id'] = $area_id;
             $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->toArray();
 
+            if (!$this->super_power) {
+                $users = db('users')->where(['id' => $this->user['id']])->find();
+                if ($users['user_role_id'] == 22) {
+                    // 区域管理
+                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = array_column($user_ids, 'id');
+
+                    $where_child['id'] = array('IN', $ids);
+                    $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
+                    $child_ids = array_column($user_child_ids, 'id');
+                    $ids = array_merge($ids, $child_ids);
+
+                    array_push($ids, $this->user['id']);
+                } elseif ($users['user_role_id'] == 23) {
+                    // 县级代理
+                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = array_column($user_ids, 'id');
+                    array_push($ids, $this->user['id']);
+                }
+            }
+
             foreach ($role_address as $ra_item) {
-                $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
-                $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
-                $user_data['role_name'] = $power_data['role_name'];
-                array_push($user_array, $user_data);
+                if (in_array($ra_item['user_id'], $ids)) {
+                    $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
+                    $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
+                    $user_data['role_name'] = $power_data['role_name'];
+                    array_push($user_array, $user_data);
+                }
             }
         }
 
@@ -68,7 +90,6 @@ class Report extends AdminBase
         $province = trim(input('param.area_province', ' ', 'htmlspecialchars'));
         $city = trim(input('param.area_city', ' ', 'htmlspecialchars'));
         $area = trim(input('param.area_area', ' ', 'htmlspecialchars'));
-        $area_id = 26;
         if ($province) {
             $area_id = $province;
         }
@@ -85,14 +106,35 @@ class Report extends AdminBase
             $where['area_id'] = $area_id;
             $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->toArray();
 
-            foreach ($role_address as $ra_item) {
-                $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
-                $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
-                $user_data['role_name'] = $power_data['role_name'];
-                array_push($user_array, $user_data);
+            if (!$this->super_power) {
+                $users = db('users')->where(['id' => $this->user['id']])->find();
+                if ($users['user_role_id'] == 22) {
+                    // 区域管理
+                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = array_column($user_ids, 'id');
+
+                    $where_child['id'] = array('IN', $ids);
+                    $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
+                    $child_ids = array_column($user_child_ids, 'id');
+                    $ids = array_merge($ids, $child_ids);
+
+                    array_push($ids, $this->user['id']);
+                } elseif ($users['user_role_id'] == 23) {
+                    // 县级代理
+                    $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
+                    $ids = array_column($user_ids, 'id');
+                    array_push($ids, $this->user['id']);
+                }
             }
-        } else {
-            //根据用户权限选择对应展示对数据
+
+            foreach ($role_address as $ra_item) {
+                if (in_array($ra_item['user_id'], $ids)) {
+                    $user_data = set_model('users')->where(['id' => $ra_item['user_id']])->find();
+                    $power_data = set_model('user_roles')->where(['id' => $ra_item['role_id']])->field('role_name')->find();
+                    $user_data['role_name'] = $power_data['role_name'];
+                    array_push($user_array, $user_data);
+                }
+            }
         }
 
         //设置筛选数据
