@@ -435,10 +435,32 @@ class User extends AdminBase
             $where['a.mobile'] = $mobile;
         }
 
-        if (!$this->current_admin_role) {
-            $where['a.user_id'] = $this->user->id;
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['a.id'] = array('IN', $ids);
         }
+
         $list = set_model('users')->alias('a')->join(config("database.prefix") . 'sites_wechat_fans b', 'a.id = b.user_id', 'INNER')->where($where)->field('a.id,b.openid,a.avatar,a.user_name,a.nickname,a.mobile,a.login_cnt,a.last_login')->paginate(config('list_rows'));
+//        $ll = set_model('users');
+//        print_r($ll->getLastSql());
 
         $pages = $list->render();
 
