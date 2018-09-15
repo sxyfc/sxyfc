@@ -124,7 +124,7 @@
                 <div class="column is-full">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">经纪人电话 :</div>
-                        <div class="column">{$detail['mobile']}</div>
+                        <div class="column">{$mobile}</div>
                     </div>
                 </div>
                 {/if}
