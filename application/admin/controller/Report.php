@@ -181,10 +181,10 @@ class Report extends AdminBase
         if ($this->super_power) {
             if ($user_id) {
                 $share = db('distribution_orders')->where(['status' => 1, 'user_id' => $user_id])->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
-                $data['total'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $user_id])->sum('amount');
+                $data['total'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $user_id])->sum('total_fee');
             } else {
                 $share = db('distribution_orders')->where(['status' => 1])->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
-                $data['total'] = db('distribution_orders')->where(['status' => 1])->sum('amount');
+                $data['total'] = db('distribution_orders')->where(['status' => 1])->sum('total_fee');
             }
             $shares = $share->toArray();
             foreach ($shares['data'] as $key => $value) {
@@ -203,7 +203,7 @@ class Report extends AdminBase
             $house_where['status'] = 1;
             $house_where['user_id'] = array('IN', $house_ids);
 
-            $data['head'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
+            $data['head'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('total_fee');
             $this->view->assign('data', $data);
         } else {
             // 根据角色查数据
@@ -268,7 +268,7 @@ class Report extends AdminBase
                 $shares['data'][$key]['nickname'] = $user_info['nickname'];
             }
 
-            $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('amount');
+            $data['self'] = db('distribution_orders')->where(['status' => 1, 'user_id' => $this->user['id']])->sum('total_fee');
             $this->view->assign('data', $data);
         }
 
