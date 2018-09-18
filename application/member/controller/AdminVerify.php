@@ -22,10 +22,10 @@ class AdminVerify extends AdminBase
 //        $where = [];
         //data list
 //        $where['site_id'] = $this->site['id'];
-        $where2['personal_verify'] = 1;
-        $where1['company_verify'] = 1;
+        $where['personal_verify'] = array('NEQ',99);
+        $where['company_verify'] = array('NEQ',99);
         $this->view->mapping = $this->mapping;
-        $lists = $model->whereOr($where1)->whereOr($where2)->order("create_at desc")->paginate();
+        $lists = $model->where($where)->order("create_at desc")->paginate();
         $this->view->lists = $lists;
         return $this->view->fetch();
     }
