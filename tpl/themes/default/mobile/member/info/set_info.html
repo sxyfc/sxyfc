@@ -34,7 +34,15 @@
         <div class="layui-form-item">
             <label class="layui-form-label">手机号</label>
             <div class="layui-input-block">
-                <input  type="text" value="{$user.mobile}" name="data[mobile]"  disabled="true"  autocomplete="off" class="layui-input">
+                <input  type="text" id="mobile" value="{$user.mobile}" name="data[mobile]" required  placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                <div class="layui-btn layui-btn-xs"  id="send_btn" onclick="send_verify_code()">获取验证码</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">验证码</label>
+            <div class="layui-input-block">
+                <input class="layui-input" type="number" pattern="[0-9]*" placeholder="修改手机号才输入验证码，否则为空"  name="code">
             </div>
         </div>
 
@@ -47,8 +55,32 @@
             </div>
         </div>
 
+        {if $user.pass != 'NOTSET'}
+        <div class="layui-form-item">
+            <label class="layui-form-label">旧密码</label>
+            <div class="layui-input-block">
+                <input  type="password" value="" name="data[old_pass]"   autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        {/if}
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-block">
+                <input  type="password" value="" name="data[pass]"   autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">确认密码</label>
+            <div class="layui-input-block">
+                <input  type="password" value="" name="data[repass]"   autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
         <div class="layui-form-item">
             <div class="layui-input-block">
+                <input  type="hide" value="{$forward}" name="forward" >
                 <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
@@ -57,9 +89,52 @@
 
 <script>
     //Demo
-    layui.use('form', function(){
-        var form = layui.form();
-    });
+    // layui.use('form', function(){
+    //     var form = layui.form();
+    // });
+    var mobile_sender = {
+        count : 60 ,
+
+        recount: function () {
+            var that = this;
+            layui.use(['layer', 'form'], function () {
+                var $ = layui.$, layer = layui.layer, form = layui.form;
+                if (that.count > 0) {
+                    setTimeout(function () {
+                        that.count--;
+                        that.recount()
+                    }, 1000);
+                    $("#send_btn").attr("disabled", true);
+                    $("#send_btn").html(that.count);
+                } else {
+                    that.count = 60;
+                    $("#send_btn").attr("disabled", false);
+                    $("#send_btn").html("获取验证码");
+                }
+            });
+        },
+        send_sms : function (mobile) {
+            var that = this;
+            //初始化类型类型
+            layui.use(['layer', 'form'] , function () {
+                var url = "{:url('sso/passport/send_code')}";
+                $.get( url, { "mobile": mobile }, function (data) {
+                    if(data.code === 1){
+                        layer.msg("已经发送！");
+                        that.recount();
+                    }else{
+                        layer.msg("对不起 操作失败！" + data.msg);
+                    }
+                } , 'json' );
+            });
+        }
+    };
+
+
+    function send_verify_code() {
+        var mobile_number = $("#mobile").val();
+        mobile_sender.send_sms(mobile_number);
+    }
 </script>
 {/block}
 

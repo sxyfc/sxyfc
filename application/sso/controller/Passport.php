@@ -611,6 +611,8 @@ class Passport extends ModuleBase
                     // send data to
                     MhcmsDistribution::make_down_line($user['id'], $from_uid);
                 }
+                $url = url('member/info/set_info').'?forward='.urlencode('/house/index');
+                $this->message("请补充资料信息!", 1, $url);
             } else {
                 return;
             }
@@ -783,8 +785,8 @@ class Passport extends ModuleBase
 
 
         if (!$user['is_mobile_verify']) {
-            $url = url('member/info/set_mobile').'?forward='.urlencode('/house/index');
-            $this->message("请绑定手机号!", 1, $url);
+            $url = url('member/info/set_info').'?forward='.urlencode('/house/index');
+            $this->message("请补充资料信息!", 1, $url);
         }
         if ($uuid) {
             Cache::set("mhcms_wechat_login:" . $uuid, $user['id']);
