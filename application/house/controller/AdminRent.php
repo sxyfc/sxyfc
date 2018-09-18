@@ -200,9 +200,11 @@ class AdminRent extends AdminBase
         if ($detail) {
             if ($detail['status'] == 99) {
                 $detail['status'] = 0;
+                $detail->where($where)->update($detail);
                 return $this->zbn_msg('审核取消', 1, 'true', 1000, "''", "window.location.reload()");
             } else {
                 $detail['status'] = 99;
+                $detail->where($where)->update($detail);
                 return $this->zbn_msg('审核通过', 1, 'true', 1000, "''", "window.location.reload()");
             }
         }

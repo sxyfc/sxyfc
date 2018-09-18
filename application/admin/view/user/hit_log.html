@@ -76,7 +76,7 @@ if (!isset($keyword)) {
                 $fang = set_model($var['model_id'])->find(['id'=>$var['item_id']]);
             ?>
             <tr>
-                <td>{$var.id}</td>
+                <td>{$var.id+400000}</td>
                 <td>{$var.user_id}</td>
                 <td>{if $user.nickname}{$user.nickname}{else}{$user.user_name}{/if}</td>
                 <td>

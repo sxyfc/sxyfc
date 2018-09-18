@@ -104,12 +104,14 @@ class UserOrders extends HouseUserBase
             $models = set_model('house_rent');
             $base_info['rent_id'] = $id;
             $source_type = 2;
+            $url = url('house/rent/detail', ['id' => $id]);
         } else if ($type == 2) {//二手房
             $model_name = "house_esf_order";
             $model = set_model($model_name);
             $models = set_model('house_esf');
             $base_info['esf_id'] = $id;
             $source_type = 3;
+            $url = url('house/esf/detail', ['id' => $id]);
         }
 
         //检查权限
@@ -125,7 +127,7 @@ class UserOrders extends HouseUserBase
 
         $left_value = $balance - $fb_value;
         if ($balance <= 0.00 || $left_value < 0.00) {
-            $this->error('余额不足，请先去充值！', "/pay/pay/deposit");
+            $this->error("余额不足，请先去充值！", "pay/deposit/do_deposit");
         }
 
         $info = $models->where(['id' => $id])->field('user_id')->find();
@@ -155,7 +157,7 @@ class UserOrders extends HouseUserBase
         if (!$res) {
             $this->error('网络故障，请稍后再试！');
         } else {
-            $this->error('操作成功！');
+            $this->error('操作成功！', $url);
         }
     }
 
