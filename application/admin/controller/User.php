@@ -377,7 +377,8 @@ class User extends AdminBase
 //            $where['id'] = $this->user->id;
 //        }
 
-        if (!$this->super_power){
+        $show_mobile = true;
+        if (!$this->super_power) {
             $users = db('users')->where(['id' => $this->user['id']])->find();
             if ($users['user_role_id'] == 22) {
                 // 区域管理
@@ -398,6 +399,12 @@ class User extends AdminBase
             }
 
             $where['id'] = array('IN', $ids);
+
+            if (!$menu_access_result = db('user_menu_access')->where(['user_role_id' => $users['user_role_id'], 'user_menu_id' => 7031])->find()) {
+                if (!$menu_allot_result = db('user_menu_allot')->where(['user_id' => $this->user['id'], 'user_menu_id' => 7031])->find()) {
+                    $show_mobile = false;
+                }
+            }
         }
 
         if ($where || $user_name_query) {
@@ -418,6 +425,7 @@ class User extends AdminBase
         $this->view->assign('page', $pages);
         $this->view->assign('list', $list);
         $this->view->assign('user_name', $user_name);
+        $this->view->assign('show_mobile', $show_mobile);
         $this->view->assign('mobile', $mobile);
 
         return $this->view->fetch();
@@ -435,7 +443,7 @@ class User extends AdminBase
             $where['a.mobile'] = $mobile;
         }
 
-        if (!$this->super_power){
+        if (!$this->super_power) {
             $users = db('users')->where(['id' => $this->user['id']])->find();
             if ($users['user_role_id'] == 22) {
                 // 区域管理
@@ -471,6 +479,86 @@ class User extends AdminBase
         $this->view->assign('mobile', $mobile);
 
         return $this->view->fetch();
+    }
+
+    public function exchange()
+    {
+        $where = [];
+        if (!$this->super_power) {
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                $where_role['id'] = array('IN', [2, 4, 23, 24, 27]);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                $where_role['id'] = array('IN', [2, 4, 24, 27]);
+            } elseif ($users['user_role_id'] == 25) {
+                $ids = $this->map_area_childs($this->user['id']);
+                $where_role['id'] = array('IN', [2, 4, 22, 23, 24, 26, 27]);
+            } elseif ($users['user_role_id'] == 26) {
+                $ids = $this->map_province_childs($this->user['id']);
+                $where_role['id'] = array('IN', [2, 4, 22, 23, 24, 27]);
+            } else {
+                $ids = $this->user['id'];
+            }
+
+            $where['id'] = array('IN', $ids);
+        } else {
+            $where_role['id'] = array('>', 1);
+        }
+
+        $where = $this->map_fenzhan($where);
+        $list = Users::where($where)->order('id desc')->paginate(config('list_rows'));
+
+        $pages = $list->render();
+        foreach ($list as $k => $val) {
+            $val['create_ip_area'] = IpToArea($val['create_ip']);
+            $val['last_ip_area'] = IpToArea($val['last_login_ip']);
+        }
+
+        $roles = Db::table('mhcms_user_roles')->where($where_role)->select()->toArray();
+
+        $this->view->assign('roles', $roles);
+        $this->view->assign('page', $pages);
+        $this->view->assign('list', $list);
+
+        $this->view->field_list = set_model('users')->model_info->get_admin_column_fields();
+        $this->view->mapping = $this->mapping;
+        //$this->view->assign('mapping', $this->mapping);
+        return $this->view->fetch();
+    }
+
+    public function do_exchange()
+    {
+        $from_user_name = trim(input('param.from_user_name', ' ', 'htmlspecialchars'));
+        $to_user_name = trim(input('param.to_user_name', ' ', 'htmlspecialchars'));
+
+        $where_from['user_name'] =  $from_user_name;
+        $where_to['user_name'] = $to_user_name;
+
+        if (!$from_user_name || !$to_user_name) {
+            return $this->zbn_msg('角色替换信息不能为空', 2, 'true', 3000, "''", "'reload_page()'");
+        }
+
+        if (!$from_user_info = db('users')->where($where_from)->find()){
+            return $this->zbn_msg('替换角色不存在', 2, 'true', 3000, "''", "'reload_page()'");
+        }
+        if (!$to_user_info = db('users')->where($where_to)->find()){
+            return $this->zbn_msg('被替换角色不存在', 2, 'true', 3000, "''", "'reload_page()'");
+        }
+        if($to_user_info['id'] == 1){
+            return $this->zbn_msg('总部角色不可替换', 2, 'true', 3000, "''", "'reload_page()'");
+        }
+
+        $where['parent_id'] = $to_user_info['id'];
+
+        if (!$update_result = db('users')->where($where)->update(['parent_id'=>$from_user_info['id']])){
+            return $this->zbn_msg('网络出错，请稍后再试！', 2, 'true', 3000, "''", "'reload_page()'");
+        }
+
+        return $this->zbn_msg('替换成功！', 1, 'true', 3000, "''", "'reload_page()'");
     }
 
 }

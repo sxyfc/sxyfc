@@ -14,15 +14,19 @@
                     <span>{$_W['site']['config']['trade']['balance_text']}: {$user.balance}</span>
                 </a>
             </div>
+            {if $show_log}
             <div class="column">
                 <a>
                     <i class="iconfont icon-jifen3"></i>
                     <span>{$_W['site']['config']['trade']['point_text']}: {$user.point}</span>
                 </a>
             </div>
+            {/if}
         </div>
         <a href="{:url('pay/deposit/do_deposit')}" class="weui-btn weui-btn_primary">在线充值</a>
+        {if $show_log}
         <a href="{:url('pay/fund/draw')}" class="weui-btn weui-btn_default">申请提现</a>
+        {/if}
         <a href="{:url('pay/fund/bill_list')}" class="weui-btn weui-btn_default">资金明细</a>
     </div>
     </div>

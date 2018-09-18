@@ -167,24 +167,41 @@ class AdminFund extends AdminBase
             $where['user_id'] = $user_id;
         }
 
+        $show_log = true;
         if (!$this->super_power){
             $users = db('users')->where(['id' => $this->user['id']])->find();
+
+            if (!$menu_access_result = db('user_menu_access')->where(['user_role_id' => $users['user_role_id'], 'user_menu_id' => 7032])->find()) {
+                if (!$menu_allot_result = db('user_menu_allot')->where(['user_id' => $this->user['id'], 'user_menu_id' => 7032])->find()) {
+                    $show_log = false;
+                }
+            }
+
             if ($users['user_role_id'] == 22) {
                 // 区域管理
                 $ids = $this->map_city_childs($this->user['id']);
-                array_push($ids, $this->user['id']);
+
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
                 $ids = $this->map_county_childs($this->user['id']);
-                array_push($ids, $this->user['id']);
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
             } elseif ($users['user_role_id'] == 25) {
                 // CEO（区域经理）
                 $ids = $this->map_area_childs($this->user['id']);
-                array_push($ids, $this->user['id']);
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
             } elseif ($users['user_role_id'] == 26) {
                 // 省级代理
                 $ids = $this->map_province_childs($this->user['id']);
-                array_push($ids, $this->user['id']);
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
             }
 
             $where['user_id'] = array('IN', $ids);

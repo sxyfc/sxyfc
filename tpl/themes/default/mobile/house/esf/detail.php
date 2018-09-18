@@ -35,20 +35,27 @@
                 </div>
 
                 <div class="column">
-                    <div class="text">户型</div>
-                    <div class="em">
-                        {$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫
-                    </div>
+                    <div class="text">建筑面积</div>
+                    <div class="em">{$detail['size']}平米</div>
                 </div>
 
                 <div class="column">
-                    <div class="text">建筑面积</div>
-                    <div class="em">{$detail['size']}平米</div>
+                    <div class="text">总价</div>
+                    <div class="em">
+                        {$detail['price']}万元
+                    </div>
                 </div>
             </div>
 
 
             <div class="columns is-mobile is-marginless is-multiline">
+                <div class="column is-half">
+                    <div class="columns option is-mobile is-marginless">
+                        <div class="column is-narrow">户型 :</div>
+                        <div class="column">{$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫</div>
+                    </div>
+                </div>
+
                 <div class="column is-half">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">地区 :</div>

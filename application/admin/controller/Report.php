@@ -31,26 +31,42 @@ class Report extends AdminBase
 
         //返回省市区筛选出的用户数据
         $where = [];
+        $show_log = true;
         if ($area_id) {
             $where['area_id'] = $area_id;
             $role_address = set_model('role_address')->where($where)->field('user_id,role_id')->select()->toArray();
 
             if (!$this->super_power) {
                 $users = db('users')->where(['id' => $this->user['id']])->find();
+
+                if (!$menu_access_result = db('user_menu_access')->where(['user_role_id' => $users['user_role_id'], 'user_menu_id' => 7032])->find()) {
+                    if (!$menu_allot_result = db('user_menu_allot')->where(['user_id' => $this->user['id'], 'user_menu_id' => 7032])->find()) {
+                        $show_log = false;
+                    }
+                }
+
                 if ($users['user_role_id'] == 22) {
                     // 区域管理
                     $ids = $this->map_city_childs($this->user['id']);
-                    array_push($ids, $this->user['id']);
+                    if ($show_log){
+                        array_push($ids, $this->user['id']);
+                    }
                 } elseif ($users['user_role_id'] == 23) {
                     // 县级代理
                     $ids = $this->map_county_childs($this->user['id']);
-                    array_push($ids, $this->user['id']);
+                    if ($show_log){
+                        array_push($ids, $this->user['id']);
+                    }
                 } elseif ($users['user_role_id'] == 25) {
                     $ids = $this->map_area_childs($this->user['id']);
-                    array_push($ids, $this->user['id']);
+                    if ($show_log){
+                        array_push($ids, $this->user['id']);
+                    }
                 } elseif ($users['user_role_id'] == 26) {
                     $ids = $this->map_province_childs($this->user['id']);
-                    array_push($ids, $this->user['id']);
+                    if ($show_log){
+                        array_push($ids, $this->user['id']);
+                    }
                 }
             }
 
@@ -178,6 +194,7 @@ class Report extends AdminBase
         }
 
         // 超级管理员
+        $show_log = true;
         if ($this->super_power) {
             if ($user_id) {
                 $share = db('distribution_orders')->where(['status' => 1, 'user_id' => $user_id])->order('id desc')->paginate(config('list_rows'), false, ['query' => array('nickname' => $nickname)]);
@@ -208,6 +225,13 @@ class Report extends AdminBase
         } else {
             // 根据角色查数据
             $users = db('users')->where(['id' => $this->user['id']])->find();
+
+            if (!$menu_access_result = db('user_menu_access')->where(['user_role_id' => $users['user_role_id'], 'user_menu_id' => 7032])->find()) {
+                if (!$menu_allot_result = db('user_menu_allot')->where(['user_id' => $this->user['id'], 'user_menu_id' => 7032])->find()) {
+                    $show_log = false;
+                }
+            }
+
             if ($users['user_role_id'] == 22) {
                 // 区域管理
                 if ($user_id) {
@@ -216,7 +240,10 @@ class Report extends AdminBase
                     $ids = $this->map_city_childs($this->user['id']);
                 }
 
-                array_push($ids, $this->user['id']);
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
+
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
             } elseif ($users['user_role_id'] == 23) {
@@ -227,7 +254,9 @@ class Report extends AdminBase
                     $ids = $this->map_county_childs($this->user['id']);
                 }
 
-                array_push($ids, $this->user['id']);
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
 
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
@@ -239,7 +268,10 @@ class Report extends AdminBase
                     $ids = $this->map_area_childs($this->user['id']);
                 }
 
-                array_push($ids, $this->user['id']);
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
+
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
             } elseif ($users['user_role_id'] == 26) {
@@ -250,7 +282,10 @@ class Report extends AdminBase
                     $ids = $this->map_province_childs($this->user['id']);
                 }
 
-                array_push($ids, $this->user['id']);
+                if ($show_log){
+                    array_push($ids, $this->user['id']);
+                }
+
                 $where['status'] = 1;
                 $where['user_id'] = array('IN', $ids);
             } else {

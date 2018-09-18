@@ -59,8 +59,27 @@ class AdminEsf extends AdminBase
             $where['user_id'] = $user_model['id'];
         }
 
-        if (!$this->super_power) {
-            $where['user_id'] = $this->user['id'];
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
         }
 
         $content_model_id = $this->house_esf;
@@ -110,7 +129,7 @@ class AdminEsf extends AdminBase
 
             $base_info['loupan_id'] = $loupan_id;
             $base_info['user_id'] = $this->user['id'];
-            $base_info['status'] = 0;
+            $base_info['status'] = 1;
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'close_page()'");

@@ -38,6 +38,29 @@ class AdminRent extends AdminBase
             $this->view->assign('mobile', $mobile);
         }
 
+        if (!$this->super_power){
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
+
         $loupan_name = trim(input('param.loupan_name'));
         if ($loupan_name) {
             $ids = array();

@@ -86,7 +86,7 @@ if (!isset($keyword)) {
                         <img src="/statics/images/logo.png" style=" width: 45px;border-radius: 50%;">
                     {/if}
                 </td>
-                <td>{if $user.mobile}{$user.mobile}{else}未绑定{/if}</td>
+                <td>{if $show_mobile}{if $user.mobile}{$user.mobile}{else}未绑定{/if} {else} 无权查看{/if}</td>
                 <td>{$fang.title}</td>
                 <td>{if $fang.price}{$fang.price}{else}N/A{/if}{if $var.model_id == 649}万{else}元{/if}</td>
                 <!--<td>{$fang.mobile}</td>-->

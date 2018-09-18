@@ -93,16 +93,19 @@ class AdminRole extends AdminBase
     public function user_auth($module = "")
     {
         $nickname = trim(input('param.nickname', ' ', 'htmlspecialchars'));
-        $moblie = trim(input('param.mobile', ' ', 'htmlspecialchars'));
+        $mobile = trim(input('param.mobile', ' ', 'htmlspecialchars'));
         $uid = trim(input('param.user_id', ' ', 'htmlspecialchars'));
 
+        Log::error($mobile.'test');
         $where = [];
         if ($nickname && isset($nickname)) {
             $where['nickname'] = array('LIKE', '%' . $nickname . '%');
+            $this->view->nickname = $nickname;
         }
 
-        if ($moblie && isset($moblie)) {
-            $where['user_name'] = array('LIKE', '%' . $moblie . '%');
+        if ($mobile && isset($mobile)) {
+            $where['user_name'] = array('LIKE', '%' . $mobile . '%');
+            $this->view->mobile = $mobile;
         }
 
         if ($uid && isset($uid)) {

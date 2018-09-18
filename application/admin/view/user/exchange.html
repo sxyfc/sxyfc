@@ -1,0 +1,76 @@
+{extend name="admin@public/content_frame" /}
+
+{block name="table_form"}
+<?php
+if (!isset($keyword)) {
+    $keyword = "";
+}
+?>
+<form method="get" action="{:\think\\Url::build('/admin/user/do_exchange/user_menu_id/7034')}">
+    <table class="layui-table -group">
+        <tr>
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            替换用户名
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="from_user_name" type="text" placeholder="替换用户名">
+                    </p>
+                </div>
+            </td>
+
+            <td class="input-group">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-static">
+                            被替换用户名
+                        </a>
+                    </p>
+                    <p class="control">
+                        <input class="input" name="to_user_name" type="text" placeholder="被替换用户名">
+                    </p>
+                </div>
+            </td>
+        <td><input type="submit" value="进行替换" class="layui-btn btn-success"/></td>
+        </td></tr>
+    </table>
+</form>
+{/block}
+
+
+{block name="main"}
+    <div class="tableBox">
+        <table class="layui-table">
+            <tr>
+                <td class="w50">ID</td>
+                {foreach $field_list as $field}
+                <td>{$field['slug']}</td>
+                {/foreach}
+                <td>昵称</td>
+                <td>角色</td>
+                <td>手机</td>
+            </tr>
+            {foreach name="list" id="var"}
+            <?php
+            $role = \app\common\model\UserRoles::get(['id'=>$var['user_role_id']]);
+            $fan = set_model('sites_wechat_fans')->where(['user_id'=>$var['id']])->find();
+            ?>
+            <tr class="{neq name="var.status" value="99"}disabled_1 {/neq}">
+
+            <td>{$var.id}</td>
+            {foreach $field_list as $field}
+            <td><pre>{$var[$field['field_name']]}</pre></td>
+            {/foreach}
+            <td>{$var.nickname}</td>
+            <td>{$role.role_name}</td>
+            <td>{$var.mobile}</td>
+            </tr>
+            {/foreach}
+
+        </table>
+        {$page}
+    </div>
+{/block}
