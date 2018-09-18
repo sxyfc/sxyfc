@@ -410,6 +410,18 @@
     </a>
 </div>
 
+<div class="weui-cells">
+
+    <a class="weui-cell weui-cell_access" href="tel:{03176316699}">
+        <div class="weui-cell__hd"><i class="iconfont icon-back"
+                                      style="width:20px;margin-right:5px;display:block"></i></div>
+        <div class="weui-cell__bd weui-cell_primary">
+            <p>联系客服:  0317-6316699</p>
+        </div>
+        <span class="weui-cell__ft"></span>
+    </a>
+</div>
+
 <script>
     require(['jquery', 'mhcms'], function ($, mhcms) {
 

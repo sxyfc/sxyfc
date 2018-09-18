@@ -121,7 +121,7 @@ class AdminRent extends AdminBase
                 }
             }
             $base_info['user_id'] = $this->user['id'];
-            $base_info['status']=0;
+            $base_info['status'] = 0;
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
@@ -157,7 +157,7 @@ class AdminRent extends AdminBase
             }
 
 
-            $base_info['status']=$detail['status'];
+            $base_info['status'] = $detail['status'];
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
@@ -200,11 +200,11 @@ class AdminRent extends AdminBase
         if ($detail) {
             if ($detail['status'] == 99) {
                 $detail['status'] = 0;
-                $detail->where($where)->update($detail);
+                set_model($this->house_rent)->where(['id' => $id])->update(['status' => $detail['status']]);
                 return $this->zbn_msg('审核取消', 1, 'true', 1000, "''", "window.location.reload()");
             } else {
                 $detail['status'] = 99;
-                $detail->where($where)->update($detail);
+                set_model($this->house_rent)->where(['id' => $id])->update(['status' => $detail['status']]);
                 return $this->zbn_msg('审核通过', 1, 'true', 1000, "''", "window.location.reload()");
             }
         }
