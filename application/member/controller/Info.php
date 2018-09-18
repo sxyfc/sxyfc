@@ -33,9 +33,51 @@ class Info extends ModuleUserBase
         if ($this->isPost()) {
             $allow_fields = ["nickname", "user_email", "wechat", "qq", "sex"];
 
+            $forward = input('param.forward', '');
             $data = input('param.data/a');
+            $data['code'] = input('param.code');
+            $old_pass = $data['old_pass'];
+            $pass = $data['pass'];
+            $repass = $data['repass'];
+
+            if ($data['mobile'] != $this->user['mobile'] || empty($this->user['mobile'])) {
+                if (!is_phone($data['mobile'])) {
+                    $this->zbn_msg("请输入11位手机号码");
+                }
+                $test = Users::get(['mobile' => $data['mobile']]);
+                if ($test && $test['id'] != $this->user['id']) {
+                    $this->zbn_msg("手机号码已经被使用！无法更新资料");
+                }
+                if (empty($data['code']) || $data['code'] != session('code')) {
+                    $this->zbn_msg("验证码输入有误");
+                }
+            }
+            if ($pass) {
+                if (isset($data['old_pass']) && $this->user['pass'] != crypt_pass($old_pass, $this->user['user_crypt'])) {
+                    $this->zbn_msg("旧密码不正确！");
+                }
+                if (!is_password($pass)) {
+                    $this->zbn_msg("密码必须6 ~ 20 位！");
+                }
+                if ($pass != $repass) {
+                    $this->zbn_msg("两次密码必须相同！");
+                }
+                if ($pass == $data['old_pass']) {
+                    $this->zbn_msg("新旧密码相同");
+                }
+            }
+
             //User Process
-            $data = clean_data($data, $allow_fields);
+            $save_data = clean_data($data, $allow_fields);
+
+            if ($pass) {
+                $save_data['pass'] = crypt_pass($pass, $this->user['user_crypt']);
+            }
+            if ($data['mobile'] != $this->user['mobile'] || empty($this->user['mobile'])) {
+                $save_data['mobile']           = $data['mobile'];
+                $save_data['is_mobile_verify'] = 1;
+                $save_data['user_name']        = $data['mobile'];
+            }
             // $data['sex'] = input('param.sex');
             //Sys Process
             // if (is_phone($data['mobile'])) {
@@ -53,11 +95,13 @@ class Info extends ModuleUserBase
             // if (!is_phone($this->user['user_name'])) {
             //     $data['user_name'] = $data['mobile'];
             // }
-            if ($this->user->save($data)) {
-                foreach ($allow_fields as $v) {
-                    $this->user->$v = $data[$v];
+            // 
+
+            if ($this->user->save($save_data)) {
+                foreach ($save_data as $k=>$v) {
+                    $this->user->$k = $v;
                 }
-                return $this->zbn_msg('操作成功', 1, 'true', 1000, "''", "'reload_page()'");
+                return $this->zbn_msg('操作成功', 1, 'true', 1000, "'".$forward."'", "'reload_page()'");
             }
             return $this->zbn_msg('操作失败', 1, 'true', 1000);
         } else {
@@ -119,11 +163,20 @@ class Info extends ModuleUserBase
             if (!is_phone($input['mobile'])) {
                 return [
                     'code' => 1,
-                    'msg' => "请输入11位手机号码数"
+                    'msg' => "请输入11位手机号码"
                 ];
             }
             if ($input['mobile']) {
 
+                $test = Users::get(['mobile' => $input['mobile']]);
+                if ($test && $test['id'] != $this->user['id']) {
+                    return [
+                        'code' => 1,
+                        'msg' => "手机号码已经被使用！无法更新资料"
+                    ];
+                } else {
+                    $this->user->is_mobile_verify = 1;
+                }
                 if ($input['code'] != session('code')) {
                     return [
                         'code' => 1,
