@@ -21,7 +21,9 @@ class AdminVerify extends AdminBase
         $this->view->model_info = $model_info;
         $where = [];
         //data list
-        $where['site_id'] = $this->site['id'];
+//        $where['site_id'] = $this->site['id'];
+        $where['personal_verify'] = 0;
+        $where['company_verify'] = 0;
         $this->view->mapping = $this->mapping;
         $lists = $model->where($where)->order("create_at desc")->paginate();
         $this->view->lists = $lists;
@@ -43,7 +45,7 @@ class AdminVerify extends AdminBase
                 $data = $_GPC;
             } else {
                 //自动获取data分组数据
-                $data = input('post.data/a');//get the base info
+                $data = input('post . data / a');//get the base info
             }
             // todo  process data input
             $model_info->edit_content($data, $where);

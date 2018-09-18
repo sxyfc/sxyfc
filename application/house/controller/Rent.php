@@ -19,7 +19,7 @@ use app\common\model\Users;
 
 class Rent extends HouseBase
 {
-    private $house_esf = "house_rent";
+    private $house_rent = "house_rent";
 
     public function index()
     {
@@ -78,11 +78,11 @@ class Rent extends HouseBase
             $this->assign('ting', $_GET['ting']);
         }
         if (!empty($_GET['size'])) {
-            $where['mhcms_house_rent.size'] = $_GET['size'];
+            $where['mhcms_house_rent.sizes'] = $_GET['size'];
             $this->assign('size', $_GET['size']);
         }
 
-        $where['mhcms_house_esf.status'] = 99;
+        $where['mhcms_house_rent.status'] = 99;
         $model = set_model('house_rent');
         if (($_GET['huxing'] != null) || $_GET['ting'] != null || $_GET['tag'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
             $query = array('huxing'=>$_GET['huxing'],'tag'=>$_GET['tag'],'xiaoqu'=>$_GET['xiaoqu'],'size'=>$_GET['size'],'jiage'=>$_GET['jiage'],'ting'=>$_GET['ting']);
@@ -113,7 +113,7 @@ class Rent extends HouseBase
     public function detail($id)
     {
         global $_W;
-        $content_model_id = $this->house_esf;
+        $content_model_id = $this->house_rent;
         $model = set_model($content_model_id);
         /** @var Models $model_info */
         $model_info = $model->model_info;
@@ -125,9 +125,9 @@ class Rent extends HouseBase
         $this->mapping = array_merge($this->mapping, $detail);
         $this->view->seo = $this->seo($this->mapping);
 
-        Hits::hit($id, $this->house_esf);
+        Hits::hit($id, $this->house_rent);
         if ($this->user_id) {
-            Hits::log($id, $this->house_esf, $this->user_id);
+            Hits::log($id, $this->house_rent, $this->user_id);
         }
         $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 

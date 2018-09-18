@@ -81,7 +81,7 @@ class Esf extends HouseBase
             $this->assign('tag', $_GET['tag']);
         }
         if (!empty($_GET['jiage'])) {
-            $where['mhcms_house_esf.price'] = $_GET['jiage'];
+            $where['mhcms_house_esf.prices'] = $_GET['jiage'];
             $this->assign('jiage', $_GET['jiage']);
         }
         if ($_GET['huxing'] != null) {
@@ -93,7 +93,8 @@ class Esf extends HouseBase
             $this->assign('ting', $_GET['ting']);
         }
         if (!empty($_GET['size'])) {
-            $where['mhcms_house_esf.size'] = $_GET['size'];
+            $where['mhcms_house_esf.sizes'] = $_GET['size'];
+            Log::error($_GET);
             $this->assign('size', $_GET['size']);
         }
 

@@ -11,6 +11,7 @@ use app\member\model\UsersAddress;
 use app\sms\model\SmsReport;
 use think\Cache;
 use think\Db;
+use think\Log;
 
 class Info extends ModuleUserBase
 {
@@ -332,17 +333,16 @@ class Info extends ModuleUserBase
                         $this->zbn_msg("对不起，个人认证必须上传手持身份证招聘", 2);
                     }
                     //设置审核状态为待审核
-                    $base_info['personal_verify'] = 1;
+                    $base_info['personal_verify'] = 0;
                     break;
                 case "company":
                     if (!$base_info['company_passport']) {
                         return $this->zbn_msg("对不起，企业认证必须上传营业执照", 2);
                     }
                     //设置审核状态为待审核
-                    $base_info['company_verify'] = 1;
+                    $base_info['company_verify'] = 0;
                     break;
             }
-
             if ($detail) {
                 $res = $model_info->edit_content($base_info, ['user_id' => $this->user['id']]);
             } else {
