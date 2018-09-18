@@ -44,9 +44,8 @@ class Passport extends Base
             $where = ['nickname' => $data['admin_user_name']];
             $current_admin = Users::get($where);
             if (!$current_admin) {
-                if (!$current_admin = Users::get(['mobile' => $data['admin_user_name']])){
-                    $where_admin = ['user_name' => $data['admin_user_name']];
-                    $current_admin = Users::get($where_admin);
+                if (!$current_admin = Users::get(['user_name' => $data['admin_user_name']])){
+                    $this->zbn_msg("对不起 ，用户不存在！");
                 }
             }
 
@@ -58,11 +57,13 @@ class Passport extends Base
 
                 //获取非超级管理员
                 $admin = set_model("admin")->where(['user_id' => $current_admin['id'], 'site_id' => $_W['site']['id']])->find();
-
+                Log::error($current_admin.'456');
 
                 if ($_W['site']['user_id'] == $current_admin['id']) {
                     $this->sub_super = 1; //子站超级管理员
                 }
+
+
                 if (!$this->sub_super) {//根据管理员列表 获取角色信息
                     $current_admin_role = UserRoles::get(['id' => $admin['role_id']]);
                     if ((int)$current_admin_role['status'] != 1 || $current_admin_role['is_admin'] != 1) {
