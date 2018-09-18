@@ -34,6 +34,7 @@ class Info extends ModuleUserBase
 
             $forward = input('param.forward', '');
             $data = input('param.data/a');
+            $data['code'] = input('param.code');
             $old_pass = $data['old_pass'];
             $pass = $data['pass'];
             $repass = $data['repass'];

@@ -42,16 +42,16 @@
         <div class="layui-form-item">
             <label class="layui-form-label">验证码</label>
             <div class="layui-input-block">
-                <input class="layui-input" type="number" pattern="[0-9]*" placeholder="修改手机号才输入验证码，否则为空"  name="code">
+                <input class="layui-input" type="number" pattern="[0-9]*" placeholder="验证码"  name="code">
             </div>
         </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label">性别</label>
-            <div class="layui-input-block">
-                <input type="radio" name="data[sex]" value="男" {if $user['sex']=='男' } checked {/if} title="男">
-                <input type="radio" name="data[sex]" value="女" {if $user['sex']=='女' } checked {/if}  title="女" >
-                <input type="radio" name="data[sex]" value="保密" {if $user['sex']=='保密' } checked {/if}  title="保密" >
+            <div class="layui-input-block" id = "sex">
+                <input type="radio" name="data[sex]" value="男"  title="男">
+                <input type="radio" name="data[sex]" value="女"  title="女" >
+                <input type="radio" name="data[sex]" value="保密" title="保密" >
             </div>
         </div>
 
@@ -80,7 +80,7 @@
 
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <input  type="hide" value="{$forward}" name="forward" >
+                <input  type="hidden" value="{$forward}" name="forward" >
                 <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
             </div>
@@ -89,9 +89,14 @@
 
 <script>
     //Demo
-    // layui.use('form', function(){
-    //     var form = layui.form();
-    // });
+    layui.use('form', function(){
+        // var form = layui.form();
+    });
+    $("#sex input").each(function() { 
+        if ($(this).val() == "{$user['sex']}") { 
+            $(this).attr("checked", "checked"); 
+        } 
+    }); 
     var mobile_sender = {
         count : 60 ,
 
