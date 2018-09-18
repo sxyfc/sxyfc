@@ -290,6 +290,7 @@ class Info extends ModuleUserBase
                     $base_info['company_verify'] = 0;
                     break;
             }
+            if (!isset($base_info['company_name']))$base_info['company_name']='无';
             if ($detail) {
                 $res = $model_info->edit_content($base_info, ['user_id' => $this->user['id']]);
             } else {

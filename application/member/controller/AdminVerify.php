@@ -19,13 +19,13 @@ class AdminVerify extends AdminBase
         $this->view->field_list = $model_info->get_admin_column_fields();
         //model_info
         $this->view->model_info = $model_info;
-        $where = [];
+//        $where = [];
         //data list
 //        $where['site_id'] = $this->site['id'];
-        $where['personal_verify'] = 0;
-        $where['company_verify'] = 0;
+        $where2['personal_verify'] = 1;
+        $where1['company_verify'] = 1;
         $this->view->mapping = $this->mapping;
-        $lists = $model->where($where)->order("create_at desc")->paginate();
+        $lists = $model->whereOr($where1)->whereOr($where2)->order("create_at desc")->paginate();
         $this->view->lists = $lists;
         return $this->view->fetch();
     }

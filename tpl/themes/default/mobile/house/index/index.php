@@ -516,6 +516,8 @@ $is_ipad = (strpos($agent, 'ipad')) ? true : false;
         });
     });
 
+    alert("平台均为真实房源，虚假房源退还10倍房宝");
+
 </script>
 
 
