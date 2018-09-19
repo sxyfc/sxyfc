@@ -157,8 +157,10 @@ class Admin extends AdminBase
 
 
             // 绑定父级
-            if (!$update = Db::name('users')->where(['id' => $base_info['user_id']])->update(['parent_id' => $this->user['id']])) {
-                return $this->zbn_msg('网络出错，请稍后再试！!', 2);
+            if ($user_info['parent_id'] != $this->user['id']) {
+                if (!$update = Db::name('users')->where(['id' => $base_info['user_id']])->update(['parent_id' => $this->user['id']])) {
+                    return $this->zbn_msg('网络出错，请稍后再试！！', 2);
+                }
             }
 
             $res = $model_info->add_content($base_info);
