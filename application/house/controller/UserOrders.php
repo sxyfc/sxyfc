@@ -105,6 +105,7 @@ class UserOrders extends HouseUserBase
             $base_info['rent_id'] = $id;
             $source_type = 2;
             $url = url('house/rent/detail', ['id' => $id]);
+            $fb_value = isset($_W['site']['config']['trade']['balance_pay_fb_rent']) ? $_W['site']['config']['trade']['balance_pay_fb_rent'] : config("pay.fangbao_ratio");
         } else if ($type == 2) {//二手房
             $model_name = "house_esf_order";
             $model = set_model($model_name);
@@ -112,6 +113,7 @@ class UserOrders extends HouseUserBase
             $base_info['esf_id'] = $id;
             $source_type = 3;
             $url = url('house/esf/detail', ['id' => $id]);
+            $fb_value = isset($_W['site']['config']['trade']['balance_pay_fb_esf']) ? $_W['site']['config']['trade']['balance_pay_fb_esf'] : config("pay.fangbao_ratio");
         }
 
         //检查权限
@@ -123,7 +125,6 @@ class UserOrders extends HouseUserBase
 
         //检查房宝余额
         $balance = $this->user['balance'];
-        $fb_value = isset($_W['site']['config']['trade']['balance_pay_fb']) ? $_W['site']['config']['trade']['balance_pay_fb'] : config("pay.fangbao_ratio");
 
         $left_value = $balance - $fb_value;
         if ($balance <= 0.00 || $left_value < 0.00) {
