@@ -407,14 +407,18 @@ class User extends AdminBase
             }
         }
 
-        if ($where || $user_name_query) {
-            if ($user_name_query) {
-                $userids = set_model('users')->where($where)->whereExp('', $user_name_query)->field('id')->select()->column('id');
-            } else {
-                $userids = set_model('users')->where($where)->field('id')->select()->column('id');
-            }
+        if (empty($user_id)) {
+            if ($where || $user_name_query) {
+                if ($user_name_query) {
+                    $userids = set_model('users')->where($where)->whereExp('', $user_name_query)->field('id')->select()->column('id');
+                } else {
+                    $userids = set_model('users')->where($where)->field('id')->select()->column('id');
+                }
 
-            $where_hit['a.user_id'] = ['IN', $userids];
+                $where_hit['a.user_id'] = ['IN', $userids];
+            }
+        } else {
+            $where_hit['a.user_id'] = $user_id;
         }
 
         $sub_query = set_model('hits_log')->alias('a')->where($where_hit)->group('user_id,model_id,item_id')->field('user_id,model_id,item_id,COUNT(1) cnt')->buildSql();
