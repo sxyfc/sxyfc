@@ -149,9 +149,12 @@ class Admin extends AdminBase
             }
 
             // 修改用户角色
-            if (!$result_update = Db::name('users')->where(['id' => $base_info['user_id']])->update(['user_role_id' => $base_info['role_id']])) {
-                return $this->zbn_msg('网络出错，请稍后再试！', 2);
+            if ($user_info['user_role_id'] != $base_info['role_id']){
+                if (!$result_update = Db::name('users')->where(['id' => $base_info['user_id']])->update(['user_role_id' => $base_info['role_id']])) {
+                    return $this->zbn_msg('网络出错，请稍后再试！', 2);
+                }
             }
+
 
             // 绑定父级
             if (!$update = Db::name('users')->where(['id' => $base_info['user_id']])->update(['parent_id' => $this->user['id']])) {

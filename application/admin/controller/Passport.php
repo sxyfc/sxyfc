@@ -50,19 +50,16 @@ class Passport extends Base
             }
 
             if ($current_admin['id'] != 1) {
-
                 if ($current_admin['status'] != 99) {
                     $this->zbn_msg("对不起 ， 用户不存在或者您的账户已被禁用！" . $current_admin['status']);
                 }
 
                 //获取非超级管理员
                 $admin = set_model("admin")->where(['user_id' => $current_admin['id'], 'site_id' => $_W['site']['id']])->find();
-                Log::error($current_admin.'456');
 
                 if ($_W['site']['user_id'] == $current_admin['id']) {
                     $this->sub_super = 1; //子站超级管理员
                 }
-
 
                 if (!$this->sub_super) {//根据管理员列表 获取角色信息
                     $current_admin_role = UserRoles::get(['id' => $admin['role_id']]);
