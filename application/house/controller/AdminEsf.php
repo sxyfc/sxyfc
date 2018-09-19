@@ -60,6 +60,7 @@ class AdminEsf extends AdminBase
         }
 
         if (!$this->super_power){
+            $ids = array();
             $users = db('users')->where(['id' => $this->user['id']])->find();
             if ($users['user_role_id'] == 22) {
                 // 区域管理
@@ -76,6 +77,8 @@ class AdminEsf extends AdminBase
             } elseif ($users['user_role_id'] == 26) {
                 // 省级代理
                 $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }else{
                 array_push($ids, $this->user['id']);
             }
 
