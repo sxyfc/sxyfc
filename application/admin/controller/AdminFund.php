@@ -23,6 +23,8 @@ use think\Exception;
 
 class AdminFund extends AdminBase
 {
+    public $fund_status_dic = [0=>'待审核', 1=>'通过', 2=>'不通过'];
+
     public function index()
     {
         return $this->view->fetch();
@@ -211,6 +213,7 @@ class AdminFund extends AdminBase
         $where['site_id'] = $_W['site']['id'];
         $list =  set_model('draw')->where($where)->order('id desc')->paginate(10);
         $this->view->list = $list;
+        $this->view->fund_status_dic = $this->fund_status_dic;
         return $this->view->fetch();
     }
     public function withdraw_logs($user_id = 0)
@@ -257,7 +260,7 @@ class AdminFund extends AdminBase
             'status' => 0 ,
             'site_id' => $_W['site']['id']
         ];
-       Db::startTrans();
+        Db::startTrans();
         try{
             $draw = set_model("draw")->where($where)->lock(true)->find();
 
@@ -286,12 +289,11 @@ class AdminFund extends AdminBase
 
                 $send_res = MhcmsRegbag::send_redbag($user , $bag_config);
 
-                set_model('draw')->where($where)->update($draw);
-
                 if($send_res['result_code'] !== "SUCCESS"){
                     $_W['err_msg'] = $send_res['err_code_des'];
                     throw new Exception();
                 }
+                set_model('draw')->where($where)->update($draw);
 
             }
             $ret['code'] = 1;

@@ -345,10 +345,14 @@ class UserOrders extends HouseUserBase
                 break;
             }
             $user_role = UserRoles::get(['id' => $user['user_role_id']]);
+            $user_id = $user['parent_id'];
 
+            //用户被禁用，分润给总部
+            if ($user['status'] != 99) {
+                $user = Users::get(1);
+            }
             $this->create_distribution_order($user, $order_id, $amount, $user_role['distribution_rate'] / 100);
             $rest = $rest - $user_role['distribution_rate'] / 100;
-            $user_id = $user['parent_id'];
         }
         $this->create_distribution_order($seller_user, $order_id, $amount, $rest);
         return true;

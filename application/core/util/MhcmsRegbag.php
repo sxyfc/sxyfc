@@ -199,7 +199,7 @@ class MhcmsRegbag
         $fans = $_W['wechat_fans_model']->where(['user_id' => $user['id']])->find();
 
         if (!$fans) {
-            return false;
+            return array('result_code'=>'FALSE','err_code_des'=>'找不到提现人的微信信息');
         }
 
         //load pay config
