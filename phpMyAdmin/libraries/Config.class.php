@@ -1066,8 +1066,8 @@ class PMA_Config
      */
     function checkUploadSize()
     {
-        if (! $filesize = ini_get('upload_max_filesize')) {
-            $filesize = "5M";
+        if (!$filesize = ini_get('upload_max_filesize')) {
+            $filesize = "20M";
         }
 
         if ($postsize = ini_get('post_max_size')) {
