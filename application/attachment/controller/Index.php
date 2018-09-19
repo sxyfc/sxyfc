@@ -173,8 +173,8 @@ class Index extends Base
             $data_ret['user_id'] = $this->user_id;
             $data_ret['filename'] = $file_name;
             $data_ret['url'] = str_replace(DIRECTORY_SEPARATOR , '/' ,  $target_dir. $file_name);
-            $data_ret['filemime'] = $uploaded->getMime();
-            $data_ret['filesize'] = $uploaded->getSize();
+//            $data_ret['filemime'] = $uploaded->getMime();
+//            $data_ret['filesize'] = $uploaded->getSize();
             $data_ret['created'] = date('Y-m-d H:i:s', time());
             $data_ret['alt'] = '';
             $data_ret['site_id'] = $this->site_id;
