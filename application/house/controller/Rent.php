@@ -123,7 +123,8 @@ class Rent extends HouseBase
         $this->view->detail = $detail;
         $this->view->page_title = $detail['title'];
         $this->mapping = array_merge($this->mapping, $detail);
-        $this->view->seo = $this->seo($this->mapping);
+        $this->view->seo = array_merge($this->seo($this->mapping), array('ext'=>'--随心用房产网', 'share_icon'=>$this->mapping['thumbs'][0]->url));
+        $this->view->share_img = $this->mapping['thumbs'][0]->url;
 
         Hits::hit($id, $this->house_rent);
         if ($this->user_id) {

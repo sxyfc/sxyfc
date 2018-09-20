@@ -141,8 +141,9 @@ class Esf extends HouseBase
         if ($this->user_id) {
             Hits::log($id, $this->house_esf, $this->user_id);
         }
-//        $this->mapping = array_merge($this->mapping, $detail);
-//        $this->view->seo = $this->seo($this->mapping);
+        $this->mapping = array_merge($this->mapping, $detail);
+        $this->view->seo = array_merge($this->seo($this->mapping), array('ext'=>'--随心用房产网', 'share_icon'=>$this->mapping['thumbs'][0]->url));
+        $this->view->share_img = $this->mapping['thumbs'][0]->url;
 //        $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 
         //设置可见权限：支付查看信息
