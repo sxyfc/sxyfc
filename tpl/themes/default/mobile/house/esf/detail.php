@@ -55,6 +55,18 @@
 
                     }
                 });
+
+                wx.onMenuShareAppMessage({
+                      title: '{$seo.seo_title}{$seo.ext}',
+                      desc: '{$seo.seo_desc}',
+                      link: '{$seo.share_url}',
+                      imgUrl: '{$seo.share_icon}',
+                      success: function () {
+
+                      }
+                });
+
+
             });
         });
 
