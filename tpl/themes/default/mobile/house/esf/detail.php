@@ -52,7 +52,7 @@
                     link: '{$seo.share_url}',
                     imgUrl: '{$seo.share_icon}',
                     success: function(){
-                        alert('分享成功');
+
                     }
                 });
             });
