@@ -52,7 +52,7 @@ class Rent extends HouseBase
         // 筛选条件
         $where = array();
         if ($_GET['area_province'] != null) {
-            $area=1;
+            $area = 1;
             if ($_GET['area_province'] != null) $area = $_GET['area_province'];
             if ($_GET['area_city'] != null) $area = $_GET['area_city'];
             if ($_GET['area_area'] != null) $area = $_GET['area_area'];
@@ -87,14 +87,14 @@ class Rent extends HouseBase
         $where['mhcms_house_rent.status'] = 99;
         $model = set_model('house_rent');
         if (($_GET['huxing'] != null) || $_GET['ting'] != null || $_GET['tag'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
-            $query = array('huxing'=>$_GET['huxing'],'tag'=>$_GET['tag'],'xiaoqu'=>$_GET['xiaoqu'],'size'=>$_GET['size'],'jiage'=>$_GET['jiage'],'ting'=>$_GET['ting']);
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate(config('list_rows'),false, ['query' => $query]);
+            $query = array('huxing' => $_GET['huxing'], 'tag' => $_GET['tag'], 'xiaoqu' => $_GET['xiaoqu'], 'size' => $_GET['size'], 'jiage' => $_GET['jiage'], 'ting' => $_GET['ting']);
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         } else {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
         }
 
         //设置筛选数据
-        $area_data = set_model('area')->order(['parent_id'=>'asc'])->field('id,area_name,parent_id')->select()->toArray();
+        $area_data = set_model('area')->order(['parent_id' => 'asc'])->field('id,area_name,parent_id')->select()->toArray();
         $xiaoqu_data = set_model('house_xiaoqu')->field('id,xiaoqu_name')->select()->toArray();
         $area_province = array();
         foreach ($area_data as $area_item) {
@@ -125,7 +125,7 @@ class Rent extends HouseBase
         $this->view->detail = $detail;
         $this->view->page_title = $detail['title'];
         $this->mapping = array_merge($this->mapping, $detail);
-        $this->view->seo = array_merge($this->seo($this->mapping), array('ext'=>'--随心用房产网', 'share_icon'=>$this->mapping['thumbs'][0]->url));
+        $this->view->seo = array_merge($this->seo($this->mapping), array('ext' => '--随心用房产网', 'share_icon' => $this->mapping['thumbs'][0]->url));
         $this->view->share_img = $this->mapping['thumbs'][0]->url;
 
         $site_wechat = SitesWechat::get(['id' => 1]);
@@ -135,6 +135,12 @@ class Rent extends HouseBase
         Hits::hit($id, $this->house_rent);
         if ($this->user_id) {
             Hits::log($id, $this->house_rent, $this->user_id);
+        } else {
+            if (is_weixin()) {
+                $current_url = $_W['current_url'];
+                $passport = new Passport();
+                $passport->wx_register(0, false, $current_url);
+            }
         }
         $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 
@@ -163,9 +169,9 @@ class Rent extends HouseBase
             $mobile = '';
         }
 
-        if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $agent['user_id'], 'user_menu_id' => '7028'])->find()){
+        if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $agent['user_id'], 'user_menu_id' => '7028'])->find()) {
             $power_result = true;
-        }else{
+        } else {
             $power_result = false;
         }
 

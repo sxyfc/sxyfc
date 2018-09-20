@@ -17,6 +17,7 @@ use app\common\model\Users;
 use app\common\util\wechat\wechat;
 use app\core\util\ContentTag;
 use app\common\model\SitesWechat;
+use app\sso\controller\Passport;
 use think\Db;
 use think\Log;
 
@@ -141,6 +142,12 @@ class Esf extends HouseBase
         Hits::hit($id, $this->house_esf);
         if ($this->user_id) {
             Hits::log($id, $this->house_esf, $this->user_id);
+        } else {
+            if (is_weixin()) {
+                $current_url = $_W['current_url'];
+                $passport = new Passport();
+                $passport->wx_register(0, false, $current_url);
+            }
         }
         $this->mapping = array_merge($this->mapping, $detail);
         $this->view->seo = array_merge($this->seo($this->mapping), array('ext' => '--随心用房产网', 'share_icon' => $this->mapping['thumbs'][0]->url));
