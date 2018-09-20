@@ -14,7 +14,9 @@ use app\common\controller\HomeBase;
 use app\common\model\Hits;
 use app\common\model\Models;
 use app\common\model\Users;
+use app\common\util\wechat\wechat;
 use app\core\util\ContentTag;
+use app\common\model\SitesWechat;
 use think\Db;
 use think\Log;
 
@@ -94,21 +96,20 @@ class Esf extends HouseBase
         }
         if (!empty($_GET['size'])) {
             $where['mhcms_house_esf.sizes'] = $_GET['size'];
-            Log::error($_GET);
             $this->assign('size', $_GET['size']);
         }
 
         $where['mhcms_house_esf.status'] = 99;
         $model = set_model('house_esf');
         if (($_GET['huxing'] != null) || $_GET['tag'] || $_GET['zhuangxiu'] || $_GET['yongtu'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage'] || ($_GET['ting'] != null)) {
-            $query = array('huxing'=>$_GET['huxing'],'tag'=>$_GET['tag'],'zhuangxiu'=>$_GET['zhuangxiu'],'yongtu'=>$_GET['yongtu'],'xiaoqu'=>$_GET['xiaoqu'],'size'=>$_GET['size'],'jiage'=>$_GET['jiage'],'ting'=>$_GET['ting']);
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'),false, ['query' => $query]);
+            $query = array('huxing' => $_GET['huxing'], 'tag' => $_GET['tag'], 'zhuangxiu' => $_GET['zhuangxiu'], 'yongtu' => $_GET['yongtu'], 'xiaoqu' => $_GET['xiaoqu'], 'size' => $_GET['size'], 'jiage' => $_GET['jiage'], 'ting' => $_GET['ting']);
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         } else {
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
         }
 
         //设置筛选数据
-        $area_data = set_model('area')->order(['parent_id'=>'asc'])->field('id,area_name,parent_id')->select()->toArray();
+        $area_data = set_model('area')->order(['parent_id' => 'asc'])->field('id,area_name,parent_id')->select()->toArray();
         $xiaoqu_data = set_model('house_xiaoqu')->field('id,xiaoqu_name')->select()->toArray();
         $area_province = array();
         foreach ($area_data as $area_item) {
@@ -142,10 +143,12 @@ class Esf extends HouseBase
             Hits::log($id, $this->house_esf, $this->user_id);
         }
         $this->mapping = array_merge($this->mapping, $detail);
-        $this->view->seo = array_merge($this->seo($this->mapping), array('ext'=>'--随心用房产网', 'share_icon'=>$this->mapping['thumbs'][0]->url));
+        $this->view->seo = array_merge($this->seo($this->mapping), array('ext' => '--随心用房产网', 'share_icon' => $this->mapping['thumbs'][0]->url));
         $this->view->share_img = $this->mapping['thumbs'][0]->url;
-//        $this->view->user_verify = set_model("users_verify")->where(['user_id' => $detail['user_id']])->find();
 
+        $site_wechat = SitesWechat::get(['id' => 1]);
+        $wechat = new wechat($site_wechat);
+        $this->view->signPackage = $wechat->getSignPackage();
         //设置可见权限：支付查看信息
         $show_power = true;
         //设置支付查看交易结果
@@ -167,9 +170,9 @@ class Esf extends HouseBase
             $mobile = '';
         }
 
-        if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $agent['user_id'], 'user_menu_id' => '7028'])->find()){
+        if ($res_allot = Db::table('mhcms_user_menu_allot')->where(['user_id' => $agent['user_id'], 'user_menu_id' => '7028'])->find()) {
             $power_result = true;
-        }else{
+        } else {
             $power_result = false;
         }
 

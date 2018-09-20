@@ -13,7 +13,9 @@ namespace app\house\controller;
 use app\common\controller\HomeBase;
 use app\common\model\Hits;
 use app\common\model\Models;
+use app\common\util\wechat\wechat;
 use app\core\util\ContentTag;
+use app\common\model\SitesWechat;
 use think\Db;
 use app\common\model\Users;
 
@@ -125,6 +127,10 @@ class Rent extends HouseBase
         $this->mapping = array_merge($this->mapping, $detail);
         $this->view->seo = array_merge($this->seo($this->mapping), array('ext'=>'--随心用房产网', 'share_icon'=>$this->mapping['thumbs'][0]->url));
         $this->view->share_img = $this->mapping['thumbs'][0]->url;
+
+        $site_wechat = SitesWechat::get(['id' => 1]);
+        $wechat = new wechat($site_wechat);
+        $this->view->signPackage = $wechat->getSignPackage();
 
         Hits::hit($id, $this->house_rent);
         if ($this->user_id) {

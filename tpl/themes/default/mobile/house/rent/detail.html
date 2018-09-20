@@ -10,6 +10,70 @@
 {block name="layui_js"}{/block}
 {block name="layui_css"}{/block}
 {block name="main"}
+<script>
+        wx.config({
+            debug: false,
+            appId: '<?php echo $signPackage["appId"]; ?>',
+            timestamp: <?php echo $signPackage["timestamp"]; ?>,
+            nonceStr: '<?php echo $signPackage["nonceStr"]; ?>',
+            signature: '<?php echo $signPackage["signature"]; ?>',
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'onMenuShareWeibo',
+                'hideMenuItems',
+                'showMenuItems',
+                'hideAllNonBaseMenuItem',
+                'showAllNonBaseMenuItem',
+                'translateVoice',
+                'startRecord',
+                'stopRecord',
+                'onRecordEnd',
+                'playVoice',
+                'pauseVoice',
+                'stopVoice',
+                'uploadVoice',
+                'downloadVoice',
+                'chooseImage',
+                'previewImage',
+                'uploadImage',
+                'downloadImage',
+                'getNetworkType',
+                'openLocation',
+                'getLocation',
+                'hideOptionMenu',
+                'showOptionMenu',
+                'closeWindow',
+                'scanQRCode',
+                'chooseWXPay',
+                'openProductSpecificView',
+                'addCard',
+                'chooseCard',
+                'openCard',
+                'openAddress'
+            ]
+        });
+        $(function(){
+            wx.ready(function () {
+                wx.onMenuShareTimeline({
+                    title: '{$seo.seo_title}{$seo.ext}',
+                    desc: '{$seo.seo_desc}',
+                    link: '{$seo.share_url}',
+                    imgUrl: '{$seo.share_icon}',
+                    success: function(){
+                        alert('分享成功');
+                    }
+                });
+            });
+        });
+
+
+</script>
+
+
 <div style="height: 260px"
      class="swiper-container swiper-container-horizontal new-better-swiper-container"
      id="detail_ad">

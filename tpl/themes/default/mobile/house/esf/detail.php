@@ -1,3 +1,67 @@
+<script>
+        wx.config({
+            debug: false,
+            appId: '<?php echo $signPackage["appId"]; ?>',
+            timestamp: <?php echo $signPackage["timestamp"]; ?>,
+            nonceStr: '<?php echo $signPackage["nonceStr"]; ?>',
+            signature: '<?php echo $signPackage["signature"]; ?>',
+            jsApiList: [
+                // 所有要调用的 API 都要加到这个列表中
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage',
+                'onMenuShareQQ',
+                'onMenuShareWeibo',
+                'hideMenuItems',
+                'showMenuItems',
+                'hideAllNonBaseMenuItem',
+                'showAllNonBaseMenuItem',
+                'translateVoice',
+                'startRecord',
+                'stopRecord',
+                'onRecordEnd',
+                'playVoice',
+                'pauseVoice',
+                'stopVoice',
+                'uploadVoice',
+                'downloadVoice',
+                'chooseImage',
+                'previewImage',
+                'uploadImage',
+                'downloadImage',
+                'getNetworkType',
+                'openLocation',
+                'getLocation',
+                'hideOptionMenu',
+                'showOptionMenu',
+                'closeWindow',
+                'scanQRCode',
+                'chooseWXPay',
+                'openProductSpecificView',
+                'addCard',
+                'chooseCard',
+                'openCard',
+                'openAddress'
+            ]
+        });
+        $(function(){
+            wx.ready(function () {
+                wx.onMenuShareTimeline({
+                    title: '{$seo.seo_title}{$seo.ext}',
+                    desc: '{$seo.seo_desc}',
+                    link: '{$seo.share_url}',
+                    imgUrl: '{$seo.share_icon}',
+                    success: function(){
+                        alert('分享成功');
+                    }
+                });
+            });
+        });
+
+
+</script>
+
+
 <div id="app_mhcms">
     <?php
     $is_a = \app\house\controller\Check::check_admin();
@@ -31,7 +95,7 @@
 
                 <div class="column">
                     <div class="text">均价</div>
-                    <div class="em"><?php echo round($detail['price']/$detail['size'],4)*10000;?>元</div>
+                    <div class="em"><?php echo round($detail['price'] / $detail['size'], 4) * 10000; ?>元</div>
                 </div>
 
                 <div class="column">
@@ -52,7 +116,9 @@
                 <div class="column is-half">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">户型 :</div>
-                        <div class="column">{$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫</div>
+                        <div class="column">
+                            {$detail['old_data']['shi']}室{$detail['old_data']['ting']}厅{$detail['old_data']['chu']}厨{$detail['old_data']['wei']}卫
+                        </div>
                     </div>
                 </div>
 
@@ -236,6 +302,8 @@
                 });
             });
         });
+
+
     </script>
     <div class="mhcms-navbar weui-navbar" style="">
         <a class="weui-navbar__item is-narrow" href="/house">
@@ -254,7 +322,8 @@
         </a>
 
         {else}
-        <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/2" onclick="if(confirm('确认支付房宝获取？')==false)return false;">
+        <a class="weui-navbar__item" href="/house/user_orders/pay_for_see/id/{$detail['id']}/type/2"
+           onclick="if(confirm('确认支付房宝获取？')==false)return false;">
             获取房东电话
         </a>
         </form>

@@ -26,38 +26,33 @@ define("mhcms", ["jquery" , 'wx' ], function ($ , wx) {
             }, 'json');
         },
 
-        init_wechat_share: function ($seo_data , $url ) {
-
-
-
-
-            this.get_sign($url , function (jssdk_obj) {
-                wx.config(jssdk_obj);
-
-                wx.ready(function () {
-                    var share = {
-                        'title': $seo_data.seo_title+$seo_data.ext,
-                        'link': $seo_data.share_url,
-                        'imgUrl': share_icon,
-                        'desc': $seo_data.seo_desc,
-                        'success': function () {
-
-                        }
-                    }
-                    wx.onMenuShareAppMessage(share);
-                    wx.onMenuShareQQ(share);
-                    wx.onMenuShareWeibo(share);
-                    wx.onMenuShareTimeline({
-                        'title': $seo_data.seo_title++$seo_data.ext,
-                        'link': $url,
-                        'imgUrl': share_icon,
-                        'desc': $seo_data.seo_desc,
-                        'success': function () {
-                        }
-                    })
-                });
-            })
-        },
+//        init_wechat_share: function ($seo_data , $url ) {
+//            this.get_sign($url , function (jssdk_obj) {
+//                wx.config(jssdk_obj);
+//                wx.ready(function () {
+//                    var share = {
+//                        'title': $seo_data.seo_title+$seo_data.ext,
+//                        'link': $seo_data.share_url,
+//                        'imgUrl': $seo_data.share_icon,
+//                        'desc': $seo_data.seo_desc,
+//                        'success': function () {
+//
+//                        }
+//                    }
+//                    wx.onMenuShareAppMessage(share);
+//                    wx.onMenuShareQQ(share);
+//                    wx.onMenuShareWeibo(share);
+//                    wx.onMenuShareTimeline({
+//                        'title': $seo_data.seo_title+$seo_data.ext,
+//                        'link': $url,
+//                        'imgUrl': $seo_data.share_icon,
+//                        'desc': $seo_data.seo_desc,
+//                        'success': function () {
+//                        }
+//                    })
+//                });
+//            })
+//        },
 
         list_loader : function (options , $api) {
             var that = this;
