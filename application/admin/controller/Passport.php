@@ -61,12 +61,12 @@ class Passport extends Base
                     $this->sub_super = 1; //子站超级管理员
                 }
 
-                if (!$this->sub_super) {//根据管理员列表 获取角色信息
-                    $current_admin_role = UserRoles::get(['id' => $admin['role_id']]);
-                    if ((int)$current_admin_role['status'] != 1 || $current_admin_role['is_admin'] != 1) {
-                        $this->zbn_msg($current_admin_role['is_admin'] . $admin['role_id'] . "您所在的用户组被禁，请联系管理员", 2);
-                    }
-                }
+//                if (!$this->sub_super) {//根据管理员列表 获取角色信息
+//                    $current_admin_role = UserRoles::get(['id' => $admin['role_id']]);
+//                    if ((int)$current_admin_role['status'] != 1 || $current_admin_role['is_admin'] != 1) {
+//                        $this->zbn_msg($current_admin_role['is_admin'] . $admin['role_id'] . "您所在的用户组被禁，请联系管理员", 2);
+//                    }
+//                }
 
             }
             if ($current_admin && $current_admin['pass'] == crypt_pass($data['pass'], $current_admin['user_crypt'])) {
