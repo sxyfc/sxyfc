@@ -482,10 +482,12 @@ class Passport extends ModuleBase
     /**
      * 前台微信静默注册逻辑
      * @param int $uuid
+     * @param bool $isGuide
+     * @param string $jump_url
      * @throws \think\exception\DbException
      */
 
-    public function wx_register($uuid = 0)
+    public function wx_register($uuid = 0, $isGuide = true, $jump_url = "")
     {
         global $_W, $_GPC;
 
@@ -611,8 +613,13 @@ class Passport extends ModuleBase
                     // send data to
                     MhcmsDistribution::make_down_line($user['id'], $from_uid);
                 }
-                $url = url('member/info/set_info').'?forward='.urlencode('/house/index');
-                $this->message("请补充资料信息!", 1, $url);
+                if ($isGuide) {
+                    $url = url('member/info/set_info') . '?forward=' . urlencode('/house/index');
+                    $this->message("请补充资料信息!", 1, $url);
+                } else {
+                    $url = $jump_url;
+                    $this->error("正在获取数据", 1, $url);
+                }
             } else {
                 return;
             }
@@ -785,7 +792,7 @@ class Passport extends ModuleBase
 
 
         if (!$user['is_mobile_verify']) {
-            $url = url('member/info/set_info').'?forward='.urlencode('/house/index');
+            $url = url('member/info/set_info') . '?forward=' . urlencode('/house/index');
             $this->message("请补充资料信息!", 1, $url);
         }
         if ($uuid) {
