@@ -330,7 +330,7 @@ class Info extends ModuleUserBase
             switch ($type) {
                 case "personal":
                     if (!$base_info['personal_passport_pic']) {
-                        $this->zbn_msg("对不起，个人认证必须上传手持身份证招聘", 2);
+                        $this->zbn_msg("对不起，个人认证必须上传手持身份证照片", 2);
                     }
                     //设置审核状态为待审核
                     $base_info['personal_verify'] = 0;
