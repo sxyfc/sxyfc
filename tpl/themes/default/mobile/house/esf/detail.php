@@ -182,7 +182,7 @@
                 <div class="column is-half">
                     <div class="columns option is-mobile is-marginless">
                         <div class="column is-narrow">浏览量 :</div>
-                        <div class="column">{$detail['hits']['base'] + $detail['hits']['views']}
+                        <div class="column">{$detail['views']}
                         </div>
                     </div>
                 </div>
