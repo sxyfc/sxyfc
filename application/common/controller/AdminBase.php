@@ -256,7 +256,6 @@ class AdminBase extends Base
         $where_child_province['parent_id'] = array('IN', $ids);
         $province_child_arr = db('users')->where($where_child_province)->field('id')->select()->toArray();
         $province_child_ids = array_column($province_child_arr, 'id');
-        Log::error($province_child_ids);
 
         $where_child_city['parent_id'] = array('IN', $province_child_ids);
         $city_child_arr = db('users')->where($where_child_city)->field('id')->select()->toArray();
@@ -268,7 +267,6 @@ class AdminBase extends Base
 
         $ids = array_merge($ids, $city_child_ids, $county_child_ids);
         $ids = array_merge($ids, $ids, $province_child_ids);
-        Log::error($ids);
         return $ids;
     }
 
