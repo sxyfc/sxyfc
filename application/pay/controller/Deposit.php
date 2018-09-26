@@ -25,6 +25,14 @@ class Deposit extends ModuleUserBase
             $url = url('member/info/set_mobile').'?forward='.urlencode('/pay/deposit/do_deposit');
             $this->message("请先绑定手机号!", 1, $url);
         }
+
+        //检查权限
+        $user_role_id = $this->user['user_role_id'];
+        if ($user_role_id == 4 || $user_role_id == 2) {
+            $this->error('权限不足，请先申请为经纪人！', "/member/info/verify");
+            return;
+        }
+
         if ($this->isPost(true)) {
             $data = $_GPC['data'];
 
