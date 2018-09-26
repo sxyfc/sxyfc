@@ -118,9 +118,14 @@ class UserOrders extends HouseUserBase
 
         //检查权限
         $user_role_id = $this->user['user_role_id'];
+        if ($user_role_id == 4 || $user_role_id == 2) {
+            $this->error('权限不足，请先申请为经纪人！', "/member/info/verify");
+            return;
+        }
         $user_role_ids = array(1, 3, 22, 23, 24, 25, 26, 27);
         if (!in_array($user_role_id, $user_role_ids)) {
             $this->error('权限不足，请先申请为经纪人！', "/member/info/verify");
+            return;
         }
 
         //检查房宝余额
@@ -129,6 +134,7 @@ class UserOrders extends HouseUserBase
         $left_value = $balance - $fb_value;
         if ($balance <= 0.00 || $left_value < 0.00) {
             $this->error("余额不足，请先去充值！", "pay/deposit/do_deposit");
+            return;
         }
 
         $info = $models->where(['id' => $id])->field('user_id')->find();
