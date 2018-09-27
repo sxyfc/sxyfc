@@ -557,10 +557,14 @@ class User extends AdminBase
         }
 
         $where['parent_id'] = $to_user_info['id'];
-
-        if (!$update_result = db('users')->where($where)->update(['parent_id' => $from_user_info['id']])) {
-            return $this->zbn_msg('网络出错，请稍后再试！', 2, 'true', 3000, "''", "'reload_page()'");
+        db('users')->where(['id' => $from_user_info['id']])->update(['user_role_id' => $to_user_info['user_role_id']]);
+        db('users')->where(['id' => $from_user_info['id']])->update(['parent_id' => $to_user_info['parent_id']]);
+        if ($select_result = db('users')->where($where)->find()) {
+            if (!$update_result = db('users')->where($where)->update(['parent_id' => $from_user_info['id']])) {
+                return $this->zbn_msg('网络出错，请稍后再试！', 2, 'true', 3000, "''", "'reload_page()'");
+            }
         }
+
 
         return $this->zbn_msg('替换成功！', 1, 'true', 3000, "''", "'reload_page()'");
     }

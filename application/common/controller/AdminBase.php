@@ -240,6 +240,7 @@ class AdminBase extends Base
         $county_child_ids = array_column($county_child_arr, 'id');
 
         $ids = array_merge($ids, $city_child_ids, $county_child_ids);
+        $ids = array_unique($ids);
         return $ids;
     }
 
@@ -265,8 +266,8 @@ class AdminBase extends Base
         $county_child_arr = db('users')->where($where_child_county)->field('id')->select()->toArray();
         $county_child_ids = array_column($county_child_arr, 'id');
 
-        $ids = array_merge($ids, $city_child_ids, $county_child_ids);
-        $ids = array_merge($ids, $ids, $province_child_ids);
+        $ids = array_merge($ids, $city_child_ids, $county_child_ids, $province_child_ids);
+        $ids = array_unique($ids);
         return $ids;
     }
 
