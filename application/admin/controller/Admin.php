@@ -260,6 +260,18 @@ class Admin extends AdminBase
                 }
             }
 
+            // 查询用户信息
+            if (!$user_info = Db::name('users')->where(['id' => $data['user_id']])->find()) {
+                return $this->zbn_msg('用户不存在', 2);
+            }
+
+            // 修改用户角色
+            if ($user_info['user_role_id'] != $data['role_id']){
+                if (!$result_update = Db::name('users')->where(['id' => $data['user_id']])->update(['user_role_id' => $data['role_id']])) {
+                    return $this->zbn_msg('网络出错，请稍后再试！', 2);
+                }
+            }
+
             // todo  process data input
             Db::name($model_info['table_name'])->where($where)->update($data);
             $this->zbn_msg("修改成功",1, 'true', 1000, "''", "'reload_page()'");
