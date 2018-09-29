@@ -344,6 +344,7 @@ class UserOrders extends HouseUserBase
     public function create_distribution_orders($seller_user_id, $order_id, $amount)
     {
         $seller_user = Users::get($seller_user_id);
+        $last_user_id = $seller_user['id'];
         $user_id = $seller_user['parent_id'];
         $rest = 1;
         while (!empty($user_id)) {
@@ -353,6 +354,7 @@ class UserOrders extends HouseUserBase
             //     break;
             // }
             $user_role = UserRoles::get(['id' => $user['user_role_id']]);
+            $last_user_id = $user['id'];
             $user_id = $user['parent_id'];
 
             //用户被禁用，分润给总部
@@ -366,6 +368,15 @@ class UserOrders extends HouseUserBase
                 $rest = $rest - $user_role['distribution_rate'] / 100;
             }
         }
+        if ($last_user_id != 1) {
+            $user = Users::get(1);
+            $user_role = UserRoles::get(['id' => $user['user_role_id']]);
+            if ($rest - $user_role['distribution_rate'] / 100  >= 0) {
+                $this->create_distribution_order($user, $order_id, $amount, $user_role['distribution_rate'] / 100);
+                $rest = $rest - $user_role['distribution_rate'] / 100;
+            }
+        }
+
         $this->create_distribution_order($seller_user, $order_id, $amount, $rest);
         return true;
     }
@@ -380,6 +391,9 @@ class UserOrders extends HouseUserBase
         $distribution_order_insert['total_fee'] = $amount * (float)$_W['site']['config']['trade']['balance_point_ratio'] * $rest;
         $distribution_order_insert['create_time'] = date('Y-m-d H:i:s', time());
         $distribution_order_insert['note'] = '';
+        $distribution_order_insert['role_id'] = $user['user_role_id'];
+        $distribution_order_insert['rest'] = $rest;
+        $distribution_order_insert['balance_point_ratio'] = (float)$_W['site']['config']['trade']['balance_point_ratio'];
 
         if (DistributionOrders::create($distribution_order_insert)) {
             if (!Point::deposit($user, $distribution_order_insert['total_fee'], 3, '订单分润')) {
