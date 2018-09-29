@@ -250,31 +250,24 @@ $agent_user = \app\common\model\Users::get(['id'=> $detail['user_id']]);
 ?>
 {if $agent && $agent_user}
 
-<div class="ui top attached mhcms-panel">
+<!--<div class="ui top attached mhcms-panel">
     <div class="ui column mhcms-panel-body" style="margin-bottom: 10px">
         <a class="weui-cell weui-cell_access"
            href="{:url('house/agent/detail' , ['user_id'=>$detail['user_id']])}">
             <div class="weui-cell__hd" style="position: relative;margin-right: 10px;">
-                <img class=" is-rounded" src="{$agent['avatar'][0]['url']}"
-                     style="width: 50px;height:50px;display: block;border-radius: 50%">
+                <img class=" is-rounded" src="{$agent['avatar'][0]['url']}" style="width: 50px;height:50px;display: block;border-radius: 50%">
             </div>
             <div class="weui-cell__bd">
                 <p>{$agent.person_name}
-                    {if $user_verify.personal_verify==99}<i
-                            class="has-text-success iconfont icon-renzheng"></i>{/if}
-
-                    {if $user_verify.company_verify==99}<i
-                            class="has-text-success iconfont icon-renzhengpeizhi"></i>{/if}
+                    {if $user_verify.personal_verify==99}<i class="has-text-success iconfont icon-renzheng"></i>{/if}
+                    {if $user_verify.company_verify==99}<i class="has-text-success iconfont icon-renzhengpeizhi"></i>{/if}
                 </p>
-                <p style="font-size: 13px;color: #888888;">{$agent.mobile}
-
-
-                </p>
+                <p style="font-size: 13px;color: #888888;">{$agent.mobile}</p>
             </div>
             <div class="weui-cell__ft"></div>
         </a>
     </div>
-</div>
+</div>-->
 
 {/if}
 
