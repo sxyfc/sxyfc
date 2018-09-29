@@ -170,6 +170,14 @@
                                     //     window.location.href= '/member/wallet';
                                     // });
                                 } else {
+                                    var api_url = "{:url('wechat/api/log')}";
+                                    $.get(api_url , {
+                                        site_id : {$_W['site']['id']},
+                                        query : {
+                                            order_id :  "{$order.id}",
+                                            msg :  JSON.stringify(res)
+                                        }
+                                    });
                                     alert("您取消了支付！");
                                 }
 

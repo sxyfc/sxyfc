@@ -342,9 +342,10 @@ class UserOrders extends HouseUserBase
         $rest = 1;
         while (!empty($user_id)) {
             $user = Users::get($user_id);
-            if (!in_array($user['user_role_id'], [1, 3, 22, 23])) {
-                break;
-            }
+            //取消固定角色限制
+            // if (!in_array($user['user_role_id'], [1, 3, 22, 23])) {
+            //     break;
+            // }
             $user_role = UserRoles::get(['id' => $user['user_role_id']]);
             $user_id = $user['parent_id'];
 
@@ -353,7 +354,11 @@ class UserOrders extends HouseUserBase
                 $user = Users::get(1);
             }
             $this->create_distribution_order($user, $order_id, $amount, $user_role['distribution_rate'] / 100);
-            $rest = $rest - $user_role['distribution_rate'] / 100;
+            if ($rest - $user_role['distribution_rate'] / 100  < 0) {
+                $user_id = null;
+            } else {
+                $rest = $rest - $user_role['distribution_rate'] / 100;
+            }
         }
         $this->create_distribution_order($seller_user, $order_id, $amount, $rest);
         return true;

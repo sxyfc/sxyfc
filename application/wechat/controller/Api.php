@@ -12,6 +12,7 @@ use app\pay\payment\micropay\utils\WxPayUnifiedOrder;
 use app\common\util\Money;
 use app\common\model\Users;
 use think\Cookie;
+use app\wechat\util\WechatUtility;
 
 
 /**
@@ -95,7 +96,18 @@ class Api extends ApiUserBase
             // $this->error($ret['data']['err_code_des'], "/member/wallet");
         }
 
+
         echo json_encode($ret);exit();
+    }
+
+    public function log()
+    {
+        global $_W, $_GPC;
+        $query = $_GPC['query'];
+        if(!is_array($query)){
+            $query = mhcms_json_decode($query);
+        }
+        WechatUtility::logging(sprintf("api/log  userid:%s,order_id:%s", $this->user['id'], $query['order_id']) , $query);
     }
 
     public function query_order($id) {
