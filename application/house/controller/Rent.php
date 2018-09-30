@@ -18,6 +18,7 @@ use app\core\util\ContentTag;
 use app\common\model\SitesWechat;
 use think\Db;
 use app\common\model\Users;
+use app\sso\controller\Passport;
 
 class Rent extends HouseBase
 {

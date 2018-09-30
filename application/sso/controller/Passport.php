@@ -618,6 +618,8 @@ class Passport extends ModuleBase
                     $this->message("请补充资料信息!", 1, $url);
                 } else {
                     $url = $jump_url;
+                    header('Location: ' . $url);
+                    exit;
                     $this->error("正在获取数据", 1, $url);
                 }
             } else {
