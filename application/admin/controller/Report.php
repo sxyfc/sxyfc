@@ -343,6 +343,7 @@ class Report extends AdminBase
                 $user_info = db('users')->where(['id' => $value['user_id']])->find();
                 $recharges['data'][$key]['user_name'] = $user_info['user_name'];
                 $recharges['data'][$key]['nickname'] = $user_info['nickname'];
+                $recharges['data'][$key]['bind_mobile'] = $user_info['mobile'];
             }
         } else {
             // 根据角色查数据
@@ -400,6 +401,7 @@ class Report extends AdminBase
                 $user_info = db('users')->where(['id' => $value['user_id']])->find();
                 $recharges['data'][$key]['user_name'] = $user_info['user_name'];
                 $recharges['data'][$key]['nickname'] = $user_info['nickname'];
+                $recharges['data'][$key]['bind_mobile'] = $user_info['mobile'];
             }
         }
 
@@ -416,9 +418,9 @@ class Report extends AdminBase
         $user_id = trim(input('param.user_id'));
         if ($this->super_power) {
             if ($user_id) {
-                $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.user_name from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id where mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id where mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
             } else {
-                $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.user_name from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id ORDER BY id DESC');
+                $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id ORDER BY id DESC');
             }
         } else {
             // 根据角色查数据
@@ -438,9 +440,9 @@ class Report extends AdminBase
                 $idstr = '(' . $ids . ')';
 
                 if ($user_id) {
-                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.user_name from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
                 } else {
-                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.user_name from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
                 }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
@@ -452,13 +454,13 @@ class Report extends AdminBase
                 $idstr = '(' . $ids . ')';
 
                 if ($user_id) {
-                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.user_name from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
                 } else {
-                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.user_name from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
                 }
             } else {
                 // 普通用户
-                $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.user_name from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $this->user['id'] . ' ORDER BY id DESC');
+                $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $this->user['id'] . ' ORDER BY id DESC');
             }
         }
         $csv_data = array();
@@ -481,9 +483,9 @@ class Report extends AdminBase
 
         if ($this->super_power) {
             if ($user_id) {
-                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id where mhcms_orders.source_type = 1 and  mhcms_orders.user_id=' . $user_id . ' ORDER BY id DESC');
+                $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id where mhcms_orders.source_type = 1 and  mhcms_orders.user_id=' . $user_id . ' ORDER BY id DESC');
             } else {
-                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id where mhcms_orders.source_type = 1 ORDER BY id DESC');
+                $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id where mhcms_orders.source_type = 1 ORDER BY id DESC');
             }
         } else {
             // 根据角色查数据
@@ -503,9 +505,9 @@ class Report extends AdminBase
                 $idstr = '(' . $ids . ')';
 
                 if ($user_id) {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
                 } else {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
                 }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
@@ -516,13 +518,13 @@ class Report extends AdminBase
                 $ids = implode($ids, ',');
                 $idstr = '(' . $ids . ')';
                 if ($user_id) {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
                 } else {
-                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
                 }
             } else {
                 // 普通用户
-                $recharge = db()->query('select mhcms_orders.*,mhcms_users.user_name from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $this->user['id'] . ' ORDER BY id DESC');
+                $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $this->user['id'] . ' ORDER BY id DESC');
             }
         }
 
@@ -530,6 +532,7 @@ class Report extends AdminBase
         foreach ($recharge as $key => $value) {
             $csv_data[$key]['id'] = '订单号：' . $value['id'];
             $csv_data[$key]['nickname'] = $value['nickname'];
+            $csv_data[$key]['bind_mobile'] = $value['bind_mobile'];
             $csv_data[$key]['mobile'] = $value['mobile'];
             $csv_data[$key]['note'] = $value['note'];
             $csv_data[$key]['amount'] = $value['amount'];
@@ -538,7 +541,7 @@ class Report extends AdminBase
             $csv_data[$key]['create_time'] = $value['create_time'];
         }
 
-        $csv_title = array('订单编号', '用户名', '手机号', '充值备注', '充值金额（元）', '充值状态', '充值时间', '创建时间');
+        $csv_title = array('订单编号', '用户名', '注册手机号', '手机号', '充值备注', '充值金额（元）', '充值状态', '充值时间', '创建时间');
         $this->download_report($csv_data, $csv_title);
     }
 
