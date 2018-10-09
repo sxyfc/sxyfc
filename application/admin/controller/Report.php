@@ -48,23 +48,23 @@ class Report extends AdminBase
                 if ($users['user_role_id'] == 22) {
                     // 区域管理
                     $ids = $this->map_city_childs($this->user['id']);
-                    if ($show_log){
+                    if ($show_log) {
                         array_push($ids, $this->user['id']);
                     }
                 } elseif ($users['user_role_id'] == 23) {
                     // 县级代理
                     $ids = $this->map_county_childs($this->user['id']);
-                    if ($show_log){
+                    if ($show_log) {
                         array_push($ids, $this->user['id']);
                     }
                 } elseif ($users['user_role_id'] == 25) {
                     $ids = $this->map_area_childs($this->user['id']);
-                    if ($show_log){
+                    if ($show_log) {
                         array_push($ids, $this->user['id']);
                     }
                 } elseif ($users['user_role_id'] == 26) {
                     $ids = $this->map_province_childs($this->user['id']);
-                    if ($show_log){
+                    if ($show_log) {
                         array_push($ids, $this->user['id']);
                     }
                 }
@@ -240,7 +240,7 @@ class Report extends AdminBase
                     $ids = $this->map_city_childs($this->user['id']);
                 }
 
-                if ($show_log){
+                if ($show_log) {
                     array_push($ids, $this->user['id']);
                 }
 
@@ -254,7 +254,7 @@ class Report extends AdminBase
                     $ids = $this->map_county_childs($this->user['id']);
                 }
 
-                if ($show_log){
+                if ($show_log) {
                     array_push($ids, $this->user['id']);
                 }
 
@@ -268,7 +268,7 @@ class Report extends AdminBase
                     $ids = $this->map_area_childs($this->user['id']);
                 }
 
-                if ($show_log){
+                if ($show_log) {
                     array_push($ids, $this->user['id']);
                 }
 
@@ -282,7 +282,7 @@ class Report extends AdminBase
                     $ids = $this->map_province_childs($this->user['id']);
                 }
 
-                if ($show_log){
+                if ($show_log) {
                     array_push($ids, $this->user['id']);
                 }
 
@@ -427,15 +427,8 @@ class Report extends AdminBase
             $users = db('users')->where(['id' => $this->user['id']])->find();
             if ($users['user_role_id'] == 22) {
                 // 区域管理
-                $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                $ids = array_column($user_ids, 'id');
-
-                $where_child['id'] = array('IN', $ids);
-                $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
-                $child_ids = array_column($user_child_ids, 'id');
-                $ids = array_merge($ids, $child_ids);
+                $ids = $this->map_city_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
-
                 $ids = implode($ids, ',');
                 $idstr = '(' . $ids . ')';
 
@@ -446,8 +439,31 @@ class Report extends AdminBase
                 }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
-                $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                $ids = array_column($user_ids, 'id');
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+
+                $ids = implode($ids, ',');
+                $idstr = '(' . $ids . ')';
+
+                if ($user_id) {
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                } else {
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                }
+            } elseif ($users['user_role_id'] == 25) {
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+
+                $ids = implode($ids, ',');
+                $idstr = '(' . $ids . ')';
+
+                if ($user_id) {
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                } else {
+                    $share = db()->query('select mhcms_distribution_orders.*,mhcms_users.nickname from mhcms_distribution_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_distribution_orders.user_id WHERE mhcms_distribution_orders.status=1 AND mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                }
+            } elseif ($users['user_role_id'] == 26) {
+                $ids = $this->map_province_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
 
                 $ids = implode($ids, ',');
@@ -492,13 +508,7 @@ class Report extends AdminBase
             $users = db('users')->where(['id' => $this->user['id']])->find();
             if ($users['user_role_id'] == 22) {
                 // 区域管理
-                $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                $ids = array_column($user_ids, 'id');
-
-                $where_child['id'] = array('IN', $ids);
-                $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
-                $child_ids = array_column($user_child_ids, 'id');
-                $ids = array_merge($ids, $child_ids);
+                $ids = $this->map_city_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
 
                 $ids = implode($ids, ',');
@@ -511,8 +521,29 @@ class Report extends AdminBase
                 }
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
-                $user_ids = db('users')->where(['parent_id' => $this->user['id']])->order('id desc')->field('id')->select()->toArray();
-                $ids = array_column($user_ids, 'id');
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+
+                $ids = implode($ids, ',');
+                $idstr = '(' . $ids . ')';
+                if ($user_id) {
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                } else {
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                }
+            } elseif ($users['user_role_id'] == 25) {
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+
+                $ids = implode($ids, ',');
+                $idstr = '(' . $ids . ')';
+                if ($user_id) {
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id = ' . $user_id . ' ORDER BY id DESC');
+                } else {
+                    $recharge = db()->query('select mhcms_orders.*,mhcms_users.nickname,mhcms_users.mobile bind_mobile from mhcms_orders LEFT JOIN mhcms_users ON mhcms_users.id = mhcms_orders.user_id WHERE mhcms_orders.source_type = 1 and mhcms_distribution_orders.user_id IN ' . $idstr . ' ORDER BY id DESC');
+                }
+            } elseif ($users['user_role_id'] == 26) {
+                $ids = $this->map_province_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
 
                 $ids = implode($ids, ',');
