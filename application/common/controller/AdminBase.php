@@ -212,10 +212,13 @@ class AdminBase extends Base
             $user_ids = db('users')->where(['parent_id' => $user_id])->order('id desc')->field('id')->select()->toArray();
         }
         $ids = array_column($user_ids, 'id');
+        $child_ids = array();
 
-        $where_child['parent_id'] = array('IN', $ids);
-        $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
-        $child_ids = array_column($user_child_ids, 'id');
+        if (!empty($ids)){
+            $where_child['parent_id'] = array('IN', $ids);
+            $user_child_ids = db('users')->where($where_child)->field('id')->select()->toArray();
+            $child_ids = array_column($user_child_ids, 'id');
+        }
 
         $ids = array_merge($ids, $child_ids);
         return $ids;
@@ -230,14 +233,19 @@ class AdminBase extends Base
             $user_ids = db('users')->where(['parent_id' => $user_id])->order('id desc')->field('id')->select()->toArray();
         }
         $ids = array_column($user_ids, 'id');
+        $city_child_ids = array();
+        $county_child_ids = array();
+        if (!empty($ids)){
+            $where_child_city['parent_id'] = array('IN', $ids);
+            $city_child_arr = db('users')->where($where_child_city)->field('id')->select()->toArray();
+            $city_child_ids = array_column($city_child_arr, 'id');
 
-        $where_child_city['parent_id'] = array('IN', $ids);
-        $city_child_arr = db('users')->where($where_child_city)->field('id')->select()->toArray();
-        $city_child_ids = array_column($city_child_arr, 'id');
-
-        $where_child_county['parent_id'] = array('IN', $city_child_ids);
-        $county_child_arr = db('users')->where($where_child_county)->field('id')->select()->toArray();
-        $county_child_ids = array_column($county_child_arr, 'id');
+            if (!empty($city_child_ids)){
+                $where_child_county['parent_id'] = array('IN', $city_child_ids);
+                $county_child_arr = db('users')->where($where_child_county)->field('id')->select()->toArray();
+                $county_child_ids = array_column($county_child_arr, 'id');
+            }
+        }
 
         $ids = array_merge($ids, $city_child_ids, $county_child_ids);
         return $ids;
@@ -252,18 +260,27 @@ class AdminBase extends Base
             $user_ids = db('users')->where(['parent_id' => $user_id])->order('id desc')->field('id')->select()->toArray();
         }
         $ids = array_column($user_ids, 'id');
+        $city_child_ids = array();
+        $county_child_ids = array();
+        $province_child_ids = array();
 
-        $where_child_province['parent_id'] = array('IN', $ids);
-        $province_child_arr = db('users')->where($where_child_province)->field('id')->select()->toArray();
-        $province_child_ids = array_column($province_child_arr, 'id');
+        if (!empty($ids)){
+            $where_child_province['parent_id'] = array('IN', $ids);
+            $province_child_arr = db('users')->where($where_child_province)->field('id')->select()->toArray();
+            $province_child_ids = array_column($province_child_arr, 'id');
 
-        $where_child_city['parent_id'] = array('IN', $province_child_ids);
-        $city_child_arr = db('users')->where($where_child_city)->field('id')->select()->toArray();
-        $city_child_ids = array_column($city_child_arr, 'id');
+            if (!empty($province_child_ids)){
+                $where_child_city['parent_id'] = array('IN', $province_child_ids);
+                $city_child_arr = db('users')->where($where_child_city)->field('id')->select()->toArray();
+                $city_child_ids = array_column($city_child_arr, 'id');
 
-        $where_child_county['parent_id'] = array('IN', $city_child_ids);
-        $county_child_arr = db('users')->where($where_child_county)->field('id')->select()->toArray();
-        $county_child_ids = array_column($county_child_arr, 'id');
+                if (!empty($city_child_ids)){
+                    $where_child_county['parent_id'] = array('IN', $city_child_ids);
+                    $county_child_arr = db('users')->where($where_child_county)->field('id')->select()->toArray();
+                    $county_child_ids = array_column($county_child_arr, 'id');
+                }
+            }
+        }
 
         $ids = array_merge($ids, $city_child_ids, $county_child_ids, $province_child_ids);
         return $ids;
