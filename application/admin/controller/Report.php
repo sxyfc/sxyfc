@@ -235,59 +235,61 @@ class Report extends AdminBase
             if ($users['user_role_id'] == 22) {
                 // 区域管理
                 if ($user_id) {
-                    $ids = $this->map_city_childs($this->user['id'], $user_id);
+                    $where['status'] = 1;
+                    $where['user_id'] = $user_id;
                 } else {
                     $ids = $this->map_city_childs($this->user['id']);
+                    if ($show_log) {
+                        array_push($ids, $this->user['id']);
+                    }
+
+                    $where['status'] = 1;
+                    $where['user_id'] = array('IN', $ids);
                 }
 
-                if ($show_log) {
-                    array_push($ids, $this->user['id']);
-                }
 
-                $where['status'] = 1;
-                $where['user_id'] = array('IN', $ids);
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
                 if ($user_id) {
-                    $ids = $this->map_county_childs($this->user['id'], $user_id);
+                    $where['status'] = 1;
+                    $where['user_id'] = $user_id;
                 } else {
                     $ids = $this->map_county_childs($this->user['id']);
-                }
+                    if ($show_log) {
+                        array_push($ids, $this->user['id']);
+                    }
 
-                if ($show_log) {
-                    array_push($ids, $this->user['id']);
+                    $where['status'] = 1;
+                    $where['user_id'] = array('IN', $ids);
                 }
-
-                $where['status'] = 1;
-                $where['user_id'] = array('IN', $ids);
             } elseif ($users['user_role_id'] == 25) {
                 // CEO区域管理
                 if ($user_id) {
-                    $ids = $this->map_area_childs($this->user['id'], $user_id);
+                    $where['status'] = 1;
+                    $where['user_id'] = $user_id;
                 } else {
                     $ids = $this->map_area_childs($this->user['id']);
-                }
+                    if ($show_log) {
+                        array_push($ids, $this->user['id']);
+                    }
 
-                if ($show_log) {
-                    array_push($ids, $this->user['id']);
+                    $where['status'] = 1;
+                    $where['user_id'] = array('IN', $ids);
                 }
-
-                $where['status'] = 1;
-                $where['user_id'] = array('IN', $ids);
             } elseif ($users['user_role_id'] == 26) {
                 //省级代理
                 if ($user_id) {
-                    $ids = $this->map_province_childs($this->user['id'], $user_id);
+                    $where['status'] = 1;
+                    $where['user_id'] = $user_id;
                 } else {
                     $ids = $this->map_province_childs($this->user['id']);
-                }
+                    if ($show_log) {
+                        array_push($ids, $this->user['id']);
+                    }
 
-                if ($show_log) {
-                    array_push($ids, $this->user['id']);
+                    $where['status'] = 1;
+                    $where['user_id'] = array('IN', $ids);
                 }
-
-                $where['status'] = 1;
-                $where['user_id'] = array('IN', $ids);
             } else {
                 // 普通用户
                 $where['status'] = 1;
@@ -351,44 +353,47 @@ class Report extends AdminBase
             if ($users['user_role_id'] == 22) {
                 // 区域管理
                 if ($user_id) {
-                    $ids = $this->map_city_childs($this->user['id'], $user_id);
+                    $where['user_id'] = $user_id;
+                    $where['source_type'] = 1;
                 } else {
                     $ids = $this->map_city_childs($this->user['id']);
+                    array_push($ids, $this->user['id']);
+                    $where['user_id'] = array('IN', $ids);
+                    $where['source_type'] = 1;
                 }
-                array_push($ids, $this->user['id']);
-                $where['user_id'] = array('IN', $ids);
-                $where['source_type'] = 1;
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
                 if ($user_id) {
-                    $ids = $this->map_county_childs($this->user['id'], $user_id);
+                    $where['user_id'] = $user_id;
+                    $where['source_type'] = 1;
                 } else {
                     $ids = $this->map_county_childs($this->user['id']);
+                    array_push($ids, $this->user['id']);
+                    $where['user_id'] = array('IN', $ids);
+                    $where['source_type'] = 1;
                 }
-                array_push($ids, $this->user['id']);
-
-                $where['user_id'] = array('IN', $ids);
-                $where['source_type'] = 1;
             } elseif ($users['user_role_id'] == 25) {
                 if ($user_id) {
-                    $ids = $this->map_area_childs($this->user['id'], $user_id);
+                    $where['user_id'] = $user_id;
+                    $where['source_type'] = 1;
                 } else {
                     $ids = $this->map_area_childs($this->user['id']);
-                }
-                array_push($ids, $this->user['id']);
+                    array_push($ids, $this->user['id']);
 
-                $where['user_id'] = array('IN', $ids);
-                $where['source_type'] = 1;
+                    $where['user_id'] = array('IN', $ids);
+                    $where['source_type'] = 1;
+                }
             } elseif ($users['user_role_id'] == 26) {
                 if ($user_id) {
-                    $ids = $this->map_province_childs($this->user['id'], $user_id);
+                    $where['user_id'] = $user_id;
+                    $where['source_type'] = 1;
                 } else {
                     $ids = $this->map_province_childs($this->user['id']);
-                }
-                array_push($ids, $this->user['id']);
+                    array_push($ids, $this->user['id']);
 
-                $where['user_id'] = array('IN', $ids);
-                $where['source_type'] = 1;
+                    $where['user_id'] = array('IN', $ids);
+                    $where['source_type'] = 1;
+                }
             } else {
                 // 普通用户
                 $where['user_id'] = $this->user['id'];
