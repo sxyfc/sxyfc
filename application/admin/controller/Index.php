@@ -34,7 +34,8 @@ class Index extends AdminBase
 
         $modules = ['house', 'info', 'gov_task', 'zhaopin'];
         $where['module'] = ['IN', $modules];
-        $this->view->modules = set_model("modules")->where($where)->select();
+        // $this->view->modules = set_model("modules")->where($where)->select();
+        $this->view->modules = [];
         $this->view->view = $this->view;
 
         return $this->view->fetch();
