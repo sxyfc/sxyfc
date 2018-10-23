@@ -41,6 +41,33 @@ class AdminAppointment extends AdminBase
         $model_info = $model->model_info;
         $where = [];
         $where['site_id'] = $_W['site']['id'];
+
+        if (!$this->super_power){
+            $ids = array();
+            $users = db('users')->where(['id' => $this->user['id']])->find();
+            if ($users['user_role_id'] == 22) {
+                // 区域管理
+                $ids = $this->map_city_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 23) {
+                // 县级代理
+                $ids = $this->map_county_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 25) {
+                // CEO（区域经理）
+                $ids = $this->map_area_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            } elseif ($users['user_role_id'] == 26) {
+                // 省级代理
+                $ids = $this->map_province_childs($this->user['id']);
+                array_push($ids, $this->user['id']);
+            }else{
+                array_push($ids, $this->user['id']);
+            }
+
+            $where['user_id'] = array('IN', $ids);
+        }
+
         $this->view->lists = $model->where($where)->order("id desc")->paginate();
         $this->view->field_list = $model_info->get_admin_column_fields();
         $this->view->content_model_id = $content_model_id;
@@ -62,10 +89,10 @@ class AdminAppointment extends AdminBase
                 $base_info = $_GPC;
             } else {
                 //自动获取data分组数据
-                $base_info = input('post.data/a');//get the base info
-                Log::error($base_info);
+                $base_info = input('post.data/a');
             }
 
+            $base_info['user_id'] = $this->user['id'];
             $res = $model_info->add_content($base_info);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
@@ -99,7 +126,7 @@ class AdminAppointment extends AdminBase
                 $base_info = input('post.data/a');//get the base info
             }
 
-
+            $base_info['user_id'] = $this->user['id'];
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_page()'");
