@@ -425,6 +425,14 @@ class Passport extends ModuleBase
                     header("location:$url");
                     die();
                 } else {
+                    if (is_weixin()) {
+                        $url = url('sso/passport/wx_login');
+                    } else {
+                        $url = url('sso/passport/wx_subscribe');
+                    }
+
+                    header("location:$url");
+                    die();
                     return $this->view->fetch();
                 }
 
