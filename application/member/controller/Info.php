@@ -39,6 +39,7 @@ class Info extends ModuleUserBase
             $old_pass = $data['old_pass'];
             $pass = $data['pass'];
             $repass = $data['repass'];
+            $type = ($this->user['pass'] == 'NOTSET') ? true : false;
 
             if ($data['mobile'] != $this->user['mobile'] || empty($this->user['mobile'])) {
                 if (!is_phone($data['mobile'])) {
@@ -65,6 +66,8 @@ class Info extends ModuleUserBase
                 if ($pass == $data['old_pass']) {
                     $this->zbn_msg("新旧密码相同");
                 }
+            } else {
+                $this->zbn_msg("密码为空");
             }
 
             //User Process
@@ -96,12 +99,15 @@ class Info extends ModuleUserBase
             //     $data['user_name'] = $data['mobile'];
             // }
             // 
-
             if ($this->user->save($save_data)) {
                 foreach ($save_data as $k=>$v) {
                     $this->user->$k = $v;
                 }
-                return $this->zbn_msg('操作成功', 1, 'true', 1000, "'".$forward."'", "'reload_page()'");
+                if ($type) {
+                    return $this->zbn_msg('操作成功', 1, 'true', 1000, "'".url('house/user/index')."'");
+                } else {
+                    return $this->zbn_msg('操作成功', 1, 'true', 1000, "'".(strpos($forward, '://') !== false || $forward == '') ? $forward : url($forward)."'", "'reload_page()'");
+                }
             }
             return $this->zbn_msg('操作失败', 1, 'true', 1000);
         } else {
