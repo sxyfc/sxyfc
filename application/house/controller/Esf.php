@@ -104,9 +104,11 @@ class Esf extends HouseBase
         $model = set_model('house_esf');
         if (($_GET['huxing'] != null) || $_GET['tag'] || $_GET['zhuangxiu'] || $_GET['yongtu'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage'] || ($_GET['ting'] != null)) {
             $query = array('huxing' => $_GET['huxing'], 'tag' => $_GET['tag'], 'zhuangxiu' => $_GET['zhuangxiu'], 'yongtu' => $_GET['yongtu'], 'xiaoqu' => $_GET['xiaoqu'], 'size' => $_GET['size'], 'jiage' => $_GET['jiage'], 'ting' => $_GET['ting']);
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->
+            join('mhcms_area','mhcms_area.id=mhcms_house_esf.area_id')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         } else {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->
+            join('mhcms_area','mhcms_area.id=mhcms_house_esf.area_id')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
         }
 
         //设置筛选数据
