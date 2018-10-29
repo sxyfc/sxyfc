@@ -18,7 +18,11 @@ class User extends HouseUserBase
 {
     public function index()
     {
-
+        if (!$this->user['is_mobile_verify']) {
+            $url = url('member/info/set_info') . '?forward=' . urlencode('/house/index');
+            $this->message("请补充资料信息!", 1, $url);
+            die();
+        }
         $this->view->seo = $this->seo($this->mapping);
 
         $menu = new MhcmsMenu();
