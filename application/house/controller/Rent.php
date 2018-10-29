@@ -89,11 +89,9 @@ class Rent extends HouseBase
         $model = set_model('house_rent');
         if (($_GET['huxing'] != null) || $_GET['ting'] != null || $_GET['tag'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
             $query = array('huxing' => $_GET['huxing'], 'tag' => $_GET['tag'], 'xiaoqu' => $_GET['xiaoqu'], 'size' => $_GET['size'], 'jiage' => $_GET['jiage'], 'ting' => $_GET['ting']);
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->
-            join('mhcms_area','mhcms_area.id=mhcms_house_rent.area_id')->where($where)->order('mhcms_house_rent.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         } else {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->
-            join('mhcms_area','mhcms_area.id=mhcms_house_rent.area_id')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
         }
 
         //设置筛选数据
@@ -107,10 +105,17 @@ class Rent extends HouseBase
                 array_splice($area_data, $key, 1);
             }
         }
+
+        $data = array();
+        foreach ($area_data as $key => $value){
+            $data[$value['id']] = $value['area_name'];
+        }
+
         $this->assign('area_data', json_encode($area_data));
         $this->assign('area_province', json_encode($area_province));
         $this->assign('xiaoqu_data', $xiaoqu_data);
         $this->assign('select', $select);
+        $this->assign('data', $data);
 
         return $this->view->fetch();
     }

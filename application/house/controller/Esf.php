@@ -105,10 +105,9 @@ class Esf extends HouseBase
         if (($_GET['huxing'] != null) || $_GET['tag'] || $_GET['zhuangxiu'] || $_GET['yongtu'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage'] || ($_GET['ting'] != null)) {
             $query = array('huxing' => $_GET['huxing'], 'tag' => $_GET['tag'], 'zhuangxiu' => $_GET['zhuangxiu'], 'yongtu' => $_GET['yongtu'], 'xiaoqu' => $_GET['xiaoqu'], 'size' => $_GET['size'], 'jiage' => $_GET['jiage'], 'ting' => $_GET['ting']);
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->
-            join('mhcms_area','mhcms_area.id=mhcms_house_esf.area_id')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
+            join('mhcms_area','mhcms_area.id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         } else {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->
-            join('mhcms_area','mhcms_area.id=mhcms_house_esf.area_id')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
         }
 
         //设置筛选数据
@@ -122,10 +121,17 @@ class Esf extends HouseBase
                 array_splice($area_data, $key, 1);
             }
         }
+
+        $data = array();
+        foreach ($area_data as $key => $value){
+            $data[$value['id']] = $value['area_name'];
+        }
+
         $this->assign('area_data', json_encode($area_data));
         $this->assign('area_province', json_encode($area_province));
         $this->assign('xiaoqu_data', $xiaoqu_data);
         $this->assign('select', $select);
+        $this->assign('data', $data);
 
         return $this->view->fetch();
     }
