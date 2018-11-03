@@ -55,7 +55,7 @@ class Deposit extends ModuleUserBase
             $order_insert['gateway'] = $gateway = $data['gateway'];
             //计算费用
             $order_insert['amount'] = $data['amount'];
-            $order_insert['total_fee'] = $data['amount'] * $_W['site']['config']['trade']['rmb_balance_ratio'] * (1 - $_W['site']['config']['trade']['rmb_balance_ratio']/100);
+            $order_insert['total_fee'] = $data['amount'] * $_W['site']['config']['trade']['rmb_balance_ratio'] * (1 - $_W['site']['config']['trade']['fund_rate']/100);
             $order_insert['express_fee'] = 0;
             $order_insert['delivery'] = "";
             //common info
