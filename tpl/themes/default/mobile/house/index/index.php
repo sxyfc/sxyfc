@@ -516,7 +516,11 @@ $is_ipad = (strpos($agent, 'ipad')) ? true : false;
         });
     });
 
-    alert("想了解更多房源、实地看房，联系发送该房源链接的经纪人即可");
+    {if $_W.site.config.house_notice}
+        alert("{$_W['site']['config']['house_notice']}");
+    {else}
+        alert("想要买房租房、了解更多房源信息、实地看房的用户，请直接联系使你关注公众号的房产经纪人员。谢谢！");
+    {/if} 
 
 </script>
 
