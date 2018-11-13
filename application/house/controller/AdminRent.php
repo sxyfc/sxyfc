@@ -67,13 +67,13 @@ class AdminRent extends AdminBase
         $loupan_name = trim(input('param.loupan_name'));
         if ($loupan_name) {
             $ids = array();
-            $where_loupan['loupan_name'] = array('LIKE', '%' . $loupan_name . '%');
-            if ($loupan_name_info = Db::name('house_loupan')->where($where_loupan)->field('id')->select()->toArray()) {
+            $where_loupan['xiaoqu_name'] = array('LIKE', '%' . $loupan_name . '%');
+            if ($loupan_name_info = Db::name('house_xiaoqu')->where($where_loupan)->field('id')->select()->toArray()) {
                 foreach ($loupan_name_info as $key => $value) {
                     $ids[$key] = $value['id'];
                 }
 
-                $where['loupan_id'] = array('IN', $ids);
+                $where['xiaoqu_id'] = array('IN', $ids);
                 $this->view->lists = $model->where($where)->order("id desc")->paginate();
             } else {
                 $this->view->lists = '';

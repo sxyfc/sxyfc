@@ -122,7 +122,7 @@ class Esf extends HouseBase
         }
 
         $data = array();
-        foreach ($area_data as $key => $value){
+        foreach ($area_data as $key => $value) {
             $data[$value['id']] = $value['area_name'];
         }
 
@@ -165,6 +165,8 @@ class Esf extends HouseBase
         $this->view->signPackage = $wechat->getSignPackage();
         //设置可见权限：支付查看信息
         $show_power = true;
+        //非经纪人无法看到房东电话
+        if ($this->user_role == '2' || $this->user_role == '4') $show_power = false;
         //设置支付查看交易结果
         $user_id = $this->user_id;
         $esf_id = $id;

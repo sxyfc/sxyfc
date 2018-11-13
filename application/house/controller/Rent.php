@@ -107,7 +107,7 @@ class Rent extends HouseBase
         }
 
         $data = array();
-        foreach ($area_data as $key => $value){
+        foreach ($area_data as $key => $value) {
             $data[$value['id']] = $value['area_name'];
         }
 
@@ -155,6 +155,8 @@ class Rent extends HouseBase
 
         //设置可见权限：支付查看信息
         $show_power = true;
+        //非经纪人无法看到房东电话
+        if ($this->user_role == '2' || $this->user_role == '4') $show_power = false;
         $this->assign("show_power", $show_power);
 
 
