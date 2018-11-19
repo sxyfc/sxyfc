@@ -104,9 +104,32 @@ class Esf extends HouseBase
         $model = set_model('house_esf');
         if (($_GET['huxing'] != null) || $_GET['tag'] || $_GET['zhuangxiu'] || $_GET['yongtu'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage'] || ($_GET['ting'] != null)) {
             $query = array('huxing' => $_GET['huxing'], 'tag' => $_GET['tag'], 'zhuangxiu' => $_GET['zhuangxiu'], 'yongtu' => $_GET['yongtu'], 'xiaoqu' => $_GET['xiaoqu'], 'size' => $_GET['size'], 'jiage' => $_GET['jiage'], 'ting' => $_GET['ting']);
+
+            if ($_GET['area_province'] != null){
+                $query['area_province'] = $_GET['area_province'];
+            }
+            if ($_GET['area_city'] != null){
+                $query['area_city'] = $_GET['area_city'];
+            }
+            if ($_GET['area_area'] != null){
+                $query['area_area'] = $_GET['area_area'];
+            }
+
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         } else {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate();
+            $query = array();
+
+            if ($_GET['area_province'] != null){
+                $query['area_province'] = $_GET['area_province'];
+            }
+            if ($_GET['area_city'] != null){
+                $query['area_city'] = $_GET['area_city'];
+            }
+            if ($_GET['area_area'] != null){
+                $query['area_area'] = $_GET['area_area'];
+            }
+
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_esf.thumb')->where($where)->order('mhcms_house_esf.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         }
 
         //设置筛选数据
@@ -146,9 +169,11 @@ class Esf extends HouseBase
         $detail = Models::get_item($id, $content_model_id);
         $this->view->detail = $detail;
         $this->view->field_list = $model_info->get_admin_publish_fields($detail, []);
-        Hits::hit($id, $this->house_esf);
+        $r = Hits::hit($id, $this->house_esf);
+        Log::error('esf_hit' . $r.'+++userid='.$this->user_id);
         if ($this->user_id) {
-            Hits::log($id, $this->house_esf, $this->user_id);
+            $res = Hits::log($id, $this->house_esf, $this->user_id);
+            Log::error('esf_hit_log' . $res.'+++userid='.$this->user_id);
         } else {
             if (is_weixin()) {
                 $current_url = $_W['current_url'];
@@ -165,8 +190,9 @@ class Esf extends HouseBase
         $this->view->signPackage = $wechat->getSignPackage();
         //设置可见权限：支付查看信息
         $show_power = true;
+        $user_role_id = $this->user['user_role_id'];
         //非经纪人无法看到房东电话
-        if ($this->user_role == '2' || $this->user_role == '4') $show_power = false;
+        if ($user_role_id == '2' || $user_role_id == '4') $show_power = false;
         //设置支付查看交易结果
         $user_id = $this->user_id;
         $esf_id = $id;

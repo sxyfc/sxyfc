@@ -89,9 +89,33 @@ class Rent extends HouseBase
         $model = set_model('house_rent');
         if (($_GET['huxing'] != null) || $_GET['ting'] != null || $_GET['tag'] || $_GET['area_province'] || $_GET['xiaoqu'] || $_GET['size'] || $_GET['jiage']) {
             $query = array('huxing' => $_GET['huxing'], 'tag' => $_GET['tag'], 'xiaoqu' => $_GET['xiaoqu'], 'size' => $_GET['size'], 'jiage' => $_GET['jiage'], 'ting' => $_GET['ting']);
+
+            if ($_GET['area_province'] != null){
+                $query['area_province'] = $_GET['area_province'];
+            }
+            if ($_GET['area_city'] != null){
+                $query['area_city'] = $_GET['area_city'];
+            }
+            if ($_GET['area_area'] != null){
+                $query['area_area'] = $_GET['area_area'];
+            }
+
+
             $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         } else {
-            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate();
+            $query = array();
+
+            if ($_GET['area_province'] != null){
+                $query['area_province'] = $_GET['area_province'];
+            }
+            if ($_GET['area_city'] != null){
+                $query['area_city'] = $_GET['area_city'];
+            }
+            if ($_GET['area_area'] != null){
+                $query['area_area'] = $_GET['area_area'];
+            }
+
+            $this->view->lists = $model->join('mhcms_file', 'mhcms_file.file_id=mhcms_house_rent.thumb')->where($where)->order('mhcms_house_rent.update_at desc')->paginate(config('list_rows'), false, ['query' => $query]);
         }
 
         //设置筛选数据
