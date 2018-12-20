@@ -192,7 +192,7 @@ class AdminRent extends AdminBase
         // if ($detail) {
         //     $model_info::delete_item($id, $this->house_rent);
         // }
-        $model->where(['id' => $id])->update(['online'=>0]);
+        $model->where(['id' => $id])->update(['online'=>0, 'status'=>0]);
 
         $ret['code'] = 1;
         $ret['msg'] = "ok";

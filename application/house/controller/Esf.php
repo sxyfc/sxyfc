@@ -168,6 +168,10 @@ class Esf extends HouseBase
         $model_info = $model->model_info;
 
         $detail = Models::get_item($id, $content_model_id);
+        if ($detail['online'] != 1) {
+            $to_url = url('house/rent/index');
+            $this->error("该房源已下架！请查看其它房源", $to_url);
+        }
         $this->view->detail = $detail;
         $this->view->field_list = $model_info->get_admin_publish_fields($detail, []);
         $r = Hits::hit($id, $this->house_esf);

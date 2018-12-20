@@ -200,7 +200,7 @@ class AdminEsf extends AdminBase
         //     $model_info::delete_item($id, $this->house_esf);
         // }
 
-        $model->where(['id' => $id])->update(['online'=>0]);
+        $model->where(['id' => $id])->update(['online'=>0, 'status'=>0]);
 //        return ['code' => 1, 'msg' => 'ok'];
         $ret['code'] = 1;
         $ret['msg'] = "ok";
