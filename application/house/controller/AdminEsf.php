@@ -66,18 +66,22 @@ class AdminEsf extends AdminBase
                 // 区域管理
                 $ids = $this->map_city_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
+                $where['online'] = 1;
             } elseif ($users['user_role_id'] == 23) {
                 // 县级代理
                 $ids = $this->map_county_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
+                $where['online'] = 1;
             } elseif ($users['user_role_id'] == 25) {
                 // CEO（区域经理）
                 $ids = $this->map_area_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
+                $where['online'] = 1;
             } elseif ($users['user_role_id'] == 26) {
                 // 省级代理
                 $ids = $this->map_province_childs($this->user['id']);
                 array_push($ids, $this->user['id']);
+                $where['online'] = 1;
             }else{
                 array_push($ids, $this->user['id']);
             }
@@ -188,16 +192,33 @@ class AdminEsf extends AdminBase
         global $_W, $_GPC;
         $model = set_model($this->house_esf);
         $model_info = $model->model_info;
-        $where['id'] = $id;
-        $where['site_id'] = $_W['site']['id'];
-        $detail = $model->where($where)->find();
+        // $where['id'] = $id;
+        // $where['site_id'] = $_W['site']['id'];
+        // $detail = $model->where($where)->find();
 
-        if ($detail) {
-            $model_info::delete_item($id, $this->house_esf);
-        }
+        // if ($detail) {
+        //     $model_info::delete_item($id, $this->house_esf);
+        // }
 
+        $model->where(['id' => $id])->update(['online'=>0]);
 //        return ['code' => 1, 'msg' => 'ok'];
-        return $this->zbn_msg('ok', 1, 'true', 1000, "''", "window.location.reload()");
+        $ret['code'] = 1;
+        $ret['msg'] = "ok";
+        $ret['javascript'] = "reload_page()";
+        return $ret;
+    }
+
+    public function online($id)
+    {
+        global $_W, $_GPC;
+        $model = set_model($this->house_esf);
+        $model_info = $model->model_info;
+
+        $model->where(['id' => $id])->update(['online'=>1]);
+        $ret['code'] = 1;
+        $ret['msg'] = "ok";
+        $ret['javascript'] = "reload_page()";
+        return $ret;
     }
 
     public function record($id)
@@ -247,13 +268,21 @@ class AdminEsf extends AdminBase
         $detail = $model->where($where)->find();
         if ($detail) {
             if ($detail['status'] == 99) {
-                $detail['status'] = 0;
-                set_model($this->house_esf)->where(['id' => $id])->update(['status'=>$detail['status']]);
-                return $this->zbn_msg('审核取消', 1, 'true', 1000, "''", "window.location.reload()");
+                $data['status'] = 0;
+                $model->where(['id' => $id])->update($data);
+                $ret['code'] = 0;
+                $ret['msg'] = "取消通过";
+                $ret['javascript'] = "reload_page()";
+                return $ret;
+                // return $this->zbn_msg('审核取消', 1, 'true', 1000, "''", "'reload_page()'");
             } else {
-                $detail['status'] = 99;
-                set_model($this->house_esf)->where(['id' => $id])->update(['status'=>$detail['status']]);
-                return $this->zbn_msg('审核通过', 1, 'true', 1000, "''", "window.location.reload()");
+                $data['status'] = 99;
+                $model->where(['id' => $id])->update($data);
+                $ret['code'] = 1;
+                $ret['msg'] = "审核通过";
+                $ret['javascript'] = "reload_page()";
+                return $ret;
+                // return $this->zbn_msg('审核通过', 1, 'true', 1000, "''", "'reload_page()'");
             }
         }
     }
