@@ -247,13 +247,15 @@ $value[$name_key]<input type=\"hidden\" name=\"$field->form_group[$field->node_f
         $params['model_id'] = $field->node_field_data_source_config;
         $service_api_url = url('core/service/list_item', $params);
         $form_str = "";
+        $node_value_name = $field->form_data[$field->node_field_default_value][$field->node_field_name_key];
+        $node_value_name = $node_value_name ? $node_value_name : "请输入关键字";
 
 
         $display_text = $field->node_field_default_value ? $field->node_field_default_value : "请输入关键字";
         $form_str .= "<div id='$field->node_field_name' class=\"SEMANTIC_AJAX_INPUT ui fluid  search normal selection dropdown\">
   <input type=\"hidden\" value='$field->node_field_default_value' name=\"$field->form_group[$field->node_field_name]$field->multiple\">
   <i class=\"dropdown icon\"></i>
-  <div class=\"default text\">$field->node_field_default_value</div></div>";
+  <div class=\"default text\">$node_value_name</div></div>";
 
         $form_str .= "
 <script type='text/javascript'>
