@@ -1,7 +1,3 @@
-console.log("Bao8_org FrameWork init");
-console.log("此产品由鸣鹤CMS核心强力驱动");
-console.log("QQ : 1620298436");
-
 var loading_layer;         //Loading 的索引
 var mhcms_frame_work = {}; //鸣鹤CMS核心框架
 

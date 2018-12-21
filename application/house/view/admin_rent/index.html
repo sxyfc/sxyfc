@@ -34,6 +34,13 @@ if (!isset($keyword)) {
                     </p>
                 </div>
             </td>
+            <td class="input-group">
+                <div class="layui-inline" data-toggle="distpicker" id="area">地区：
+                    <select name="province" class="layui-select" lay-ignore=""></select>
+                    <select name="city" class="layui-select" lay-ignore=""></select>
+                    <select name="district" class="layui-select" lay-ignore=""></select>
+                </div>
+            </td>
             <td><input type="submit" value="搜索" class="layui-btn btn-success"/></td>
             </tr>
     </table>
@@ -58,7 +65,18 @@ if (!isset($keyword)) {
         <tr>
             <td>{$item.id}</td>
             {foreach $field_list as $field}
-            <td><pre>{$_item[$field['field_name']]}</pre></td>
+            <td name="{$field['field_name']}">
+{if $field['field_name'] == "area_id"}
+<script type="text/javascript">
+require(["distpicker"]  ,function () {
+    var area = $("#area").distpicker("getAreaFullName", "{$_item[$field['field_name']]}");
+    $("#table").find("tr").eq({$k+1}).find("td[name=area_id]").html("<pre>"+area+"</pre>");
+});
+</script>
+{else}
+<pre>{$_item[$field['field_name']]}</pre>
+{/if}
+            </td>
             {/foreach}
             <td>
                 <?php
@@ -80,4 +98,12 @@ if (!isset($keyword)) {
 <div>
     <div>{$lists->render()}</div>
 </div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        require(["distpicker"]  ,function () {
+            $("#area").distpicker("destroy");
+            $("#area").distpicker({'area': "{$area_id}"});
+        });
+    });
+</script>
 {/block}

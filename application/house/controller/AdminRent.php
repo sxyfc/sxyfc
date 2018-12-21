@@ -21,7 +21,8 @@ class AdminRent extends AdminBase
 
     public function index()
     {
-        global $_W;
+        global $_W, $_GPC;
+
         $content_model_id = $this->house_rent;
         $model = set_model($content_model_id);
         /** @var Models $model_info */
@@ -30,6 +31,17 @@ class AdminRent extends AdminBase
         $where['site_id'] = $_W['site']['id'];
         if (!$this->super_power) {
             $where['user_id'] = $this->user['id'];
+        }
+
+        $area_id = getArea($_GPC);
+        if (substr($area_id, 2, 4) == '0000') {
+            $where['area_id'][] = array('egt', substr($area_id, 0, 2).'0000');
+            $where['area_id'][] = array('elt', substr($area_id, 0, 2).'9999');
+        } else if (substr($area_id, 4, 2) == '00') {
+            $where['area_id'][] = array('egt', substr($area_id, 0, 4).'00');
+            $where['area_id'][] = array('elt', substr($area_id, 0, 4).'99');
+        } else if ($area_id != '' && $area_id != '0') {
+            $where['area_id'] = $area_id;
         }
 
         $mobile = trim(input('param.mobile', '', 'htmlspecialchars'));
@@ -91,6 +103,7 @@ class AdminRent extends AdminBase
         $this->view->field_list = $model_info->get_admin_column_fields();
         $this->view->content_model_id = $content_model_id;
         $this->view->mapping = $this->mapping;
+        $this->view->area_id = $area_id;
         return $this->view->fetch();
     }
 
@@ -113,11 +126,10 @@ class AdminRent extends AdminBase
                 if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
                 $where['mobile'] = $base_info['mobile'];
                 $where['address'] = $base_info['address'];
-                $where['area_id'] = $base_info['area_id'];
+                $where['area_id'] = getArea($_GPC['area']);
                 $where['site_id'] = $_W['site']['id'];
                 $where['title'] = $base_info['title'];
-                $find_data = set_model($this->house_rent);
-                $find_data = $find_data->where($where)->find();
+                $find_data = $model->where($where)->find();
 //                Log::error("where==" . json_encode($where)."====".$model_info);
                 if ($find_data) {
                     return $this->zbn_msg("不可添加重复房源", 2);
@@ -127,6 +139,8 @@ class AdminRent extends AdminBase
                     return $this->zbn_msg("手机号必须为数字", 2);
                 }
             }
+
+            $base_info['area_id'] = getArea($_GPC['area']);
             $base_info['user_id'] = $this->user['id'];
             $base_info['status'] = 0;
             $res = $model_info->add_content($base_info);
@@ -151,7 +165,6 @@ class AdminRent extends AdminBase
         $model_info = $model->model_info;
         $where['id'] = $id;
         $where['site_id'] = $_W['site']['id'];
-        $detail = $model->where($where)->find();
 
         if ($this->isPost()) {
             if (isset($_GPC['_form_manual'])) {
@@ -163,8 +176,11 @@ class AdminRent extends AdminBase
                 if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
             }
 
+            $base_info['area_id'] = getArea($_GPC['area']);
+            if (!$this->super_power){
+                unset($base_info['status']);
+            }
 
-            $base_info['status'] = $detail['status'];
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
                 return $this->zbn_msg($res['msg'], 1, 'true', 1000, "''", "'reload_parent_page()'");
@@ -173,6 +189,7 @@ class AdminRent extends AdminBase
             }
 
         } else {
+            $detail = $model->where($where)->find();
             $this->view->field_list = $model_info->get_admin_publish_fields($detail, []);
             $detail['data'] = mhcms_json_decode($detail['data']);
             $this->view->detail = $detail;

@@ -52,8 +52,8 @@ var path_obj = {
         'mhcms':'../../components/mhcms/mhcms',
         'weui':'../../components/weui/weui.min',
         'mhcms_level_picker':'../../components/weui/level_picker',
-        'city_picker':'../../components/weui/city_picker',
         'sortable':'../../components/sortable/sortable.min',
+        'distpicker':'../../components/weui/distpicker',
 
     },
     shim: {
@@ -72,9 +72,9 @@ var path_obj = {
             deps: ['jquery' , 'weui'],
             exports: "level_picker"
         },
-        'city_picker': {
-            deps: ['jquery' , 'weui'],
-            exports: "city_picker"
+        'distpicker': {
+            deps: ['jquery'],
+            exports: "distpicker"
         },
         'wx': {
             exports: "wx"

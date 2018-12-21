@@ -12,12 +12,23 @@
                 <input id="searchplace" placeholder="输入搜索地址" class="layui-input" style="width: 200px;float: left"/>
             </div>
             {/if}
+            {if $field['slug'] == '地区'}
+            <div class="layui-form-item">
+                <label class="layui-form-label">{$field['slug']}</label>
+                <div class="layui-input-block" data-toggle="distpicker" id="area">
+                    <select name="area[province]" class="layui-select" lay-ignore=""></select>
+                    <select name="area[city]" class="layui-select" lay-ignore=""></select>
+                    <select name="area[district]" class="layui-select" lay-ignore=""></select>
+                </div>
+            </div>
+            {else}
             <div class="layui-form-item" id="row_{$k}">
                 <label class="layui-form-label">{$field['slug']}</label>
                 <div class="layui-input-block">
                     {$field['form_str']}
                 </div>
             </div>
+            {/if}
             {/foreach}
 
             <div class="layui-form-item">
@@ -37,8 +48,36 @@
         var $ = layui.$;
         form.render();
     });
-
+    
     $(function(){
+        require(["distpicker"]  ,function () {
+            $("#area").distpicker("destroy");
+            navigator.geolocation.getCurrentPosition(
+                function(position){
+                    var cords = position.coords;
+                    var longitude = cords['longitude'];
+                    var latitude = cords['latitude'];
+                    var point = new BMap.Point(longitude, latitude);
+                
+                    var geoc = new BMap.Geocoder();
+                    geoc.getLocation(point, function(rs){
+                        var addComp = rs.addressComponents;
+                        var areas = $("#area").distpicker("getDistrictsCode", addComp["province"], addComp["city"], addComp["district"]);
+                    });
+                    var area_id = "{$area_id}" && "{$area_id}" != "0" ? "{$area_id}" : areas[2];
+                    $("#area").distpicker({'area': area_id});
+                },
+                function(error){
+                    var errorTypes={1:"位置服务被拒绝", 2:"获取不到位置信息", 3:"获取位置信息超时"};
+                    console.log( errorTypes[error.code] +":,不能确定当前地理位置");
+                    //关闭窗口
+                    window.opener=null;
+                    window.open('','_self');
+                    window.close();
+                    $("#area").distpicker({'area': "{$area_id}"});
+                }
+            );
+        });
         createSearch();
         createAutocomlete();
         $("#s_p_search_btn").click(function () {

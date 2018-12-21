@@ -25,7 +25,7 @@ class AdminEsf extends AdminBase
 
     public function index()
     {
-        global $_W;
+        global $_W, $_GPC;
         $this->view->filter_info = Models::gen_admin_filter($this->house_esf, $this->menu_id);
         $where = $this->view->filter_info['where'];
 
@@ -35,6 +35,16 @@ class AdminEsf extends AdminBase
         $esf_name = trim(input('param.esf_name', '', 'htmlspecialchars'));
         $mobile = trim(input('param.mobile', '', 'htmlspecialchars'));
 
+        $area_id = getArea($_GPC);
+        if (substr($area_id, 2, 4) == '0000') {
+            $where['area_id'][] = array('egt', substr($area_id, 0, 2).'0000');
+            $where['area_id'][] = array('elt', substr($area_id, 0, 2).'9999');
+        } else if (substr($area_id, 4, 2) == '00') {
+            $where['area_id'][] = array('egt', substr($area_id, 0, 4).'00');
+            $where['area_id'][] = array('elt', substr($area_id, 0, 4).'99');
+        } else if ($area_id != '' && $area_id != '0') {
+            $where['area_id'] = $area_id;
+        }
 
         if ($mobile) {
             $where['mobile'] = array('LIKE', '%' . $mobile . '%');
@@ -99,6 +109,7 @@ class AdminEsf extends AdminBase
         $this->view->field_list = $model_info->get_admin_column_fields();
         $this->view->content_model_id = $content_model_id;
         $this->view->mapping = $this->mapping;
+        $this->view->area_id = $area_id;
         return $this->view->fetch();
     }
 
@@ -118,11 +129,10 @@ class AdminEsf extends AdminBase
                 $base_info = input('post.data/a');//get the base info
                 $where['mobile'] = $base_info['mobile'];
                 $where['address'] = $base_info['address'];
-                $where['area_id'] = $base_info['area_id'];
+                $where['area_id'] = getArea($_GPC['area']);
                 $where['site_id'] = $_W['site']['id'];
                 $where['title'] = $base_info['title'];
-                $find_data = set_model($this->house_esf);
-                $find_data = $find_data->where($where)->find();
+                $find_data = $model->where($where)->find();
 //                Log::error("where==" . json_encode($where)."====".$model_info);
                 if ($find_data) {
                     return $this->zbn_msg("不可添加重复房源", 2);
@@ -135,6 +145,7 @@ class AdminEsf extends AdminBase
             if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
 
             $base_info['loupan_id'] = $loupan_id;
+            $base_info['area_id'] = getArea($_GPC['area']);
             $base_info['user_id'] = $this->user['id'];
             $base_info['status'] = 1;
             $res = $model_info->add_content($base_info);
@@ -159,7 +170,6 @@ class AdminEsf extends AdminBase
         $model_info = $model->model_info;
         $where['id'] = $id;
         $where['site_id'] = $_W['site']['id'];
-        $detail = $model->where($where)->find();
 
         if ($this->isPost()) {
             if (isset($_GPC['_form_manual'])) {
@@ -170,6 +180,10 @@ class AdminEsf extends AdminBase
                 $base_info = input('post.data/a');//get the base info
             }
 
+            if (!$this->super_power){
+                unset($base_info['status']);
+            }
+            $base_info['area_id'] = getArea($_GPC['area']);
             if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {
@@ -179,6 +193,7 @@ class AdminEsf extends AdminBase
             }
 
         } else {
+            $detail = $model->where($where)->find();
             $this->view->field_list = $model_info->get_admin_publish_fields($detail, []);
             $detail['data'] = mhcms_json_decode($detail['data']);
             $this->view->detail = $detail;
@@ -241,6 +256,7 @@ class AdminEsf extends AdminBase
                 if (!isset($base_info['top_expire']) || $base_info['top_expire'] == '' || empty($base_info['top_expire'])) $base_info['top_expire'] = gmdate("Y-m-d H:i:s");
             }
 
+            $base_info['area_id'] = getArea($_GPC['area']);
             $base_info['status'] = $detail['status'];
             $res = $model_info->edit_content($base_info, $where);
             if ($res['code'] == 1) {

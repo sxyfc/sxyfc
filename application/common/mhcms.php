@@ -2477,3 +2477,16 @@ if (!function_exists('aes_pkcs7_decode')) {
         return $result[1];
     }
 }
+
+function getArea($args)
+{
+    $arr = ['district', 'city', 'province'];
+    $area = 0;
+    foreach ($arr as $name) {
+        if (isset($args[$name]) && $args[$name] != '' && $args[$name] != '0') {
+            $area = $args[$name];
+            break;
+        }
+    }
+    return $area;
+}
