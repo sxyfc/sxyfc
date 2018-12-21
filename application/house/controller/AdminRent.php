@@ -217,6 +217,7 @@ class AdminRent extends AdminBase
         return $ret;
     }
 
+
     public function online($id)
     {
         global $_W, $_GPC;
